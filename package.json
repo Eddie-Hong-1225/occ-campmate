@@ -1,0 +1,11 @@
+{
+  "name": "occ-camping-mate",
+  "version": "1.0.0",
+  "description": "외동아이 캠핑친구만들기 네이버 카페 전용 또래 매칭 & 장비 분담 웹앱",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": ["camping", "occ", "naver-cafe", "kids-camping"],
+  "author": "OCC Community Member",
+  "license": "MIT"
+}

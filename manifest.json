@@ -1,0 +1,17 @@
+{
+  "name": "외동아이 캠핑친구만들기 (OCC CampMate)",
+  "short_name": "외동캠친구",
+  "description": "네이버 카페 외동아이 캠핑친구만들기 전용 또래 매칭 & 장비 분담 웹앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#1b4332",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='25' fill='%231b4332'/><text y='68' x='15' font-size='60'>🏕️</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
