@@ -10,6 +10,7 @@
   <meta name="apple-mobile-web-app-title" content="외동캠친구">
   <link rel="manifest" href="/manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,6 +117,12 @@
 
       <!-- Right User Controls -->
       <div class="flex items-center gap-3">
+        <!-- Cloud DB Connection Status & Settings Button -->
+        <button id="dbStatusHeaderBtn" onclick="openDbConfigModal()" class="px-2.5 py-1.5 rounded-lg bg-forest-800/90 hover:bg-forest-600 text-[11px] text-amber-200 flex items-center gap-1.5 border border-forest-600 transition shadow-2xs" title="클라우드 DB(Supabase) 실시간 연동 설정">
+          <span id="dbStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <span id="dbStatusText" class="font-bold">DB 연동설정</span>
+        </button>
+
         <!-- Viewport Switcher -->
         <button id="viewToggleBtn" onclick="toggleViewMode()" class="px-3 py-1.5 rounded-lg bg-forest-800/80 hover:bg-forest-600 text-xs text-emerald-100 flex items-center gap-1.5 border border-forest-600 transition" title="모바일 화면 / 와이드 화면 전환">
           <span id="viewModeIcon">📱</span>
@@ -817,6 +824,78 @@
 
 
   <!-- ============================================== -->
+  <!-- ============================================== -->
+  <!-- MODAL 3: SUPABASE CLOUD DB CONFIG & SQL HELPER -->
+  <!-- ============================================== -->
+  <div id="dbConfigModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">🗄️</span>
+          <div>
+            <h3 class="font-extrabold text-sm sm:text-base text-slate-800">실시간 클라우드 DB (Supabase) 연동</h3>
+            <p class="text-[11px] text-slate-500">모든 카페 회원이 스마트폰/PC에서 동일한 모집글과 대기 명단을 실시간 공유합니다</p>
+          </div>
+        </div>
+        <button onclick="closeDbConfigModal()" class="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-400 font-bold flex items-center justify-center">✕</button>
+      </div>
+
+      <!-- Step 1: SQL Table Creation Copy -->
+      <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-extrabold text-slate-800">1단계: Supabase SQL Editor에서 테이블 생성 (최초 1회)</span>
+          <button type="button" onclick="copySupabaseSql()" class="px-2.5 py-1 rounded-lg bg-forest-600 hover:bg-forest-700 text-white font-bold text-[11px] transition shadow-2xs cursor-pointer">
+            📋 SQL 복사하기
+          </button>
+        </div>
+        <p class="text-[11px] text-slate-500 leading-relaxed">
+          Supabase 가입 후 새 프로젝트를 만들고, 좌측 메뉴 <b>[SQL Editor]</b> ➔ <b>[New query]</b>에 아래 SQL을 붙여넣고 <b>[Run]</b>을 눌러주세요.
+        </p>
+        <pre id="supabaseSqlCode" class="p-2.5 rounded-lg bg-slate-900 text-emerald-300 font-mono text-[10px] overflow-x-auto leading-relaxed select-all">create table if not exists public.occ_camps (
+  id bigint primary key,
+  data jsonb not null,
+  end_date text,
+  updated_at timestamptz default now()
+);
+alter table public.occ_camps enable row level security;
+create policy "Allow public access" on public.occ_camps
+  for all using (true) with check (true);</pre>
+      </div>
+
+      <!-- Step 2: URL & Key Inputs -->
+      <form onsubmit="handleSaveDbConfig(event)" class="space-y-3 text-xs">
+        <div class="font-extrabold text-slate-800">2단계: Project URL 및 API Key 입력</div>
+        <p class="text-[11px] text-slate-500">
+          Supabase 좌측 하단 <b>[Project Settings ⚙️]</b> ➔ <b>[API]</b> 메뉴에서 복사해 붙여넣으세요. (또는 <code>index.html</code> 코드 상단에 직접 기입하면 모든 회원에게 즉시 적용됩니다.)
+        </p>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Project URL</label>
+          <input type="url" id="inputSupabaseUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-mono text-xs text-slate-800">
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">API Key (anon / public)</label>
+          <input type="text" id="inputSupabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-mono text-xs text-slate-800">
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="disconnectDbConfig()" class="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition">
+            연동 해제 (로컬 테스트 모드)
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" onclick="closeDbConfigModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">
+              닫기
+            </button>
+            <button type="submit" class="px-5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs shadow-md transition">
+              ⚡ DB 연결 및 동기화
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- MODAL 4: USER PROFILE SETUP & EDIT (카페 닉네임 1회 저장) -->
   <!-- ============================================== -->
   <div id="profileSetupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -905,6 +984,187 @@
   <!-- JAVASCRIPT APPLICATION LOGIC -->
   <!-- ============================================== -->
   <script>
+    // =========================================================================
+    // [중요] SUPABASE 클라우드 DB 설정 (여기에 입력 후 GitHub/Vercel에 올리면 전 회원 자동 적용!)
+    // =========================================================================
+    const DEFAULT_SUPABASE_URL = ""; // 예: "https://abcdefghijklm.supabase.co"
+    const DEFAULT_SUPABASE_ANON_KEY = ""; // 예: "eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+
+    let supabaseClient = null;
+    let isCloudDbConnected = false;
+
+    function getSupabaseCredentials() {
+      const savedUrl = localStorage.getItem('occ_supabase_url') || DEFAULT_SUPABASE_URL;
+      const savedKey = localStorage.getItem('occ_supabase_key') || DEFAULT_SUPABASE_ANON_KEY;
+      return { url: savedUrl.trim(), key: savedKey.trim() };
+    }
+
+    function updateDbStatusBadge() {
+      const dot = document.getElementById('dbStatusDot');
+      const text = document.getElementById('dbStatusText');
+      if (!dot || !text) return;
+      if (isCloudDbConnected) {
+        dot.className = "w-2 h-2 rounded-full bg-emerald-400";
+        text.textContent = "실시간 DB 연동중";
+      } else {
+        dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
+        text.textContent = "DB 연동설정";
+      }
+    }
+
+    async function initSupabaseAndSync() {
+      const { url, key } = getSupabaseCredentials();
+      if (!url || !key || typeof window.supabase === 'undefined') {
+        isCloudDbConnected = false;
+        updateDbStatusBadge();
+        return;
+      }
+
+      try {
+        supabaseClient = window.supabase.createClient(url, key);
+        const { data, error } = await supabaseClient
+          .from('occ_camps')
+          .select('*')
+          .order('id', { ascending: false });
+
+        if (error) throw error;
+
+        isCloudDbConnected = true;
+        updateDbStatusBadge();
+
+        if (data && data.length > 0) {
+          camps = data.map(row => row.data);
+          cleanupExpiredCamps();
+          syncMyProfileWithCamps();
+          renderCamps();
+        } else {
+          // 테이블이 비어있다면 초기 샘플 데이터를 DB에 자동 업로드
+          await seedInitialCampsToDb();
+        }
+
+        // 실시간(Realtime) 구독: 다른 회원이 등록/착석/대기하면 내 화면도 즉시 갱신
+        supabaseClient
+          .channel('occ_camps_realtime')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'occ_camps' }, async () => {
+            await fetchCampsFromCloud();
+          })
+          .subscribe();
+
+      } catch (err) {
+        console.warn('[Supabase 연동 확인 필요]:', err.message);
+        isCloudDbConnected = false;
+        updateDbStatusBadge();
+      }
+    }
+
+    async function fetchCampsFromCloud() {
+      if (!supabaseClient || !isCloudDbConnected) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('occ_camps')
+          .select('*')
+          .order('id', { ascending: false });
+        if (!error && data) {
+          camps = data.map(row => row.data);
+          syncMyProfileWithCamps();
+          applyFilters();
+          if (currentModalCamp) {
+            const updated = camps.find(c => c.id === currentModalCamp.id);
+            if (updated) openCampDetail(updated.id);
+          }
+        }
+      } catch (e) {}
+    }
+
+    async function seedInitialCampsToDb() {
+      if (!supabaseClient || !isCloudDbConnected) return;
+      try {
+        const rows = camps.map(c => ({
+          id: c.id,
+          data: c,
+          end_date: c.endDate || null,
+          updated_at: new Date().toISOString()
+        }));
+        await supabaseClient.from('occ_camps').upsert(rows);
+      } catch (e) {}
+    }
+
+    async function saveCampToCloud(camp) {
+      // 로컬 백업 저장
+      try { localStorage.setItem('occ_camps_local_backup', JSON.stringify(camps)); } catch (e) {}
+      if (!supabaseClient || !isCloudDbConnected || !camp) return;
+      try {
+        await supabaseClient.from('occ_camps').upsert({
+          id: camp.id,
+          data: camp,
+          end_date: camp.endDate || null,
+          updated_at: new Date().toISOString()
+        });
+      } catch (e) {
+        console.error('Failed to save camp to DB:', e);
+      }
+    }
+
+    async function deleteCampFromCloud(campId) {
+      try { localStorage.setItem('occ_camps_local_backup', JSON.stringify(camps)); } catch (e) {}
+      if (!supabaseClient || !isCloudDbConnected) return;
+      try {
+        await supabaseClient.from('occ_camps').delete().eq('id', campId);
+      } catch (e) {
+        console.error('Failed to delete camp from DB:', e);
+      }
+    }
+
+    function openDbConfigModal() {
+      const { url, key } = getSupabaseCredentials();
+      const urlInput = document.getElementById('inputSupabaseUrl');
+      const keyInput = document.getElementById('inputSupabaseKey');
+      if (urlInput) urlInput.value = url;
+      if (keyInput) keyInput.value = key;
+      document.getElementById('dbConfigModal').classList.remove('hidden');
+    }
+
+    function closeDbConfigModal() {
+      document.getElementById('dbConfigModal').classList.add('hidden');
+    }
+
+    function copySupabaseSql() {
+      const sql = document.getElementById('supabaseSqlCode')?.textContent || '';
+      navigator.clipboard.writeText(sql).then(() => {
+        showToast('📋 SQL 구문이 복사되었습니다! Supabase SQL Editor에 붙여넣고 Run을 눌러주세요.');
+      });
+    }
+
+    async function handleSaveDbConfig(e) {
+      e.preventDefault();
+      const url = document.getElementById('inputSupabaseUrl').value.trim();
+      const key = document.getElementById('inputSupabaseKey').value.trim();
+      if (!url || !key) {
+        showToast('⚠️ Project URL과 API Key를 모두 입력해주세요.');
+        return;
+      }
+      localStorage.setItem('occ_supabase_url', url);
+      localStorage.setItem('occ_supabase_key', key);
+      closeDbConfigModal();
+      showToast('⚡ 클라우드 DB 연결 중입니다...');
+      await initSupabaseAndSync();
+      if (isCloudDbConnected) {
+        showToast('✅ Supabase 실시간 클라우드 DB 연동이 완료되었습니다!');
+      } else {
+        showToast('⚠️ DB 연결 실패: URL/Key 또는 occ_camps 테이블 생성 여부를 확인해주세요.');
+      }
+    }
+
+    function disconnectDbConfig() {
+      localStorage.removeItem('occ_supabase_url');
+      localStorage.removeItem('occ_supabase_key');
+      isCloudDbConnected = false;
+      supabaseClient = null;
+      updateDbStatusBadge();
+      closeDbConfigModal();
+      showToast('ℹ️ 클라우드 DB 연동이 해제되어 브라우저 로컬 모드로 동작합니다.');
+    }
+
     
     // Mock participants generator helper
     function getInitialParticipants(camp) {
@@ -936,8 +1196,7 @@
       }
       return parts;
     }
-const DEFAULT_SUPABASE_URL = "https://rkdcfdeasbfwhagsznmq.supabase.co";
-const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_xKxFUWCN6H8AEGrzDFGrgA_lDomLvAR";
+
     // Initial Mock Data (Tailored for '외동아이 캠핑친구만들기' Naver Cafe)
     let camps = [
       // ---------------------------------------------------------
@@ -1526,7 +1785,7 @@ const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_xKxFUWCN6H8AEGrzDFGrgA_lDomLvA
     const ADMIN_NICKNAME = '18시원맘김포';
 
     let myProfile = {
-      nickname: '18시원파김포',
+      nickname: '18시원맘김포',
       kidBirthYear: 2018,
       kidGender: '남아',
       kidDesc: '외동아이 또래와 캠핑하는 것을 좋아해요',
@@ -1556,13 +1815,15 @@ const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_xKxFUWCN6H8AEGrzDFGrgA_lDomLvA
       camps.forEach(camp => {
         if (camp.participants) {
           camp.participants.forEach(p => {
-            if (p.isCurrentUserParticipant) {
+            if (p.isCurrentUserParticipant && !isCloudDbConnected) {
               p.name = myProfile.nickname;
               p.kid = `${myProfile.kidBirthYear}년생 ${myProfile.kidGender}`;
             }
           });
+          // 내 닉네임이 참석자 명단에 있으면 applied = true로 자동 동기화
+          camp.applied = camp.participants.some(p => p.name === myProfile.nickname);
         }
-        if (camp.waitlist) {
+        if (camp.waitlist && !isCloudDbConnected) {
           camp.waitlist.forEach(w => {
             if (w.isCurrentUserWaitlist) {
               w.name = myProfile.nickname;
@@ -1796,6 +2057,7 @@ function loadUserProfile() {
       };
 
       camps.unshift(newCamp);
+      saveCampToCloud(newCamp);
       showToast('🎉 캠핑 일정이 성공적으로 등록되었습니다!');
       
       document.getElementById('createMatchForm').reset();
@@ -1846,9 +2108,9 @@ function loadUserProfile() {
       cleanupExpiredCamps();
       loadUserProfile();
       renderCamps();
-            renderExpenseList();
-            checkUrlParamsOnLoad();
+      checkUrlParamsOnLoad();
       updateMatchTitlePreview();
+      initSupabaseAndSync();
     };
 
     // Navigation Tab Switching
@@ -2603,6 +2865,7 @@ function loadUserProfile() {
       if (!input) return;
       const newMsg = input.value.trim() || '함께 캠핑할 생각에 설레네요!';
       currentModalCamp.participants[idx].message = newMsg;
+      saveCampToCloud(currentModalCamp);
       renderModalParticipants(currentModalCamp);
       showToast(currentModalCamp && currentModalCamp.bookingType === '일정등록' ? '🏕️ 예약한 사이트명이 수정되었습니다!' : '💬 일행에게 하고싶은 말이 수정되었습니다!');
     }
@@ -2811,6 +3074,7 @@ function loadUserProfile() {
         registeredAt: new Date().toISOString()
       });
 
+      saveCampToCloud(currentModalCamp);
       showToast(`⏳ [${myProfile.nickname}]님 가족이 '대기 ${waitOrder}번'으로 등록되었습니다! 취소 발생 시 자동 승격됩니다.`);
       closeCampModal();
       document.getElementById('applyComment').value = '';
@@ -2822,6 +3086,7 @@ function loadUserProfile() {
       if (!camp || !camp.waitlist) return;
 
       camp.waitlist = camp.waitlist.filter(w => w.name !== myProfile.nickname);
+      saveCampToCloud(camp);
       showToast('⏳ 대기 신청이 정상적으로 취소되었습니다.');
       closeCampModal();
       applyFilters();
@@ -2866,6 +3131,7 @@ function loadUserProfile() {
         showToast(`👋 [${camp.title.slice(0, 16)}...] 모임 동행이 취소되었습니다. 모닥불 의자가 다시 비워졌습니다.`);
       }
 
+      saveCampToCloud(camp);
       closeCampModal();
       applyFilters();
     }
@@ -2915,8 +3181,9 @@ function loadUserProfile() {
       const targetTitle = currentModalCamp.title || '모집글';
       const isForceAdmin = deleteModeIsAdmin;
       
-      // Delete from camps array
+      // Delete from camps array & Cloud DB
       camps = camps.filter(c => c.id !== targetId);
+      deleteCampFromCloud(targetId);
 
       closeDeleteConfirmModal();
       closeCampModal();
@@ -2949,11 +3216,11 @@ function loadUserProfile() {
         isHost: false
       });
 
-      showToast(`🔥 [${myProfile.nickname}]님 가족이 모닥불 옆에 착석했습니다! 업데이트된 카페 공유 링크를 확인하세요.`);
+      saveCampToCloud(currentModalCamp);
+      showToast(`🔥 [${myProfile.nickname}]님 가족이 모닥불 옆에 착석했습니다!`);
       closeCampModal();
       document.getElementById('applyComment').value = '';
       applyFilters();
-      openCafeShareModal(targetId);
     }
 
     // ==========================================
@@ -3018,6 +3285,7 @@ function loadUserProfile() {
       };
 
       camps.unshift(newCamp);
+      saveCampToCloud(newCamp);
       showToast('🎉 캠핑 동행 모집글이 성공적으로 등록되었습니다!');
       
       document.getElementById('createCampForm').reset();
