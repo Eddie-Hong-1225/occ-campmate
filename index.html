@@ -871,11 +871,6 @@
           </div>
         </div>
 
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">아이 성향 / 좋아하는 놀이 한 줄</label>
-          <input type="text" id="inputKidDesc" placeholder="예: 보드게임, 줄넘기 좋아하고 활발해요" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 text-xs">
-        </div>
-
         <!-- Admin Status & DB Admin Nickname Manager Box -->
         <div id="adminStatusBox" class="hidden p-3.5 bg-red-50 rounded-xl border border-red-200 text-xs space-y-2.5">
           <div class="flex items-center justify-between">
@@ -1530,7 +1525,6 @@ function loadUserProfile() {
       document.getElementById('inputNickname').value = myProfile.nickname;
       document.getElementById('inputKidYear').value = myProfile.kidBirthYear;
       document.getElementById('inputKidGender').value = myProfile.kidGender;
-      document.getElementById('inputKidDesc').value = myProfile.kidDesc;
       checkAdminNicknamePreview();
       document.getElementById('profileSetupModal').classList.remove('hidden');
     }
@@ -1557,7 +1551,7 @@ function loadUserProfile() {
       const nick = document.getElementById('inputNickname').value.trim() || '카페회원';
       const year = parseInt(document.getElementById('inputKidYear').value) || 2018;
       const gender = document.getElementById('inputKidGender').value;
-      const desc = document.getElementById('inputKidDesc').value.trim() || `${year}년생 ${gender}`;
+      const desc = `${year}년생 ${gender}`;
       const isAdmin = isNicknameAdmin(nick);
 
       const updated = {
