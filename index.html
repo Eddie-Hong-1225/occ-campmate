@@ -125,15 +125,15 @@
         <!-- Interactive Profile Chip (Click to Edit) -->
         <button onclick="openProfileModal()" class="flex items-center gap-2 pl-2 border-l border-forest-600 text-left hover:opacity-90 transition group" title="내 카페 닉네임 및 아이 정보 설정/변경">
           <div id="headerAvatar" class="w-8 h-8 rounded-full bg-amber-400 text-slate-800 font-bold flex items-center justify-center text-sm shadow group-hover:scale-105 transition">
-            봄
+            시
           </div>
           <div class="hidden sm:block text-left text-xs">
             <div class="font-semibold text-white flex items-center gap-1">
-              <span id="headerNickname">19봄맘경기연천</span>
-              <span id="headerAdminBadge" class="hidden px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[9px] shadow-2xs border border-red-400">🛡️관리자</span>
+              <span id="headerNickname">18시원맘김포</span>
+              <span id="headerAdminBadge" class="px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[9px] shadow-2xs border border-red-400">🛡️관리자</span>
               <span class="text-amber-300 text-[10px] font-bold bg-forest-800 px-1.5 py-0.2 rounded border border-forest-600">설정 ⚙️</span>
             </div>
-            <div id="headerKidSummary" class="text-[10px] text-emerald-300/80">아이: 19년생 여아</div>
+            <div id="headerKidSummary" class="text-[10px] text-emerald-300/80">아이: 18년생 남아</div>
           </div>
         </button>
       </div>
@@ -838,7 +838,7 @@
           <label class="block font-bold text-slate-700 mb-1">
             네이버 카페 닉네임 <span class="text-red-500">*</span>
           </label>
-          <input type="text" id="inputNickname" required placeholder="예: 18민우파인천, 20서아맘경기" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-bold text-slate-800 text-xs">
+          <input type="text" id="inputNickname" oninput="checkAdminNicknamePreview()" required placeholder="예: 18시원맘김포, 20서아맘경기" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-bold text-slate-800 text-xs">
           <p class="text-[10px] text-slate-400 mt-1">네이버 카페와 동일한 닉네임으로 입력해주세요.</p>
         </div>
 
@@ -874,16 +874,13 @@
           <input type="text" id="inputKidDesc" placeholder="예: 보드게임, 줄넘기 좋아하고 활발해요" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 text-xs">
         </div>
 
-        <!-- Admin Privilege Toggle Box -->
-        <div class="p-3.5 bg-red-50/80 rounded-xl border border-red-200 text-xs space-y-1.5">
-          <div class="flex items-center justify-between">
-            <label for="inputIsAdmin" class="font-extrabold text-red-950 flex items-center gap-1.5 cursor-pointer select-none">
-              <span>🛡️</span> 카페 관리자(운영진) 모드
-            </label>
-            <input type="checkbox" id="inputIsAdmin" class="w-4 h-4 rounded text-red-600 focus:ring-red-500 cursor-pointer">
+        <!-- Admin Status Notice Box (Strictly for 18시원맘김포) -->
+        <div id="adminStatusBox" class="p-3.5 bg-red-50 rounded-xl border border-red-200 text-xs space-y-1">
+          <div class="flex items-center gap-1.5 font-extrabold text-red-950">
+            <span>🛡️</span> 카페 관리자(운영진) 닉네임 인증됨
           </div>
           <p class="text-[11px] text-red-700 leading-relaxed">
-            체크하시면 <b>관리자 권한</b>이 부여되어, 내가 등록한 글뿐만 아니라 <b>다른 회원의 모든 모집글에 대해 [🛡️ 관리자 강제삭제]</b> 권한이 활성화됩니다.
+            <b>18시원맘김포</b> 닉네임에 공식 카페 관리자 권한이 적용됩니다. (다른 회원의 모든 모집글에 대해 <b>[🛡️ 관리자 강제삭제]</b> 권한 활성화)
           </p>
         </div>
 
@@ -1525,13 +1522,15 @@
     // ==========================================
     // USER PROFILE STORAGE (localStorage 기반 1회 저장)
     // ==========================================
+    const ADMIN_NICKNAME = '18시원맘김포';
+
     let myProfile = {
-      nickname: '19봄맘경기연천',
-      kidBirthYear: 2019,
-      kidGender: '여아',
-      kidDesc: '보드게임과 비눗방울 좋아해요',
-      avatar: '봄',
-      isAdmin: false
+      nickname: '18시원맘김포',
+      kidBirthYear: 2018,
+      kidGender: '남아',
+      kidDesc: '외동아이 또래와 캠핑하는 것을 좋아해요',
+      avatar: '시',
+      isAdmin: true
     };
 
         function updatePostTargetPreview() {
@@ -1577,20 +1576,27 @@ function loadUserProfile() {
       try {
         const stored = localStorage.getItem('occ_campmate_profile');
         if (stored) {
-          myProfile = Object.assign({ isAdmin: false }, JSON.parse(stored));
+          myProfile = JSON.parse(stored);
         }
       } catch (e) {}
+      // Enforce admin permission strictly only for 18시원맘김포
+      myProfile.isAdmin = (myProfile.nickname && myProfile.nickname.trim() === ADMIN_NICKNAME);
       applyProfileToUI();
       syncMyProfileWithCamps();
     }
 
     function saveUserProfile(profile) {
       myProfile = profile;
+      myProfile.isAdmin = (myProfile.nickname && myProfile.nickname.trim() === ADMIN_NICKNAME);
       try {
         localStorage.setItem('occ_campmate_profile', JSON.stringify(myProfile));
       } catch (e) {}
       applyProfileToUI();
-      showToast(`👤 내 프로필이 [${myProfile.nickname}]님으로 저장되었습니다!`);
+      if (myProfile.isAdmin) {
+        showToast(`👑 [${myProfile.nickname}]님 카페 관리자(운영진) 권한이 적용되었습니다!`);
+      } else {
+        showToast(`👤 내 프로필이 [${myProfile.nickname}]님으로 저장되었습니다.`);
+      }
       syncMyProfileWithCamps();
       applyFilters();
     }
@@ -1643,8 +1649,20 @@ function loadUserProfile() {
       document.getElementById('inputKidYear').value = myProfile.kidBirthYear;
       document.getElementById('inputKidGender').value = myProfile.kidGender;
       document.getElementById('inputKidDesc').value = myProfile.kidDesc;
-      if (document.getElementById('inputIsAdmin')) document.getElementById('inputIsAdmin').checked = myProfile.isAdmin === true;
+      checkAdminNicknamePreview();
       document.getElementById('profileSetupModal').classList.remove('hidden');
+    }
+
+    function checkAdminNicknamePreview() {
+      const nick = document.getElementById('inputNickname')?.value.trim();
+      const box = document.getElementById('adminStatusBox');
+      if (box) {
+        if (nick === ADMIN_NICKNAME) {
+          box.classList.remove('hidden');
+        } else {
+          box.classList.add('hidden');
+        }
+      }
     }
 
     function closeProfileModal() {
@@ -1654,11 +1672,11 @@ function loadUserProfile() {
     function handleSaveProfile(e) {
       e.preventDefault();
       const nick = document.getElementById('inputNickname').value.trim() || '카페회원';
-      const year = parseInt(document.getElementById('inputKidYear').value) || 2019;
+      const year = parseInt(document.getElementById('inputKidYear').value) || 2018;
       const gender = document.getElementById('inputKidGender').value;
       const desc = document.getElementById('inputKidDesc').value.trim() || `${year}년생 ${gender}`;
+      const isAdmin = (nick === ADMIN_NICKNAME);
 
-      const isAdmin = document.getElementById('inputIsAdmin')?.checked === true;
       const updated = {
         nickname: nick,
         kidBirthYear: year,
