@@ -130,6 +130,7 @@
           <div class="hidden sm:block text-left text-xs">
             <div class="font-semibold text-white flex items-center gap-1">
               <span id="headerNickname">19봄맘경기연천</span>
+              <span id="headerAdminBadge" class="hidden px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[9px] shadow-2xs border border-red-400">🛡️관리자</span>
               <span class="text-amber-300 text-[10px] font-bold bg-forest-800 px-1.5 py-0.2 rounded border border-forest-600">설정 ⚙️</span>
             </div>
             <div id="headerKidSummary" class="text-[10px] text-emerald-300/80">아이: 19년생 여아</div>
@@ -787,10 +788,10 @@
   <div id="deleteConfirmModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
       <div class="flex items-center gap-2.5 text-red-600 font-extrabold text-sm">
-        <span class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-base">🗑️</span>
-        <span>모집글을 정말 삭제할까요?</span>
+        <span id="deleteModalIcon" class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-base">🗑️</span>
+        <span id="deleteModalTitle">모집글을 정말 삭제할까요?</span>
       </div>
-      <p class="text-xs text-slate-600 leading-relaxed">
+      <p id="deleteModalDesc" class="text-xs text-slate-600 leading-relaxed">
         내가 등록한 모집글과 모닥불 방이 완전히 삭제됩니다.<br>
         <span class="text-red-500 font-semibold">* 이미 착석한 참여 가족들의 명단도 함께 정리됩니다.</span>
       </p>
@@ -798,7 +799,7 @@
         <button onclick="closeDeleteConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
           취소
         </button>
-        <button onclick="confirmDeleteCamp()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition">
+        <button id="deleteConfirmBtn" onclick="confirmDeleteCamp()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition">
           네, 삭제합니다
         </button>
       </div>
@@ -871,6 +872,19 @@
         <div>
           <label class="block font-bold text-slate-700 mb-1">아이 성향 / 좋아하는 놀이 한 줄</label>
           <input type="text" id="inputKidDesc" placeholder="예: 보드게임, 줄넘기 좋아하고 활발해요" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 text-xs">
+        </div>
+
+        <!-- Admin Privilege Toggle Box -->
+        <div class="p-3.5 bg-red-50/80 rounded-xl border border-red-200 text-xs space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label for="inputIsAdmin" class="font-extrabold text-red-950 flex items-center gap-1.5 cursor-pointer select-none">
+              <span>🛡️</span> 카페 관리자(운영진) 모드
+            </label>
+            <input type="checkbox" id="inputIsAdmin" class="w-4 h-4 rounded text-red-600 focus:ring-red-500 cursor-pointer">
+          </div>
+          <p class="text-[11px] text-red-700 leading-relaxed">
+            체크하시면 <b>관리자 권한</b>이 부여되어, 내가 등록한 글뿐만 아니라 <b>다른 회원의 모든 모집글에 대해 [🛡️ 관리자 강제삭제]</b> 권한이 활성화됩니다.
+          </p>
         </div>
 
         <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
@@ -1516,7 +1530,8 @@
       kidBirthYear: 2019,
       kidGender: '여아',
       kidDesc: '보드게임과 비눗방울 좋아해요',
-      avatar: '봄'
+      avatar: '봄',
+      isAdmin: false
     };
 
         function updatePostTargetPreview() {
@@ -1562,7 +1577,7 @@ function loadUserProfile() {
       try {
         const stored = localStorage.getItem('occ_campmate_profile');
         if (stored) {
-          myProfile = JSON.parse(stored);
+          myProfile = Object.assign({ isAdmin: false }, JSON.parse(stored));
         }
       } catch (e) {}
       applyProfileToUI();
@@ -1594,6 +1609,16 @@ function loadUserProfile() {
         headerKid.textContent = `아이: ${birth.toString().slice(2)}년생 ${myProfile.kidGender}`;
       }
 
+      // Admin Badge in Header
+      const headerAdminBadge = document.getElementById('headerAdminBadge');
+      if (headerAdminBadge) {
+        if (myProfile.isAdmin) {
+          headerAdminBadge.classList.remove('hidden');
+        } else {
+          headerAdminBadge.classList.add('hidden');
+        }
+      }
+
       // Pre-fill Create Form inputs if blank
       const postKidYear = document.getElementById('postKidBirthYear');
       const postKidGender = document.getElementById('postKidGender');
@@ -1618,6 +1643,7 @@ function loadUserProfile() {
       document.getElementById('inputKidYear').value = myProfile.kidBirthYear;
       document.getElementById('inputKidGender').value = myProfile.kidGender;
       document.getElementById('inputKidDesc').value = myProfile.kidDesc;
+      if (document.getElementById('inputIsAdmin')) document.getElementById('inputIsAdmin').checked = myProfile.isAdmin === true;
       document.getElementById('profileSetupModal').classList.remove('hidden');
     }
 
@@ -1632,12 +1658,14 @@ function loadUserProfile() {
       const gender = document.getElementById('inputKidGender').value;
       const desc = document.getElementById('inputKidDesc').value.trim() || `${year}년생 ${gender}`;
 
+      const isAdmin = document.getElementById('inputIsAdmin')?.checked === true;
       const updated = {
         nickname: nick,
         kidBirthYear: year,
         kidGender: gender,
         kidDesc: desc,
-        avatar: nick.slice(0, 1) || '나'
+        avatar: nick.slice(0, 1) || '나',
+        isAdmin: isAdmin
       };
 
       saveUserProfile(updated);
@@ -2285,9 +2313,22 @@ function loadUserProfile() {
               </div>
 
               <div class="flex items-center gap-1.5">
-                <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl ${camp.host.name === myProfile.nickname ? 'bg-amber-100 text-amber-950 border border-amber-300 font-extrabold' : camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-xs transition shadow-sm">
-                  ${camp.host.name === myProfile.nickname ? '👑 내 주최글 (관리/삭제)' : camp.applied ? '참여중 (상세보기) ✓' : '상세보기'}
-                </button>
+                ${camp.host.name === myProfile.nickname ? `
+                  <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-extrabold text-xs transition shadow-sm">
+                    👑 내 주최글 (관리/삭제)
+                  </button>
+                ` : (myProfile.isAdmin ? `
+                  <button onclick="openCampDetail(${camp.id})" class="px-3 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-xs transition shadow-sm">
+                    ${camp.applied ? '참여중 ✓' : '상세보기'}
+                  </button>
+                  <button onclick="currentModalCamp = camps.find(c => c.id === ${camp.id}); openDeleteConfirmModal(true);" class="px-2.5 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-800 border border-red-300 font-extrabold text-xs transition shadow-2xs" title="관리자 권한으로 강제 삭제">
+                    🛡️ 삭제
+                  </button>
+                ` : `
+                  <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-xs transition shadow-sm">
+                    ${camp.applied ? '참여중 (상세보기) ✓' : '상세보기'}
+                  </button>
+                `)}
               </div>
             </div>
           </div>
@@ -2626,17 +2667,33 @@ function loadUserProfile() {
       const cancelBtn = document.getElementById('modalCancelBtn');
       const deleteBtn = document.getElementById('modalDeleteBtn');
       const isHost = camp.host.name === myProfile.nickname;
+      const isAdmin = myProfile.isAdmin === true;
       const isOnWaitlist = waitlist.some(w => w.name === myProfile.nickname);
       const myWaitIdx = waitlist.findIndex(w => w.name === myProfile.nickname);
 
       if (isHost) {
         // If I am the host, show Delete button! (Host cannot apply/cancel their own room)
-        if (deleteBtn) deleteBtn.classList.remove('hidden');
+        if (deleteBtn) {
+          deleteBtn.classList.remove('hidden');
+          deleteBtn.className = "px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer";
+          deleteBtn.innerHTML = '<span>🗑️</span> 모집글 삭제하기';
+          deleteBtn.onclick = () => openDeleteConfirmModal(false);
+        }
         if (applyBtn) applyBtn.classList.add('hidden');
         if (cancelBtn) cancelBtn.classList.add('hidden');
       } else {
-        // Guest mode
-        if (deleteBtn) deleteBtn.classList.add('hidden');
+        // Guest mode: If Admin, show Admin Force Delete alongside guest actions!
+        if (isAdmin) {
+          if (deleteBtn) {
+            deleteBtn.classList.remove('hidden');
+            deleteBtn.className = "px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-900 text-white font-black text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer border border-red-950";
+            deleteBtn.innerHTML = '<span>🛡️</span> 관리자 강제삭제';
+            deleteBtn.title = '카페 관리자(운영진) 권한으로 강제 삭제';
+            deleteBtn.onclick = () => openDeleteConfirmModal(true);
+          }
+        } else {
+          if (deleteBtn) deleteBtn.classList.add('hidden');
+        }
 
         if (camp.applied && !isOnWaitlist) {
           // Confirmed attendee
@@ -2796,20 +2853,48 @@ function loadUserProfile() {
 
 
     // ==========================================
-    // HOST DELETE CAMP LOGIC (내가 올린 모집글 삭제)
+    // DELETE CAMP LOGIC (호스트 삭제 및 관리자 강제 삭제)
     // ==========================================
-    function openDeleteConfirmModal() {
-      document.getElementById('deleteConfirmModal').classList.remove('hidden');
+    let deleteModeIsAdmin = false;
+
+    function openDeleteConfirmModal(isAdmin = false) {
+      deleteModeIsAdmin = isAdmin;
+      const modal = document.getElementById('deleteConfirmModal');
+      const iconEl = document.getElementById('deleteModalIcon');
+      const titleEl = document.getElementById('deleteModalTitle');
+      const descEl = document.getElementById('deleteModalDesc');
+      const confirmBtn = document.getElementById('deleteConfirmBtn');
+
+      if (isAdmin) {
+        if (iconEl) iconEl.textContent = '🛡️';
+        if (titleEl) titleEl.textContent = '[관리자 권한] 모집글을 강제 삭제할까요?';
+        if (descEl) descEl.innerHTML = `카페 운영진(관리자) 권한으로 <b>[${currentModalCamp?.host?.name || '호스트'}]</b>님의 모집글을 강제 삭제합니다.<br><span class="text-red-600 font-bold">* 부적절한 홍보, 도배, 카페 규정 위반 글 삭제 목적입니다.</span>`;
+        if (confirmBtn) {
+          confirmBtn.textContent = '🛡️ 관리자 권한으로 강제 삭제';
+          confirmBtn.className = 'px-4 py-2 rounded-xl bg-red-800 hover:bg-red-900 text-white font-black text-xs shadow-md transition';
+        }
+      } else {
+        if (iconEl) iconEl.textContent = '🗑️';
+        if (titleEl) titleEl.textContent = '모집글을 정말 삭제할까요?';
+        if (descEl) descEl.innerHTML = `내가 등록한 모집글과 모닥불 방이 완전히 삭제됩니다.<br><span class="text-red-500 font-semibold">* 이미 착석한 참여 가족들의 명단도 함께 정리됩니다.</span>`;
+        if (confirmBtn) {
+          confirmBtn.textContent = '네, 삭제합니다';
+          confirmBtn.className = 'px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition';
+        }
+      }
+      modal.classList.remove('hidden');
     }
 
     function closeDeleteConfirmModal() {
       document.getElementById('deleteConfirmModal').classList.add('hidden');
+      deleteModeIsAdmin = false;
     }
 
     function confirmDeleteCamp() {
       if (!currentModalCamp) return;
       const targetId = currentModalCamp.id;
       const targetTitle = currentModalCamp.title || '모집글';
+      const isForceAdmin = deleteModeIsAdmin;
       
       // Delete from camps array
       camps = camps.filter(c => c.id !== targetId);
@@ -2817,7 +2902,12 @@ function loadUserProfile() {
       closeDeleteConfirmModal();
       closeCampModal();
       applyFilters();
-      showToast(`🗑️ [${targetTitle.slice(0, 16)}...] 모집글이 성공적으로 삭제되었습니다.`);
+      
+      if (isForceAdmin) {
+        showToast(`🛡️ [관리자 권한] '${targetTitle.slice(0, 16)}...' 모집글이 강제 삭제되었습니다.`);
+      } else {
+        showToast(`🗑️ [${targetTitle.slice(0, 16)}...] 모집글이 성공적으로 삭제되었습니다.`);
+      }
     }
 
     function submitApplication() {
