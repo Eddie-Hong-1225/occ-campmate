@@ -117,12 +117,6 @@
 
       <!-- Right User Controls -->
       <div class="flex items-center gap-3">
-        <!-- Cloud DB Connection Status & Settings Button -->
-        <button id="dbStatusHeaderBtn" onclick="openDbConfigModal()" class="px-2.5 py-1.5 rounded-lg bg-forest-800/90 hover:bg-forest-600 text-[11px] text-amber-200 flex items-center gap-1.5 border border-forest-600 transition shadow-2xs" title="클라우드 DB(Supabase) 실시간 연동 설정">
-          <span id="dbStatusDot" class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-          <span id="dbStatusText" class="font-bold">DB 연동설정</span>
-        </button>
-
         <!-- Viewport Switcher -->
         <button id="viewToggleBtn" onclick="toggleViewMode()" class="px-3 py-1.5 rounded-lg bg-forest-800/80 hover:bg-forest-600 text-xs text-emerald-100 flex items-center gap-1.5 border border-forest-600 transition" title="모바일 화면 / 와이드 화면 전환">
           <span id="viewModeIcon">📱</span>
@@ -825,77 +819,6 @@
 
   <!-- ============================================== -->
   <!-- ============================================== -->
-  <!-- MODAL 3: SUPABASE CLOUD DB CONFIG & SQL HELPER -->
-  <!-- ============================================== -->
-  <div id="dbConfigModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2.5">
-          <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">🗄️</span>
-          <div>
-            <h3 class="font-extrabold text-sm sm:text-base text-slate-800">실시간 클라우드 DB (Supabase) 연동</h3>
-            <p class="text-[11px] text-slate-500">모든 카페 회원이 스마트폰/PC에서 동일한 모집글과 대기 명단을 실시간 공유합니다</p>
-          </div>
-        </div>
-        <button onclick="closeDbConfigModal()" class="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-400 font-bold flex items-center justify-center">✕</button>
-      </div>
-
-      <!-- Step 1: SQL Table Creation Copy -->
-      <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 text-xs">
-        <div class="flex items-center justify-between">
-          <span class="font-extrabold text-slate-800">1단계: Supabase SQL Editor에서 테이블 생성 (최초 1회)</span>
-          <button type="button" onclick="copySupabaseSql()" class="px-2.5 py-1 rounded-lg bg-forest-600 hover:bg-forest-700 text-white font-bold text-[11px] transition shadow-2xs cursor-pointer">
-            📋 SQL 복사하기
-          </button>
-        </div>
-        <p class="text-[11px] text-slate-500 leading-relaxed">
-          Supabase 가입 후 새 프로젝트를 만들고, 좌측 메뉴 <b>[SQL Editor]</b> ➔ <b>[New query]</b>에 아래 SQL을 붙여넣고 <b>[Run]</b>을 눌러주세요.
-        </p>
-        <pre id="supabaseSqlCode" class="p-2.5 rounded-lg bg-slate-900 text-emerald-300 font-mono text-[10px] overflow-x-auto leading-relaxed select-all">create table if not exists public.occ_camps (
-  id bigint primary key,
-  data jsonb not null,
-  end_date text,
-  updated_at timestamptz default now()
-);
-alter table public.occ_camps enable row level security;
-create policy "Allow public access" on public.occ_camps
-  for all using (true) with check (true);</pre>
-      </div>
-
-      <!-- Step 2: URL & Key Inputs -->
-      <form onsubmit="handleSaveDbConfig(event)" class="space-y-3 text-xs">
-        <div class="font-extrabold text-slate-800">2단계: Project URL 및 API Key 입력</div>
-        <p class="text-[11px] text-slate-500">
-          Supabase 좌측 하단 <b>[Project Settings ⚙️]</b> ➔ <b>[API]</b> 메뉴에서 복사해 붙여넣으세요. (또는 <code>index.html</code> 코드 상단에 직접 기입하면 모든 회원에게 즉시 적용됩니다.)
-        </p>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">Project URL</label>
-          <input type="url" id="inputSupabaseUrl" placeholder="https://xxxxxxxxxxxx.supabase.co" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-mono text-xs text-slate-800">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 mb-1">API Key (anon / public)</label>
-          <input type="text" id="inputSupabaseKey" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." class="w-full px-3.5 py-2 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-mono text-xs text-slate-800">
-        </div>
-
-        <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-slate-100">
-          <button type="button" onclick="disconnectDbConfig()" class="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs transition">
-            연동 해제 (로컬 테스트 모드)
-          </button>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="closeDbConfigModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">
-              닫기
-            </button>
-            <button type="submit" class="px-5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs shadow-md transition">
-              ⚡ DB 연결 및 동기화
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- MODAL 4: USER PROFILE SETUP & EDIT (카페 닉네임 1회 저장) -->
   <!-- ============================================== -->
   <div id="profileSetupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -953,14 +876,31 @@ create policy "Allow public access" on public.occ_camps
           <input type="text" id="inputKidDesc" placeholder="예: 보드게임, 줄넘기 좋아하고 활발해요" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 text-xs">
         </div>
 
-        <!-- Admin Status Notice Box (Strictly for 18시원맘김포) -->
-        <div id="adminStatusBox" class="p-3.5 bg-red-50 rounded-xl border border-red-200 text-xs space-y-1">
-          <div class="flex items-center gap-1.5 font-extrabold text-red-950">
-            <span>🛡️</span> 카페 관리자(운영진) 닉네임 인증됨
+        <!-- Admin Status & DB Admin Nickname Manager Box -->
+        <div id="adminStatusBox" class="hidden p-3.5 bg-red-50 rounded-xl border border-red-200 text-xs space-y-2.5">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5 font-extrabold text-red-950">
+              <span>🛡️</span> 카페 관리자(운영진) 닉네임 인증됨
+            </div>
+            <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[10px] border border-red-200">DB 연동</span>
           </div>
           <p class="text-[11px] text-red-700 leading-relaxed">
-            <b>18시원맘김포</b> 닉네임에 공식 카페 관리자 권한이 적용됩니다. (다른 회원의 모든 모집글에 대해 <b>[🛡️ 관리자 강제삭제]</b> 권한 활성화)
+            <code>occ_admins</code> DB 테이블에 등록된 공식 운영진 닉네임입니다. 다른 회원의 모든 모집글에 대해 <b>[🛡️ 관리자 강제삭제]</b> 권한이 활성화됩니다.
           </p>
+
+          <!-- Dynamic Admin List & Add/Remove (Only visible to verified admins) -->
+          <div class="pt-2 border-t border-red-200/80 space-y-2">
+            <div class="font-bold text-red-950 text-[11px] flex items-center justify-between">
+              <span>📋 등록된 관리자 닉네임 목록 (occ_admins)</span>
+            </div>
+            <div id="adminListContainer" class="flex flex-wrap gap-1.5"></div>
+            <div class="flex items-center gap-1.5 pt-1">
+              <input type="text" id="newAdminNicknameInput" placeholder="추가할 운영진 카페 닉네임 입력" class="flex-1 px-2.5 py-1.5 rounded-lg border border-red-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
+              <button type="button" onclick="addAdminNicknameToDb()" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition shrink-0 cursor-pointer">
+                + 관리자 추가
+              </button>
+            </div>
+          </div>
         </div>
 
         <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
@@ -999,24 +939,10 @@ create policy "Allow public access" on public.occ_camps
       return { url: savedUrl.trim(), key: savedKey.trim() };
     }
 
-    function updateDbStatusBadge() {
-      const dot = document.getElementById('dbStatusDot');
-      const text = document.getElementById('dbStatusText');
-      if (!dot || !text) return;
-      if (isCloudDbConnected) {
-        dot.className = "w-2 h-2 rounded-full bg-emerald-400";
-        text.textContent = "실시간 DB 연동중";
-      } else {
-        dot.className = "w-2 h-2 rounded-full bg-amber-400 animate-pulse";
-        text.textContent = "DB 연동설정";
-      }
-    }
-
     async function initSupabaseAndSync() {
       const { url, key } = getSupabaseCredentials();
       if (!url || !key || typeof window.supabase === 'undefined') {
         isCloudDbConnected = false;
-        updateDbStatusBadge();
         return;
       }
 
@@ -1030,30 +956,27 @@ create policy "Allow public access" on public.occ_camps
         if (error) throw error;
 
         isCloudDbConnected = true;
-        updateDbStatusBadge();
 
-        if (data && data.length > 0) {
-          camps = data.map(row => row.data);
-          cleanupExpiredCamps();
-          syncMyProfileWithCamps();
-          renderCamps();
-        } else {
-          // 테이블이 비어있다면 초기 샘플 데이터를 DB에 자동 업로드
-          await seedInitialCampsToDb();
-        }
+        camps = (data || []).map(row => row.data);
+        await fetchAdminsFromCloud();
+        cleanupExpiredCamps();
+        syncMyProfileWithCamps();
+        renderCamps();
 
-        // 실시간(Realtime) 구독: 다른 회원이 등록/착석/대기하면 내 화면도 즉시 갱신
+        // 실시간(Realtime) 구독: 모집글(occ_camps) 및 관리자명단(occ_admins) 변경 즉시 반영
         supabaseClient
           .channel('occ_camps_realtime')
           .on('postgres_changes', { event: '*', schema: 'public', table: 'occ_camps' }, async () => {
             await fetchCampsFromCloud();
+          })
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'occ_admins' }, async () => {
+            await fetchAdminsFromCloud();
           })
           .subscribe();
 
       } catch (err) {
         console.warn('[Supabase 연동 확인 필요]:', err.message);
         isCloudDbConnected = false;
-        updateDbStatusBadge();
       }
     }
 
@@ -1076,21 +999,7 @@ create policy "Allow public access" on public.occ_camps
       } catch (e) {}
     }
 
-    async function seedInitialCampsToDb() {
-      if (!supabaseClient || !isCloudDbConnected) return;
-      try {
-        const rows = camps.map(c => ({
-          id: c.id,
-          data: c,
-          end_date: c.endDate || null,
-          updated_at: new Date().toISOString()
-        }));
-        await supabaseClient.from('occ_camps').upsert(rows);
-      } catch (e) {}
-    }
-
     async function saveCampToCloud(camp) {
-      // 로컬 백업 저장
       try { localStorage.setItem('occ_camps_local_backup', JSON.stringify(camps)); } catch (e) {}
       if (!supabaseClient || !isCloudDbConnected || !camp) return;
       try {
@@ -1115,57 +1024,117 @@ create policy "Allow public access" on public.occ_camps
       }
     }
 
-    function openDbConfigModal() {
-      const { url, key } = getSupabaseCredentials();
-      const urlInput = document.getElementById('inputSupabaseUrl');
-      const keyInput = document.getElementById('inputSupabaseKey');
-      if (urlInput) urlInput.value = url;
-      if (keyInput) keyInput.value = key;
-      document.getElementById('dbConfigModal').classList.remove('hidden');
+    // ==========================================
+    // ADMIN NICKNAMES DB MANAGEMENT (occ_admins 테이블 연동)
+    // ==========================================
+    const DEFAULT_ADMIN_NICKNAME = '18시원맘김포';
+    let adminNicknames = [DEFAULT_ADMIN_NICKNAME];
+
+    function isNicknameAdmin(nick) {
+      if (!nick) return false;
+      const trimmed = nick.trim();
+      return adminNicknames.includes(trimmed);
     }
 
-    function closeDbConfigModal() {
-      document.getElementById('dbConfigModal').classList.add('hidden');
+    async function fetchAdminsFromCloud() {
+      if (!supabaseClient || !isCloudDbConnected) return;
+      try {
+        const { data, error } = await supabaseClient
+          .from('occ_admins')
+          .select('nickname, role')
+          .order('created_at', { ascending: true });
+
+        if (!error && data) {
+          if (data.length > 0) {
+            adminNicknames = data.map(r => r.nickname.trim()).filter(Boolean);
+            if (!adminNicknames.includes(DEFAULT_ADMIN_NICKNAME)) {
+              adminNicknames.unshift(DEFAULT_ADMIN_NICKNAME);
+            }
+          } else {
+            // occ_admins 테이블이 비어있으면 기본 관리자(18시원맘김포) 자동 등록
+            await supabaseClient.from('occ_admins').upsert({
+              nickname: DEFAULT_ADMIN_NICKNAME,
+              role: '카페 매니저 (최고관리자)'
+            });
+            adminNicknames = [DEFAULT_ADMIN_NICKNAME];
+          }
+          // 현재 사용자 관리자 권한 재확인 및 UI 반영
+          myProfile.isAdmin = isNicknameAdmin(myProfile.nickname);
+          applyProfileToUI();
+          renderAdminListInModal();
+          applyFilters();
+        }
+      } catch (e) {
+        console.warn('[occ_admins 테이블 조회 안내]:', e.message);
+      }
     }
 
-    function copySupabaseSql() {
-      const sql = document.getElementById('supabaseSqlCode')?.textContent || '';
-      navigator.clipboard.writeText(sql).then(() => {
-        showToast('📋 SQL 구문이 복사되었습니다! Supabase SQL Editor에 붙여넣고 Run을 눌러주세요.');
-      });
+    function renderAdminListInModal() {
+      const container = document.getElementById('adminListContainer');
+      if (!container) return;
+      container.innerHTML = adminNicknames.map(nick => {
+        const isSuperAdmin = (nick === DEFAULT_ADMIN_NICKNAME);
+        return `
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white border border-red-200 text-red-900 font-bold text-[11px] shadow-2xs">
+            <span>${isSuperAdmin ? '👑' : '🛡️'}</span>
+            <span>${nick}</span>
+            ${!isSuperAdmin ? `
+              <button type="button" onclick="removeAdminNicknameFromDb('${nick}')" class="ml-1 text-red-400 hover:text-red-700 font-black cursor-pointer" title="관리자 권한 해제">✕</button>
+            ` : ''}
+          </span>
+        `;
+      }).join('');
     }
 
-    async function handleSaveDbConfig(e) {
-      e.preventDefault();
-      const url = document.getElementById('inputSupabaseUrl').value.trim();
-      const key = document.getElementById('inputSupabaseKey').value.trim();
-      if (!url || !key) {
-        showToast('⚠️ Project URL과 API Key를 모두 입력해주세요.');
+    async function addAdminNicknameToDb() {
+      const input = document.getElementById('newAdminNicknameInput');
+      if (!input) return;
+      const newNick = input.value.trim();
+      if (!newNick) {
+        showToast('⚠️ 추가할 운영진의 네이버 카페 닉네임을 입력해주세요.');
         return;
       }
-      localStorage.setItem('occ_supabase_url', url);
-      localStorage.setItem('occ_supabase_key', key);
-      closeDbConfigModal();
-      showToast('⚡ 클라우드 DB 연결 중입니다...');
-      await initSupabaseAndSync();
-      if (isCloudDbConnected) {
-        showToast('✅ Supabase 실시간 클라우드 DB 연동이 완료되었습니다!');
+      if (adminNicknames.includes(newNick)) {
+        showToast('ℹ️ 이미 관리자로 등록된 닉네임입니다.');
+        return;
+      }
+
+      adminNicknames.push(newNick);
+      input.value = '';
+      renderAdminListInModal();
+
+      if (supabaseClient && isCloudDbConnected) {
+        try {
+          const { error } = await supabaseClient.from('occ_admins').upsert({
+            nickname: newNick,
+            role: '운영진'
+          });
+          if (error) throw error;
+          showToast(`🛡️ [${newNick}]님이 DB 관리자(occ_admins)에 추가되었습니다!`);
+        } catch (err) {
+          showToast('⚠️ DB 저장 실패: Supabase에서 occ_admins 테이블 생성 SQL을 먼저 실행해주세요.');
+        }
       } else {
-        showToast('⚠️ DB 연결 실패: URL/Key 또는 occ_camps 테이블 생성 여부를 확인해주세요.');
+        showToast(`🛡️ [${newNick}]님이 관리자에 추가되었습니다.`);
       }
     }
 
-    function disconnectDbConfig() {
-      localStorage.removeItem('occ_supabase_url');
-      localStorage.removeItem('occ_supabase_key');
-      isCloudDbConnected = false;
-      supabaseClient = null;
-      updateDbStatusBadge();
-      closeDbConfigModal();
-      showToast('ℹ️ 클라우드 DB 연동이 해제되어 브라우저 로컬 모드로 동작합니다.');
+    async function removeAdminNicknameFromDb(targetNick) {
+      if (targetNick === DEFAULT_ADMIN_NICKNAME) {
+        showToast('⚠️ 기본 최고관리자 닉네임은 삭제할 수 없습니다.');
+        return;
+      }
+      adminNicknames = adminNicknames.filter(n => n !== targetNick);
+      renderAdminListInModal();
+
+      if (supabaseClient && isCloudDbConnected) {
+        try {
+          await supabaseClient.from('occ_admins').delete().eq('nickname', targetNick);
+          showToast(`🗑️ [${targetNick}]님의 관리자 권한이 해제되었습니다.`);
+        } catch (e) {}
+      }
     }
 
-    
     // Mock participants generator helper
     function getInitialParticipants(camp) {
       const parts = [
@@ -1197,355 +1166,8 @@ create policy "Allow public access" on public.occ_camps
       return parts;
     }
 
-    // Initial Mock Data (Tailored for '외동아이 캠핑친구만들기' Naver Cafe)
-    let camps = [
-      // ---------------------------------------------------------
-      // [대기 테스트 1] 첫 대기 신청 테스트 (정원 3/3 마감 · 대기 0명)
-      // ---------------------------------------------------------
-      {
-        id: 101,
-        title: "🔥 [대기신청 테스트] 춘천 송지호 호수 숲캠핑 (정원 3가족 마감 · 대기 0명, 첫 대기 신청 테스트!)",
-        location: "춘천 송지호 숲속캠핑장 A-2, A-3",
-        bookingType: "개별예약",
-        bookingNote: "호스트 및 참가자 개별 사이트 예약 완료! 옆 사이트 모임",
-        startDate: "2026-11-21",
-        endDate: "2026-11-22",
-        dDay: "D-16",
-        currentMembers: 3,
-        maxMembers: 3,
-        kidInfo: {
-          birthYear: 2019,
-          gender: "남아",
-          applyPeerMatching: true,
-          targetAgeGroup: "17-21",
-          desc: "19년생 활발한 아들 (줄넘기, 보드게임 좋아해요)"
-        },
-        theme: "생태/자연탐험",
-        host: {
-          name: "19준우맘경기구리",
-          avatar: "준",
-          exp: "외동캠핑 3년차"
-        },
-        openChatUrl: "https://open.kakao.com/o/sOCC19chun",
-        description: `가을 단풍 숲길 산책하고 저녁엔 모닥불 피워놓고 보드게임해요!\n정원은 3가족 모두 마감되었으며, [대기 1번]으로 첫 대기 신청을 바로 테스트해 보실 수 있습니다.`,
-        applied: false,
-        participants: [
-          {
-            name: "19준우맘경기구리",
-            role: "호스트 (주최)",
-            kid: "2019년생 남아",
-            message: "춘천 송지호 A-2 사이트 예약 완료! 즐거운 캠핑 기대됩니다.",
-            isHost: true
-          },
-          {
-            name: "19민재파파서울노원",
-            role: "동행 1가족",
-            kid: "2019년생 남아",
-            message: "A-3 사이트 예약 마쳤습니다. 야외 보드게임 챙겨갈게요!",
-            isHost: false
-          },
-          {
-            name: "19윤아맘인천연수",
-            role: "동행 2가족",
-            kid: "2019년생 여아",
-            message: "맛있는 간식거리와 불멍용 오로라 가루 준비할게요~",
-            isHost: false
-          }
-        ],
-        waitlist: []
-      },
-
-      // ---------------------------------------------------------
-      // [대기 테스트 2] 자동 승격 테스트 (내가 참여중! 참여 취소 시 대기자 자동 승격)
-      // ---------------------------------------------------------
-      {
-        id: 102,
-        title: "🎉 [자동승격 테스트] 가평 유명산 단풍 불멍 (내가 착석중! 참여 취소 시 대기 1번 자동승격)",
-        location: "가평 유명산 어비계곡 캠핑장 B-2, B-3",
-        bookingType: "취합예약",
-        bookingNote: "호스트가 대형 사이트 일괄 예약 완료",
-        startDate: "2026-11-14",
-        endDate: "2026-11-15",
-        dDay: "D-9",
-        currentMembers: 3,
-        maxMembers: 3,
-        kidInfo: {
-          birthYear: 2019,
-          gender: "여아",
-          applyPeerMatching: true,
-          targetAgeGroup: "17-21",
-          desc: "19년생 딸 (비눗방울, 미술놀이)"
-        },
-        theme: "보드게임/비눗방울",
-        host: {
-          name: "19태양맘경기수원",
-          avatar: "태",
-          exp: "키즈캠핑 2년차"
-        },
-        openChatUrl: "https://open.kakao.com/o/sOCC19gapyeong",
-        description: `💡 이 모임은 현재 본인 가족이 착석(참여) 중인 테스트 모임입니다!\n상세보기에서 [✕ 동행 참여 취소하기] 버튼을 누르시면, 아래 대기 1번이었던 [19하늘맘서울마포]님 가족이 모닥불 빈자리로 즉시 '자동 승격'되는 것을 확인하실 수 있습니다.`,
-        applied: true,
-        participants: [
-          {
-            name: "19태양맘경기수원",
-            role: "호스트 (주최)",
-            kid: "2019년생 남아",
-            message: "유명산 데크 B구역 일괄 예약 완료했습니다.",
-            isHost: true
-          },
-          {
-            name: "19봄맘경기연천",
-            role: "동행 1가족",
-            kid: "2019년생 여아",
-            message: "내가 참여중인 자리입니다. 참여 취소를 누르면 대기자가 자동 승격됩니다!",
-            isHost: false,
-            isCurrentUserParticipant: true
-          },
-          {
-            name: "19지호파파인천남동",
-            role: "동행 2가족",
-            kid: "2019년생 남아",
-            message: "천체망원경 챙겨가서 밤하늘 별 관측 같이 해요!",
-            isHost: false
-          }
-        ],
-        waitlist: [
-          {
-            name: "19하늘맘서울마포",
-            kid: "2019년생 남아",
-            message: "취소 발생 시 바로 달려갑니다! 대형 쉘터 챙겨갈게요.",
-            waitOrder: 1,
-            registeredAt: "2026-11-05T09:30:00.000Z"
-          },
-          {
-            name: "19은우파파경기성남",
-            kid: "2019년생 남아",
-            message: "대기 2번 희망합니다~ 좋은 시간 보내세요!",
-            waitOrder: 2,
-            registeredAt: "2026-11-05T10:15:00.000Z"
-          }
-        ]
-      },
-
-      // ---------------------------------------------------------
-      // [대기 테스트 3] 대기 취소 테스트 (내가 이미 대기 1번으로 등록된 상태)
-      // ---------------------------------------------------------
-      {
-        id: 103,
-        title: "⏳ [대기취소 테스트] 가평 자라섬 숲체험 (내가 대기 1번 등록중! 대기 취소 테스트)",
-        location: "가평 자라섬오토캠핑장 캐라반 B사이트",
-        bookingType: "취합예약",
-        bookingNote: "호스트가 대형 사이트 예약 완료",
-        startDate: "2026-11-20",
-        endDate: "2026-11-21",
-        dDay: "D-15",
-        currentMembers: 3,
-        maxMembers: 3,
-        kidInfo: {
-          birthYear: 2018,
-          gender: "여아",
-          applyPeerMatching: true,
-          targetAgeGroup: "16-18",
-          desc: "18년생 활발한 딸 (자전거, 숲놀이 좋아해요)"
-        },
-        theme: "생태/자연탐험",
-        host: {
-          name: "18다은맘서울송파",
-          avatar: "다",
-          exp: "키즈캠핑 3년차"
-        },
-        openChatUrl: "https://open.kakao.com/o/sOCC18zara",
-        description: `💡 본인 가족이 '대기 1번'으로 이미 접수되어 있는 모임입니다.\n상세보기에서 [✕ 대기 취소하기 (대기 1번)] 버튼을 눌러 대기 취소 및 순번 갱신을 테스트해보세요.`,
-        applied: false,
-        participants: [
-          {
-            name: "18다은맘서울송파",
-            role: "호스트 (주최)",
-            kid: "2018년생 여아",
-            message: "가평 자라섬 B-4 대형 데크 예약 완료! 즐거운 캠핑 기대됩니다.",
-            isHost: true
-          },
-          {
-            name: "18민준파파경기하남",
-            role: "동행 1가족",
-            kid: "2018년생 남아",
-            message: "킥보드랑 야외 배드민턴 챙겨갈게요!",
-            isHost: false
-          },
-          {
-            name: "18서아맘인천송도",
-            role: "동행 2가족",
-            kid: "2018년생 여아",
-            message: "보드게임과 간식거리 넉넉히 가져가겠습니다.",
-            isHost: false
-          }
-        ],
-        waitlist: [
-          {
-            name: "19봄맘경기연천",
-            kid: "2019년생 여아",
-            message: "취소 생기면 꼭 연락 부탁드립니다! (내 대기 등록)",
-            waitOrder: 1,
-            registeredAt: "2026-11-05T10:00:00.000Z",
-            isCurrentUserWaitlist: true
-          },
-          {
-            name: "18태율파파서울강남",
-            kid: "2018년생 남아",
-            message: "대기 희망합니다",
-            waitOrder: 2,
-            registeredAt: "2026-11-05T11:00:00.000Z"
-          }
-        ]
-      },
-
-      // ---------------------------------------------------------
-      // [대기 테스트 4] 정원 + 대기 전석 마감 테스트 (버튼 잠김)
-      // ---------------------------------------------------------
-      {
-        id: 104,
-        title: "🔒 [전석마감 테스트] 양평 용문산 밤하늘 불멍 (정원 2가족 + 대기 2가족 전석 마감)",
-        location: "양평 용문산야영장 데크 3, 4번",
-        bookingType: "개별예약",
-        bookingNote: "개별 사이트 예약 완료",
-        startDate: "2026-11-28",
-        endDate: "2026-11-29",
-        dDay: "D-23",
-        currentMembers: 2,
-        maxMembers: 2,
-        kidInfo: {
-          birthYear: 2020,
-          gender: "남아",
-          applyPeerMatching: true,
-          targetAgeGroup: "18-22",
-          desc: "20년생 남아 (조용한 불멍 선호)"
-        },
-        theme: "생태/자연탐험",
-        host: {
-          name: "20도윤맘서울강서",
-          avatar: "도",
-          exp: "감성캠핑 3년차"
-        },
-        openChatUrl: "https://open.kakao.com/o/sOCC20yp",
-        description: `정원(2가족)과 대기정원(2가족)까지 모두 마감된 상태입니다.\n상세보기에서 [✕ 정원 및 대기 마감] 버튼이 비활성화되는 것을 확인하실 수 있습니다.`,
-        applied: false,
-        participants: [
-          {
-            name: "20도윤맘서울강서",
-            role: "호스트 (주최)",
-            kid: "2020년생 남아",
-            message: "용문산 데크 3번 예약 완료했습니다.",
-            isHost: true
-          },
-          {
-            name: "20예린파파경기고양",
-            role: "동행 1가족",
-            kid: "2020년생 여아",
-            message: "데크 4번 예약 완료!",
-            isHost: false
-          }
-        ],
-        waitlist: [
-          {
-            name: "20승우맘경기부천",
-            kid: "2020년생 남아",
-            message: "대기 1번 신청합니다",
-            waitOrder: 1,
-            registeredAt: "2026-11-05T08:00:00.000Z"
-          },
-          {
-            name: "20하율맘서울구로",
-            kid: "2020년생 여아",
-            message: "대기 2번 신청합니다",
-            waitOrder: 2,
-            registeredAt: "2026-11-05T08:30:00.000Z"
-          }
-        ]
-      },
-
-      // ---------------------------------------------------------
-      // [일반 모집 모임] 여유 좌석 있는 일반 모임
-      // ---------------------------------------------------------
-      {
-        id: 105,
-        title: "🏕️ [일반모집] 태안 몽산포 갯벌체험 & 조개잡기 동행 (1가족 착석중 / 2가족 여유)",
-        location: "태안 몽산포오토캠핑장 바다앞 1선",
-        bookingType: "개별예약",
-        bookingNote: "해변 1선 사이트 각자 개별 예약 완료 후 모임",
-        startDate: "2026-11-28",
-        endDate: "2026-11-29",
-        dDay: "D-23",
-        currentMembers: 1,
-        maxMembers: 3,
-        kidInfo: {
-          birthYear: 2020,
-          gender: "남아",
-          targetAgeGroup: "18-22",
-          desc: "20년생 예비초 (조개잡기, 물놀이 열정)"
-        },
-        theme: "물놀이/모래놀이",
-        host: {
-          name: "20시우파파인천",
-          avatar: "시",
-          exp: "바다캠핑 3년차"
-        },
-        openChatUrl: "https://open.kakao.com/o/sOCC20beach",
-        description: `물때 맞춰 조개잡고 갯벌 썰매 타러 갑니다! 아이들 갯벌 장화랑 헤드랜턴만 챙겨오시면 됩니다. 저녁엔 조개구이와 빔프로젝터 만화 상영 예정입니다.`,
-        applied: false,
-        participants: [
-          {
-            name: "20시우파파인천",
-            role: "호스트 (주최)",
-            kid: "2020년생 남아",
-            message: "몽산포 해변 1선 데크 예약 완료! 갯벌체험 장비 준비해둘게요.",
-            isHost: true
-          }
-        ],
-        waitlist: []
-      },
-
-      // ---------------------------------------------------------
-      // [일정등록 모임] 친구 매칭 전용 모임
-      // ---------------------------------------------------------
-      {
-        id: 106,
-        title: "🤝 [일정등록] 단양 소백산 가을 생거진천탐험대 & 천체관측 (1가족 착석중 / 2가족 여유)",
-        location: "단양 소백산국립공원 삼가야영장 C구역 데크 5번",
-        bookingType: "일정등록",
-        bookingNote: "",
-        startDate: "2026-11-14",
-        endDate: "2026-11-15",
-        dDay: "D-9",
-        currentMembers: 1,
-        maxMembers: 3,
-        kidInfo: {
-          birthYear: 2017,
-          gender: "남아",
-          applyPeerMatching: false,
-          targetAgeGroup: "all",
-          desc: "17년생 남아 (나이 상관없이 천체망원경 구경할 가족 환영)"
-        },
-        theme: "생태/자연탐험",
-        host: {
-          name: "17서로파서울",
-          avatar: "서",
-          exp: "탐험캠핑 5년차"
-        },
-        openChatUrl: "",
-        description: `소백산 천문대 견학과 가을 밤하늘 별보기 캠핑입니다.\n나이 상관없이 야외 천체망원경으로 별 관측하고 모닥불 함께할 가족 환영합니다.`,
-        applied: false,
-        participants: [
-          {
-            name: "17서로파서울",
-            role: "호스트 (주최)",
-            kid: "2017년생 남아",
-            message: "삼가야영장 C구역 데크 5번 예약 완료했습니다.",
-            isHost: true
-          }
-        ],
-        waitlist: []
-      }
-    ];
+    // Camps Data (Loaded from Supabase Cloud DB)
+    let camps = [];
 
     let currentModalCamp = null;
     let isMobileView = false;
@@ -1782,15 +1404,13 @@ create policy "Allow public access" on public.occ_camps
     // ==========================================
     // USER PROFILE STORAGE (localStorage 기반 1회 저장)
     // ==========================================
-    const ADMIN_NICKNAME = '18시원맘김포';
-
     let myProfile = {
       nickname: '00길동맘서울',
       kidBirthYear: 2000,
       kidGender: '남아',
       kidDesc: '외동아이 또래와 캠핑하는 것을 좋아해요',
-      avatar: '시',
-      isAdmin: true
+      avatar: '길',
+      isAdmin: false
     };
 
         function updatePostTargetPreview() {
@@ -1842,14 +1462,14 @@ function loadUserProfile() {
         }
       } catch (e) {}
       // Enforce admin permission strictly only for 18시원맘김포
-      myProfile.isAdmin = (myProfile.nickname && myProfile.nickname.trim() === ADMIN_NICKNAME);
+      myProfile.isAdmin = isNicknameAdmin(myProfile.nickname);
       applyProfileToUI();
       syncMyProfileWithCamps();
     }
 
     function saveUserProfile(profile) {
       myProfile = profile;
-      myProfile.isAdmin = (myProfile.nickname && myProfile.nickname.trim() === ADMIN_NICKNAME);
+      myProfile.isAdmin = isNicknameAdmin(myProfile.nickname);
       try {
         localStorage.setItem('occ_campmate_profile', JSON.stringify(myProfile));
       } catch (e) {}
@@ -1919,8 +1539,9 @@ function loadUserProfile() {
       const nick = document.getElementById('inputNickname')?.value.trim();
       const box = document.getElementById('adminStatusBox');
       if (box) {
-        if (nick === ADMIN_NICKNAME) {
+        if (isNicknameAdmin(nick)) {
           box.classList.remove('hidden');
+          renderAdminListInModal();
         } else {
           box.classList.add('hidden');
         }
@@ -1937,7 +1558,7 @@ function loadUserProfile() {
       const year = parseInt(document.getElementById('inputKidYear').value) || 2018;
       const gender = document.getElementById('inputKidGender').value;
       const desc = document.getElementById('inputKidDesc').value.trim() || `${year}년생 ${gender}`;
-      const isAdmin = (nick === ADMIN_NICKNAME);
+      const isAdmin = isNicknameAdmin(nick);
 
       const updated = {
         nickname: nick,
@@ -3273,6 +2894,7 @@ function loadUserProfile() {
         description: desc,
         openChatUrl: openChatUrl,
         applied: true,
+        waitlist: [],
         participants: [
           {
             name: myProfile.nickname,
