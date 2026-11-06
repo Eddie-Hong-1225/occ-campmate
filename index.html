@@ -1588,8 +1588,8 @@ function loadUserProfile() {
       }
 
       const prefix = isApply
-        ? `[${(year - 2).toString().slice(2)}~${(year + 2).toString().slice(2)}년생 또래·${gender}]`
-        : `[연령무관·${year.toString().slice(2)}년생 ${gender}]`;
+        ? `[${(year - 2).toString().slice(2)}~${(year + 2).toString().slice(2)}년생 또래]`
+        : `[연령무관·${year.toString().slice(2)}년생]`;
 
       return `${prefix} ${loc} ${dateText} 캠핑 친구 찾아요!`;
     }
