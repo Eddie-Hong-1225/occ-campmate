@@ -44,6 +44,16 @@
     }
   </script>
   <style>
+    /* Enhanced readability typography */
+    html {
+      font-size: 16px;
+      -webkit-text-size-adjust: 100%;
+    }
+    body {
+      font-size: 0.9375rem; /* 15px base body font size for optimal mobile/desktop reading */
+      line-height: 1.6;
+    }
+
     /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -97,7 +107,7 @@
             <span class="font-extrabold text-xl tracking-tight text-white">외동캠친구</span>
             <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500 text-slate-900 font-bold border border-amber-300">OCC 전용</span>
           </div>
-          <p class="text-[11px] text-emerald-200/80 -mt-0.5 hidden sm:block">외동아이 또래 매칭 & 가족 캠핑 동행 플랫폼</p>
+          <p class="text-xs text-emerald-200/90 hidden sm:block">외동아이 또래 매칭 & 가족 캠핑 동행 플랫폼</p>
         </div>
       </div>
 
@@ -130,13 +140,13 @@
               <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
             </svg>
           </div>
-          <div class="hidden sm:block text-left text-xs">
-            <div class="font-semibold text-white flex items-center gap-1">
+          <div class="hidden sm:block text-left text-sm">
+            <div class="font-bold text-white flex items-center gap-1.5">
               <span id="headerNickname">18시원맘김포</span>
-              <span id="headerAdminBadge" class="px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[9px] shadow-2xs border border-red-400">🛡️관리자</span>
-              <span class="text-amber-300 text-[10px] font-bold bg-forest-800 px-1.5 py-0.2 rounded border border-forest-600">설정 ⚙️</span>
+              <span id="headerAdminBadge" class="px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[10px] shadow-2xs border border-red-400">🛡️관리자</span>
+              <span class="text-amber-300 text-xs font-bold bg-forest-800 px-2 py-0.5 rounded border border-forest-600">설정 ⚙️</span>
             </div>
-            <div id="headerKidSummary" class="text-[10px] text-emerald-300/80">아이: 18년생 남아</div>
+            <div id="headerKidSummary" class="text-xs text-emerald-200/90 font-medium">아이: 18년생 남아</div>
           </div>
         </button>
       </div>
@@ -145,16 +155,16 @@
 
   <!-- Mobile Bottom Tab Bar -->
   <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40 flex justify-around py-2 shadow-lg">
-    <button onclick="switchTab('explore')" id="m-nav-explore" class="flex flex-col items-center text-forest-600 text-[11px] font-semibold gap-1">
+    <button onclick="switchTab('explore')" id="m-nav-explore" class="flex flex-col items-center text-forest-600 text-xs font-bold gap-1">
       <span class="text-xl">🔍</span>
       <span>친구찾기</span>
     </button>
 
-    <button onclick="switchTab('match')" id="m-nav-match" class="flex flex-col items-center text-slate-500 text-[11px] font-medium gap-1">
+    <button onclick="switchTab('match')" id="m-nav-match" class="flex flex-col items-center text-slate-500 text-xs font-medium gap-1">
       <span class="text-xl">📅</span>
       <span>일정등록</span>
     </button>
-    <button onclick="switchTab('create')" id="m-nav-create" class="flex flex-col items-center text-slate-500 text-[11px] font-medium gap-1">
+    <button onclick="switchTab('create')" id="m-nav-create" class="flex flex-col items-center text-slate-500 text-xs font-medium gap-1">
       <span class="text-xl">✍️</span>
       <span>모집하기</span>
     </button>
@@ -200,21 +210,19 @@
 
           <div class="flex flex-wrap items-center gap-2">
             <!-- Only Active Toggle -->
-            <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition text-xs font-medium text-slate-700">
+            <label class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer hover:bg-slate-100 transition text-sm font-semibold text-slate-700">
               <input type="checkbox" id="onlyRecruitingCheck" onchange="applyFilters()" checked class="rounded text-forest-600 focus:ring-forest-500 w-4 h-4">
               <span>모집중만 보기</span>
             </label>
 
             <!-- Only My Camps Toggle (호스트가 내가 올린 글/참여글 확인) -->
-            <label class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-amber-50 border border-amber-200 cursor-pointer hover:bg-amber-100 transition text-xs font-bold text-amber-900">
+            <label class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 cursor-pointer hover:bg-amber-100 transition text-sm font-bold text-amber-900">
               <input type="checkbox" id="myCampsOnlyCheck" onchange="applyFilters()" class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4">
               <span>👑 내가 주최/참여한 모임</span>
             </label>
 
-            
-
             <!-- Reset Filters -->
-            <button onclick="resetFilters()" class="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-medium transition">
+            <button onclick="resetFilters()" class="px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm font-semibold transition">
               초기화
             </button>
           </div>
@@ -225,8 +233,8 @@
         <!-- Kid Age (±2 years) & Sort Filter Row (Simplified) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
           <div>
-            <label class="block text-[11px] font-bold text-slate-700 mb-1">👶 우리 아이 출생연도 (또래 ±2년 자동 매칭)</label>
-            <select id="kidAgeSelect" onchange="applyFilters()" class="w-full py-2.5 px-3 text-xs bg-amber-50/70 border border-amber-300 rounded-xl focus:ring-amber-500 focus:outline-none font-bold text-amber-900">
+            <label class="block text-xs sm:text-sm font-bold text-slate-800 mb-1">👶 우리 아이 출생연도 (또래 ±2년 자동 매칭)</label>
+            <select id="kidAgeSelect" onchange="applyFilters()" class="w-full py-2.5 px-3.5 text-sm bg-amber-50/70 border border-amber-300 rounded-xl focus:ring-amber-500 focus:outline-none font-bold text-amber-900">
               <option value="all">전체 모임 보기</option>
               <option value="2014">2014년생</option>
               <option value="2015">2015년생</option>
@@ -243,8 +251,8 @@
           </div>
 
           <div>
-            <label class="block text-[11px] font-bold text-slate-500 mb-1">정렬 기준</label>
-            <select id="sortSelect" onchange="applyFilters()" class="w-full py-2.5 px-3 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:ring-forest-500 focus:outline-none font-medium">
+            <label class="block text-xs sm:text-sm font-bold text-slate-600 mb-1">정렬 기준</label>
+            <select id="sortSelect" onchange="applyFilters()" class="w-full py-2.5 px-3.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-forest-500 focus:outline-none font-semibold">
               <option value="latest">최신 등록순</option>
               <option value="deadline">출발 임박순</option>
             </select>
@@ -255,8 +263,8 @@
 
       <!-- Result Summary & Count -->
       <div class="flex items-center justify-between">
-        <div class="text-sm font-semibold text-slate-700">
-          모집글 <span id="campCount" class="text-forest-600 font-bold">0</span>건
+        <div class="text-base font-bold text-slate-800">
+          모집글 <span id="campCount" class="text-forest-600 font-extrabold">0</span>건
         </div>
       </div>
 
@@ -297,14 +305,14 @@
           </p>
         </div>
 
-        <form id="createCampForm" onsubmit="handleCreateCamp(event)" class="space-y-6 text-xs">
+        <form id="createCampForm" onsubmit="handleCreateCamp(event)" class="space-y-6 text-sm">
           
           <!-- Title -->
           <div>
             <label class="block font-bold text-slate-700 mb-1.5">
               모집 제목 <span class="text-red-500">*</span>
             </label>
-            <input type="text" id="postTitle" required placeholder="예: [19년생 또래] 포천 산정호수 가을 숲 탐험 & 불멍 캠핑 (2가족 모집)" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none text-xs">
+            <input type="text" id="postTitle" required placeholder="예: [19년생 또래] 포천 산정호수 가을 숲 탐험 & 불멍 캠핑 (2가족 모집)" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none text-sm text-slate-800">
           </div>
 
           <!-- OCC Member Kid Info Box -->
@@ -318,8 +326,8 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">내 아이 출생연도</label>
-                <select id="postKidBirthYear" onchange="updatePostTargetPreview()" class="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-white font-extrabold text-xs text-slate-800">
+                <label class="block text-sm font-bold text-slate-800 mb-1.5">내 아이 출생연도</label>
+                <select id="postKidBirthYear" onchange="updatePostTargetPreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 bg-white font-extrabold text-sm text-slate-800">
                   <option value="2014">2014년생</option>
                   <option value="2015">2015년생</option>
                   <option value="2016">2016년생</option>
@@ -335,8 +343,8 @@
               </div>
 
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">아이 성별</label>
-                <select id="postKidGender" class="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-white font-medium text-xs text-slate-800">
+                <label class="block text-sm font-bold text-slate-800 mb-1.5">아이 성별</label>
+                <select id="postKidGender" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 bg-white font-semibold text-sm text-slate-800">
                   <option value="남아">👦 남아</option>
                   <option value="여아">👧 여아</option>
                 </select>
@@ -346,7 +354,7 @@
             <!-- Peer Matching Choice: Apply (±2 years) vs No constraint (All ages welcome) -->
             <div class="space-y-2 pt-1 border-t border-amber-200/70">
               <div class="flex items-center justify-between">
-                <label class="block text-[11px] font-bold text-slate-700">또래 매칭 적용 여부 <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-bold text-slate-800">또래 매칭 적용 여부 <span class="text-red-500">*</span></label>
                 <span class="text-[10px] text-amber-800">호스트가 직접 선택</span>
               </div>
 
@@ -375,7 +383,7 @@
           <!-- Campground Location (Standalone) -->
           <div>
             <label class="block font-bold text-slate-700 mb-1.5">캠핑장 이름 / 장소 <span class="text-red-500">*</span></label>
-            <input type="text" id="postLocation" required placeholder="예: 포천 산정호수돌담캠핑장 A-3, 가평 연인산오토캠핑장" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none text-xs">
+            <input type="text" id="postLocation" required placeholder="예: 포천 산정호수돌담캠핑장 A-3, 가평 연인산오토캠핑장" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none text-sm text-slate-800">
           </div>
 
           <!-- Booking Type Selection (취합예약 vs 개별예약) -->
@@ -401,7 +409,7 @@
             </div>
 
             <div>
-              <label class="block text-[11px] font-bold text-slate-600 mb-1">예약 안내 및 권장 구역 메모</label>
+              <label class="block text-sm font-bold text-slate-800 mb-1.5">예약 안내 및 권장 구역 메모</label>
               <input type="text" id="postBookingNote" placeholder="예: 호스트가 A구역 4번 사이트 예약 완료 / 참여자 B구역 1~5번 인근 추천" class="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white focus:outline-none">
             </div>
           </div>
@@ -410,12 +418,12 @@
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label class="block font-bold text-slate-700 mb-1.5">출발 날짜 <span class="text-red-500">*</span></label>
-              <input type="date" id="postStartDate" required onchange="handleStartDateChange('post')" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-medium text-xs">
+              <input type="date" id="postStartDate" required onchange="handleStartDateChange('post')" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-semibold text-sm">
             </div>
 
             <div>
               <label class="block font-bold text-slate-700 mb-1.5">복귀 날짜 <span class="text-red-500">*</span></label>
-              <input type="date" id="postEndDate" required onchange="this.dataset.userModified='true'" class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-medium text-xs">
+              <input type="date" id="postEndDate" required onchange="this.dataset.userModified='true'" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-semibold text-sm">
             </div>
 
             <div>
@@ -443,7 +451,7 @@
               </label>
               <span class="text-[10px] text-amber-800 font-medium">참여 가족과 실시간 소통</span>
             </div>
-            <input type="url" id="postOpenChatUrl" placeholder="https://open.kakao.com/o/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#FEE500] focus:border-amber-400 focus:outline-none bg-white text-xs text-slate-800">
+            <input type="url" id="postOpenChatUrl" placeholder="https://open.kakao.com/o/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#FEE500] focus:border-amber-400 focus:outline-none bg-white text-sm text-slate-800">
             <p class="text-[11px] text-slate-500">
               💡 카카오톡 앱에서 오픈채팅방 개설 후 <b>[링크 복사]</b>하여 붙여넣으시면, 모임 상세 팝업에 노란색 <b>[카카오톡 오픈채팅 참여하기]</b> 버튼이 자동 생성됩니다.
             </p>
@@ -485,7 +493,7 @@
           </p>
         </div>
 
-        <form id="createMatchForm" onsubmit="handleCreateMatch(event)" class="space-y-6 text-xs">
+        <form id="createMatchForm" onsubmit="handleCreateMatch(event)" class="space-y-6 text-sm">
           
 
 
@@ -500,8 +508,8 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">내 아이 출생연도</label>
-                <select id="matchKidBirthYear" onchange="updateMatchTargetPreview(); updateMatchTitlePreview();" class="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-white font-extrabold text-xs text-slate-800">
+                <label class="block text-sm font-bold text-slate-800 mb-1.5">내 아이 출생연도</label>
+                <select id="matchKidBirthYear" onchange="updateMatchTargetPreview(); updateMatchTitlePreview();" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 bg-white font-extrabold text-sm text-slate-800">
                   <option value="2014">2014년생</option>
                   <option value="2015">2015년생</option>
                   <option value="2016">2016년생</option>
@@ -517,8 +525,8 @@
               </div>
 
               <div>
-                <label class="block text-[11px] font-bold text-slate-700 mb-1">아이 성별</label>
-                <select id="matchKidGender" onchange="updateMatchTitlePreview()" class="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-white font-medium text-xs text-slate-800">
+                <label class="block text-sm font-bold text-slate-800 mb-1.5">아이 성별</label>
+                <select id="matchKidGender" onchange="updateMatchTitlePreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 bg-white font-semibold text-sm text-slate-800">
                   <option value="남아">👦 남아</option>
                   <option value="여아">👧 여아</option>
                 </select>
@@ -528,7 +536,7 @@
             <!-- Peer Matching Choice: Apply (±2 years) vs No constraint -->
             <div class="space-y-2 pt-1 border-t border-amber-200/70">
               <div class="flex items-center justify-between">
-                <label class="block text-[11px] font-bold text-slate-700">또래 매칭 조건 설정 <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-bold text-slate-800">또래 매칭 조건 설정 <span class="text-red-500">*</span></label>
                 <span class="text-[10px] text-amber-800">호스트 직접 선택</span>
               </div>
 
@@ -564,12 +572,12 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label class="block font-bold text-slate-700 mb-1.5">출발 날짜 <span class="text-red-500">*</span></label>
-              <input type="date" id="matchStartDate" onchange="handleStartDateChange('match'); updateMatchTitlePreview();" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-medium text-xs">
+              <input type="date" id="matchStartDate" onchange="handleStartDateChange('match'); updateMatchTitlePreview();" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-semibold text-sm">
             </div>
 
             <div>
               <label class="block font-bold text-slate-700 mb-1.5">복귀 날짜 <span class="text-red-500">*</span></label>
-              <input type="date" id="matchEndDate" onchange="this.dataset.userModified='true'; updateMatchTitlePreview();" required class="w-full px-3 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-medium text-xs">
+              <input type="date" id="matchEndDate" onchange="this.dataset.userModified='true'; updateMatchTitlePreview();" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none font-semibold text-sm">
             </div>
           </div>
 
@@ -588,7 +596,7 @@
               </label>
               <span class="text-[10px] text-amber-800 font-medium">참여 가족과 실시간 소통</span>
             </div>
-            <input type="url" id="matchOpenChatUrl" placeholder="https://open.kakao.com/o/..." class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#FEE500] focus:border-amber-400 focus:outline-none bg-white text-xs text-slate-800">
+            <input type="url" id="matchOpenChatUrl" placeholder="https://open.kakao.com/o/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#FEE500] focus:border-amber-400 focus:outline-none bg-white text-sm text-slate-800">
             <p class="text-[11px] text-slate-500">
               💡 카카오톡 앱에서 오픈채팅방 개설 후 <b>[링크 복사]</b>하여 붙여넣으시면, 모임 상세 팝업에 노란색 <b>[카카오톡 오픈채팅 참여하기]</b> 버튼이 자동 생성됩니다.
             </p>
@@ -631,16 +639,16 @@
       </div>
 
       <!-- Modal Body -->
-      <div class="p-5 sm:p-6 space-y-5 text-xs">
+      <div class="p-5 sm:p-6 space-y-5 text-sm">
         
         <div>
-          <h3 id="modalTitle" class="text-lg sm:text-xl font-extrabold text-slate-800 leading-snug">
+          <h3 id="modalTitle" class="text-xl sm:text-2xl font-extrabold text-slate-800 leading-snug">
             [19년생 또래] 포천 산정호수 가을 숲 탐험 & 불멍 캠핑
           </h3>
-          <div class="flex flex-wrap items-center gap-3 mt-2 text-slate-500">
-            <span class="flex items-center gap-1">📍 <span id="modalLocation">산정호수돌담캠핑장</span></span>
-            <span class="flex items-center gap-1">📅 <span id="modalDate">11.14 ~ 11.15</span></span>
-            <span class="flex items-center gap-1">👥 <span id="modalMembers">1 / 3가족</span></span>
+          <div class="flex flex-wrap items-center gap-4 mt-2 text-slate-600 font-medium">
+            <span class="flex items-center gap-1.5">📍 <span id="modalLocation">산정호수돌담캠핑장</span></span>
+            <span class="flex items-center gap-1.5">📅 <span id="modalDate">11.14 ~ 11.15</span></span>
+            <span class="flex items-center gap-1.5">👥 <span id="modalMembers">1 / 3가족</span></span>
           </div>
         </div>
 
@@ -649,15 +657,15 @@
 
         <!-- Participants Family List Section (호스트가 참석자 명단을 확인하는 핵심 섹션) -->
         <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs space-y-2.5">
-          <div class="flex flex-wrap items-center justify-between gap-1.5 pb-2 border-b border-slate-100">
-            <span class="font-extrabold text-slate-800 text-xs flex items-center gap-1.5 whitespace-nowrap">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-100">
+            <span class="font-extrabold text-slate-800 text-sm sm:text-base flex items-center gap-1.5 whitespace-nowrap">
               <span>👥</span> 참여 가족 (<span id="modalParticipantCount" class="text-forest-600 font-extrabold">2/3가족</span>)
             </span>
-            <div class="flex items-center gap-1.5">
-              <button id="modalHostCancelPartBtn" type="button" onclick="openHostCancelParticipantModal()" class="hidden px-2 py-0.5 rounded-md bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-[10px] font-extrabold transition flex items-center gap-1 cursor-pointer shadow-2xs" title="예약확정 상태에서 참여자를 선택하여 취소 처리">
+            <div class="flex items-center gap-2">
+              <button id="modalHostCancelPartBtn" type="button" onclick="openHostCancelParticipantModal()" class="hidden px-2.5 py-1 rounded-md bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-extrabold transition flex items-center gap-1 cursor-pointer shadow-2xs" title="예약확정 상태에서 참여자를 선택하여 취소 처리">
                 <span>✕</span> 참여자 취소 관리
               </button>
-              <span id="modalHostBadgeStatus" class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 shrink-0">
+              <span id="modalHostBadgeStatus" class="text-xs font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-md border border-amber-200 shrink-0">
                 호스트 주최 모임
               </span>
             </div>
@@ -667,37 +675,37 @@
         </div>
 
         <!-- Kid & Family Matching Box -->
-        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-200 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div id="modalKidIcon" class="w-12 h-12 rounded-2xl bg-amber-400/90 text-2xl flex items-center justify-center shadow-sm">
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4.5 border border-amber-200 flex items-center justify-between">
+          <div class="flex items-center gap-3.5">
+            <div id="modalKidIcon" class="w-13 h-13 rounded-2xl bg-amber-400/90 text-3xl flex items-center justify-center shadow-sm">
               👦
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <span id="modalKidTitle" class="font-extrabold text-sm text-amber-950">19년생 남아</span>
-                <span class="px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 text-[10px] font-bold">호스트 아이</span>
+                <span id="modalKidTitle" class="font-extrabold text-base text-amber-950">19년생 남아</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-900 text-xs font-bold">호스트 아이</span>
               </div>
-              <p id="modalKidDesc" class="text-xs text-amber-900 mt-0.5">
+              <p id="modalKidDesc" class="text-sm text-amber-900 mt-1">
                 호스트 아이 생년 기준 ±2년 또래 친구들과 함께합니다.
               </p>
             </div>
           </div>
           <div class="text-right hidden sm:block">
-            <span class="text-[10px] text-amber-800 font-bold block">매칭 또래 (±2년)</span>
-            <span id="modalTargetAge" class="text-xs font-extrabold text-amber-950 bg-white px-2 py-1 rounded-lg border border-amber-300">17~21년생</span>
+            <span class="text-xs text-amber-800 font-bold block mb-0.5">매칭 또래 (±2년)</span>
+            <span id="modalTargetAge" class="text-sm font-extrabold text-amber-950 bg-white px-2.5 py-1 rounded-lg border border-amber-300">17~21년생</span>
           </div>
         </div>
 
         <!-- Host Profile Card -->
         <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div id="modalHostAvatar" class="w-11 h-11 rounded-full bg-forest-600 text-white flex items-center justify-center font-extrabold text-xs tracking-tighter shadow shrink-0">
+            <div id="modalHostAvatar" class="w-11 h-11 rounded-full bg-forest-600 text-white flex items-center justify-center font-extrabold text-sm tracking-tighter shadow shrink-0">
               호
             </div>
             <div>
               <div class="flex items-center gap-2">
-                <span id="modalHostName" class="font-bold text-slate-800 text-sm">캠프대장</span>
-                <span class="px-2 py-0.5 rounded bg-emerald-100 text-forest-700 text-[10px] font-bold">호스트</span>
+                <span id="modalHostName" class="font-bold text-slate-800 text-base">캠프대장</span>
+                <span class="px-2.5 py-0.5 rounded bg-emerald-100 text-forest-700 text-xs font-bold">호스트</span>
               </div>
             </div>
           </div>
@@ -705,33 +713,33 @@
         </div>
 
         <!-- Booking Notice (Clean Single Box) -->
-        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5">
+        <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-4">
           <div class="flex items-center justify-between">
-            <span class="font-bold text-emerald-900 flex items-center gap-1.5">
+            <span class="font-extrabold text-emerald-950 text-sm sm:text-base flex items-center gap-1.5">
               <span id="modalBookingTypeIcon">🎪</span>
               <span id="modalBookingTypeTitle">예약 방식: 취합예약</span>
             </span>
-            <span id="modalReservationNoticeBadge" class="hidden text-[11px] font-extrabold px-2 py-0.5 rounded bg-amber-500 text-white flex items-center gap-1 shadow-2xs">
+            <span id="modalReservationNoticeBadge" class="hidden text-xs font-extrabold px-2.5 py-1 rounded bg-amber-500 text-white flex items-center gap-1 shadow-2xs">
               <span>🔒</span> 예약확정됨
             </span>
           </div>
-          <p id="modalBookingNote" class="mt-1 text-[11px] text-emerald-800 leading-relaxed">
+          <p id="modalBookingNote" class="mt-1.5 text-sm text-emerald-900 leading-relaxed">
             호스트가 사이트 예약을 완료하여 참여자는 몸과 장비만 챙겨오시면 됩니다. 사이트비는 1/N 정산에 포함됩니다.
           </p>
-          <div id="modalReservationWarning" class="hidden mt-2 p-2 rounded-lg bg-amber-100/90 border border-amber-300 text-[11px] text-amber-950 font-semibold flex items-center gap-1.5">
+          <div id="modalReservationWarning" class="hidden mt-2.5 p-2.5 rounded-lg bg-amber-100/90 border border-amber-300 text-xs sm:text-sm text-amber-950 font-semibold flex items-center gap-1.5">
             <span>🔒</span> 호스트가 캠핑장 예약을 최종 확정했습니다. 위약금 및 사이트 공백 방지를 위해 참여 취소가 제한됩니다.
           </div>
         </div>
 
         <!-- Plan Description -->
         <div>
-          <div class="flex items-center justify-between mb-1">
-            <span class="font-bold text-slate-700">상세 캠핑 계획</span>
-            <button type="button" id="hostEditDescBtn" onclick="toggleHostEditPlan()" class="hidden text-[11px] text-forest-700 hover:text-forest-900 font-bold underline flex items-center gap-1 cursor-pointer">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="font-extrabold text-slate-800 text-base">상세 캠핑 계획</span>
+            <button type="button" id="hostEditDescBtn" onclick="toggleHostEditPlan()" class="hidden text-xs font-bold text-forest-700 hover:text-forest-900 underline flex items-center gap-1 cursor-pointer">
               <span>✏️</span> 계획/오픈채팅 수정
             </button>
           </div>
-          <div id="modalDescription" class="bg-slate-50 rounded-xl p-3.5 text-slate-600 leading-relaxed whitespace-pre-line border border-slate-200">
+          <div id="modalDescription" class="bg-slate-50 rounded-xl p-4 text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line border border-slate-200">
             소백산 삼가야영장 C구역 예약 완료했습니다.
             대형 쉘터와 화로대는 제가 가져가므로, 개인 침구와 의자만 챙겨오시면 됩니다. 저녁에는 소고기 바베큐와 따뜻한 어묵탕 끓여먹고 밤늦게까지 불멍할 예정입니다!
           </div>
@@ -791,9 +799,9 @@
         </div>
 
         <!-- Application Form -->
-        <div class="border-t border-slate-100 pt-4 space-y-3">
-          <span id="applyCommentLabel" class="font-bold text-slate-800 block text-xs">일행에게 하고싶은 말</span>
-          <input type="text" id="applyComment" placeholder="일행에게 하고싶은 말을 적어주세요 (예: 아이와 즐겁게 놀고 싶어요! 킥보드 챙겨갈게요)" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none text-xs">
+        <div class="border-t border-slate-100 pt-4 space-y-2">
+          <span id="applyCommentLabel" class="font-bold text-slate-800 block text-sm">일행에게 하고싶은 말</span>
+          <input type="text" id="applyComment" placeholder="일행에게 하고싶은 말을 적어주세요 (예: 아이와 즐겁게 놀고 싶어요! 킥보드 챙겨갈게요)" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none text-sm text-slate-800">
           
 
         </div>
@@ -801,29 +809,29 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="border-t border-slate-100 p-4 bg-slate-50 flex flex-wrap items-center justify-between gap-2 rounded-b-2xl">
-        <div class="flex items-center gap-2">
-          <button onclick="downloadCampDetailExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="참여자 명단, 아이 정보, 장비 분담표를 엑셀 파일(.xlsx)로 저장">
+      <div class="border-t border-slate-100 p-4 bg-slate-50 flex flex-wrap items-center justify-between gap-2.5 rounded-b-2xl">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="downloadCampDetailExcel()" class="px-4 py-2.5 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-sm shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="참여자 명단, 아이 정보, 장비 분담표를 엑셀 파일(.xlsx)로 저장">
             <span>📊</span> 엑셀 다운로드
           </button>
-          <button id="modalCafeShareBtn" onclick="openCafeShareModal()" class="hidden px-3.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="호스트 전용 네이버 카페 공유 양식 복사">
+          <button id="modalCafeShareBtn" onclick="openCafeShareModal()" class="hidden px-4 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-sm shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="호스트 전용 네이버 카페 공유 양식 복사">
             <span>📋</span> 카페 글양식 복사
           </button>
-          <button id="modalConfirmReservationBtn" onclick="openReservationConfirmModal()" class="hidden px-3.5 py-2 rounded-xl font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="캠핑장 예약 확정 설정">
+          <button id="modalConfirmReservationBtn" onclick="openReservationConfirmModal()" class="hidden px-4 py-2.5 rounded-xl font-extrabold text-sm shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="캠핑장 예약 확정 설정">
             <span>🔒</span> 예약확정 하기
           </button>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="closeCampModal()" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 text-xs">
+        <div class="flex items-center gap-2 flex-wrap">
+          <button onclick="closeCampModal()" class="px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 text-sm cursor-pointer">
             닫기
           </button>
-          <button id="modalDeleteBtn" onclick="openDeleteConfirmModal()" class="hidden px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5" title="내가 주최한 모집글 및 모닥불 방 삭제">
+          <button id="modalDeleteBtn" onclick="openDeleteConfirmModal()" class="hidden px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="내가 주최한 모집글 및 모닥불 방 삭제">
             <span>🗑️</span> 모집글 삭제하기
           </button>
-          <button id="modalCancelBtn" onclick="cancelCampApplication()" class="hidden px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs transition flex items-center gap-1 shadow-xs" title="사정이 생겨 참여가 어려울 경우 동행 취소">
+          <button id="modalCancelBtn" onclick="cancelCampApplication()" class="hidden px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-sm transition flex items-center gap-1 shadow-xs cursor-pointer" title="사정이 생겨 참여가 어려울 경우 동행 취소">
             <span>✕</span> 동행 참여 취소하기
           </button>
-          <button id="modalApplyBtn" onclick="submitApplication()" class="px-5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold shadow-md transition text-xs flex items-center gap-1.5">
+          <button id="modalApplyBtn" onclick="submitApplication()" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold shadow-md transition text-sm sm:text-base flex items-center gap-1.5 cursor-pointer">
             <span>🔥</span> 모닥불 옆에 착석하기
           </button>
         </div>
@@ -848,10 +856,10 @@
         <span class="text-red-500 font-semibold">* 이미 착석한 참여 가족들의 명단도 함께 정리됩니다.</span>
       </p>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeDeleteConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+        <button onclick="closeDeleteConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
           취소
         </button>
-        <button id="deleteConfirmBtn" onclick="confirmDeleteCamp()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition">
+        <button id="deleteConfirmBtn" onclick="confirmDeleteCamp()" class="px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer">
           네, 삭제합니다
         </button>
       </div>
@@ -872,10 +880,10 @@
         <span class="text-amber-700 font-semibold">* 예약확정 후에는 사이트 위약금 및 공백 방지를 위해 참여자들의 동행 취소가 차단됩니다.</span>
       </p>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeReservationConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+        <button onclick="closeReservationConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
           취소
         </button>
-        <button id="reservationConfirmActionBtn" onclick="executeToggleReservationConfirm()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition cursor-pointer">
+        <button id="reservationConfirmActionBtn" onclick="executeToggleReservationConfirm()" class="px-4.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-sm transition cursor-pointer">
           네, 예약확정합니다
         </button>
       </div>
@@ -896,35 +904,35 @@
       </p>
 
       <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-1">취소할 참여 가족 선택</label>
-        <select id="hostCancelParticipantSelect" onchange="updateHostCancelParticipantPreview()" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-800 focus:ring-2 focus:ring-red-500 focus:outline-none">
+        <label class="block text-sm font-bold text-slate-800 mb-1.5">취소할 참여 가족 선택</label>
+        <select id="hostCancelParticipantSelect" onchange="updateHostCancelParticipantPreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-sm font-bold text-slate-800 focus:ring-2 focus:ring-red-500 focus:outline-none">
           <!-- Dynamic options populated from camp.participants -->
         </select>
       </div>
 
       <!-- Selected Participant Info Preview -->
-      <div id="hostCancelParticipantPreview" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+      <div id="hostCancelParticipantPreview" class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-sm space-y-1.5">
         <div class="flex items-center justify-between">
           <span id="previewPartName" class="font-extrabold text-slate-800">닉네임</span>
-          <span id="previewPartKid" class="text-slate-600 font-medium">아이 정보</span>
+          <span id="previewPartKid" class="text-slate-600 font-medium text-xs sm:text-sm">아이 정보</span>
         </div>
-        <div id="previewPartMsg" class="text-[11px] text-slate-500 italic">"한마디"</div>
+        <div id="previewPartMsg" class="text-xs sm:text-sm text-slate-600 italic">"한마디"</div>
       </div>
 
-      <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 space-y-0.5">
+      <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs sm:text-sm text-amber-900 space-y-1">
         <div class="font-bold flex items-center gap-1">
           <span>⚠️</span> 취소 처리 시 주의사항
         </div>
-        <p class="text-[10px] text-amber-800 leading-snug">
+        <p class="text-xs text-amber-800 leading-relaxed">
           취소된 가족은 모닥불 좌석에서 제외되며, 대기 신청 중인 가족이 있을 경우 <strong>대기 1순위 가족이 자동으로 모닥불 좌석으로 승격</strong>됩니다.
         </p>
       </div>
 
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeHostCancelParticipantModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+      <div class="flex items-center justify-end gap-2.5 pt-2.5 border-t border-slate-100">
+        <button onclick="closeHostCancelParticipantModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
           취소
         </button>
-        <button onclick="executeHostCancelParticipant()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition cursor-pointer flex items-center gap-1">
+        <button onclick="executeHostCancelParticipant()" class="px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer flex items-center gap-1.5">
           <span>✕</span> 선택한 참여자 취소하기
         </button>
       </div>
@@ -965,24 +973,24 @@
           <span class="font-bold text-slate-700">게시글 본문 미리보기</span>
           <span class="text-[11px] text-emerald-600 font-bold">실시간 웹앱 링크 자동 포함됨</span>
         </div>
-        <textarea id="cafeShareText" readonly rows="12" class="w-full p-3.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-mono text-slate-800 leading-relaxed focus:outline-none select-all"></textarea>
+        <textarea id="cafeShareText" readonly rows="12" class="w-full p-4 rounded-xl border border-slate-300 bg-slate-50 text-sm font-mono text-slate-800 leading-relaxed focus:outline-none select-all"></textarea>
       </div>
 
       <!-- Helper tip -->
-      <p class="text-[11px] text-slate-600 bg-emerald-50 p-3 rounded-xl border border-emerald-100 leading-relaxed">
+      <p class="text-xs sm:text-sm text-slate-700 bg-emerald-50 p-3.5 rounded-xl border border-emerald-100 leading-relaxed">
         💡 <b>[📋 본문 복사하기]</b>를 누른 후 네이버 카페 글쓰기 창에서 <b>붙여넣기(Ctrl+V)</b> 하시면 게시글이 완성됩니다. 카페 회원들이 게시글 속 링크를 누르면 웹앱 모닥불 방으로 바로 들어와 신청할 수 있습니다.
       </p>
 
       <!-- Action buttons -->
       <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-        <a href="https://m.cafe.naver.com/ca-fe/web/cafes/27272326/menus/18" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-xl bg-[#03C75A]/10 hover:bg-[#03C75A]/20 text-[#03C75A] font-extrabold text-xs transition flex items-center gap-1 border border-[#03C75A]/30">
+        <a href="https://m.cafe.naver.com/ca-fe/web/cafes/27272326/menus/18" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-[#03C75A]/10 hover:bg-[#03C75A]/20 text-[#03C75A] font-extrabold text-sm transition flex items-center gap-1.5 border border-[#03C75A]/30">
           <span>네이버 카페 바로가기</span> <span>↗</span>
         </a>
         <div class="flex items-center gap-2">
-          <button type="button" onclick="closeCafeShareModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+          <button type="button" onclick="closeCafeShareModal()" class="px-4.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
             닫기
           </button>
-          <button type="button" onclick="copyCafeShareText()" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+          <button type="button" onclick="copyCafeShareText()" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-sm shadow-md transition flex items-center gap-1.5 cursor-pointer">
             <span>📋</span> 본문 복사하기
           </button>
         </div>
@@ -1006,19 +1014,19 @@
         <button onclick="closeProfileModal()" class="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-400 font-bold flex items-center justify-center">✕</button>
       </div>
 
-      <form onsubmit="handleSaveProfile(event)" class="py-4 space-y-3.5 text-xs">
+      <form onsubmit="handleSaveProfile(event)" class="py-4 space-y-4 text-sm">
         <div>
-          <label class="block font-bold text-slate-700 mb-1">
+          <label class="block font-bold text-slate-800 mb-1.5">
             네이버 카페 닉네임 <span class="text-red-500">*</span>
           </label>
-          <input type="text" id="inputNickname" oninput="checkAdminNicknamePreview()" required placeholder="예: 18시원맘김포, 20서아맘경기" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-bold text-slate-800 text-xs">
-          <p class="text-[10px] text-slate-400 mt-1">네이버 카페와 동일한 닉네임으로 입력해주세요.</p>
+          <input type="text" id="inputNickname" oninput="checkAdminNicknamePreview()" required placeholder="예: 18시원맘김포, 20서아맘경기" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-forest-500 font-bold text-slate-800 text-sm">
+          <p class="text-xs text-slate-400 mt-1">네이버 카페와 동일한 닉네임으로 입력해주세요.</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-2 gap-3.5">
           <div>
-            <label class="block font-bold text-slate-700 mb-1">외동아이 출생연도</label>
-            <select id="inputKidYear" onchange="updateProfileGradePreview()" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-bold text-xs text-slate-800">
+            <label class="block font-bold text-slate-800 mb-1.5">외동아이 출생연도</label>
+            <select id="inputKidYear" onchange="updateProfileGradePreview()" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white font-bold text-sm text-slate-800">
               <option value="2014">2014년생</option>
               <option value="2015">2015년생</option>
               <option value="2016">2016년생</option>
@@ -1034,8 +1042,8 @@
           </div>
 
           <div>
-            <label class="block font-bold text-slate-700 mb-1">아이 성별</label>
-            <select id="inputKidGender" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white font-medium text-xs text-slate-800">
+            <label class="block font-bold text-slate-800 mb-1.5">아이 성별</label>
+            <select id="inputKidGender" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white font-semibold text-sm text-slate-800">
               <option value="남아">👦 남아</option>
               <option value="여아" selected>👧 여아</option>
             </select>
@@ -1043,41 +1051,41 @@
         </div>
 
         <!-- Admin Status & DB Admin Nickname Manager Box -->
-        <div id="adminStatusBox" class="hidden p-3.5 bg-red-50 rounded-xl border border-red-200 text-xs space-y-2.5">
+        <div id="adminStatusBox" class="hidden p-4 bg-red-50 rounded-xl border border-red-200 text-xs sm:text-sm space-y-3">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 font-extrabold text-red-950">
+            <div class="flex items-center gap-1.5 font-extrabold text-red-950 text-sm">
               <span>🛡️</span> 카페 관리자(운영진) 닉네임 인증됨
             </div>
-            <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-[10px] border border-red-200">DB 연동</span>
+            <span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold text-xs border border-red-200">DB 연동</span>
           </div>
-          <p class="text-[11px] text-red-700 leading-relaxed">
+          <p class="text-xs text-red-700 leading-relaxed">
             <code>occ_admins</code> DB 테이블에 등록된 공식 운영진 닉네임입니다. 다른 회원의 모든 모집글에 대해 <b>[🛡️ 관리자 강제삭제]</b> 권한이 활성화됩니다.
           </p>
 
           <!-- Dynamic Admin List & Add/Remove (Only visible to verified admins) -->
           <div class="pt-2 border-t border-red-200/80 space-y-2">
-            <div class="font-bold text-red-950 text-[11px] flex items-center justify-between">
+            <div class="font-bold text-red-950 text-xs flex items-center justify-between">
               <span>📋 등록된 관리자 닉네임 목록 (occ_admins)</span>
             </div>
             <div id="adminListContainer" class="flex flex-wrap gap-1.5"></div>
-            <div class="flex items-center gap-1.5 pt-1">
-              <input type="text" id="newAdminNicknameInput" placeholder="추가할 운영진 카페 닉네임 입력" class="flex-1 px-2.5 py-1.5 rounded-lg border border-red-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
-              <button type="button" onclick="addAdminNicknameToDb()" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-[11px] transition shrink-0 cursor-pointer">
+            <div class="flex items-center gap-2 pt-1">
+              <input type="text" id="newAdminNicknameInput" placeholder="추가할 운영진 카페 닉네임 입력" class="flex-1 px-3 py-2 rounded-lg border border-red-300 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
+              <button type="button" onclick="addAdminNicknameToDb()" class="px-3.5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm transition shrink-0 cursor-pointer">
                 + 관리자 추가
               </button>
             </div>
           </div>
         </div>
 
-        <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 text-[11px] text-amber-900 leading-relaxed">
+        <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs sm:text-sm text-amber-900 leading-relaxed">
           🔒 <b>안내:</b> 입력하신 정보는 외부 서버에 전송되지 않고 본인 스마트폰(브라우저)에만 안전하게 저장됩니다. 모닥불에 착석하거나 모집글을 올릴 때 자동으로 내 닉네임이 입력됩니다.
         </div>
 
-        <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-          <button type="button" onclick="closeProfileModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs">
+        <div class="flex items-center justify-end gap-2.5 pt-2.5 border-t border-slate-100">
+          <button type="button" onclick="closeProfileModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm cursor-pointer">
             닫기
           </button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs shadow-md transition">
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-sm shadow-md transition cursor-pointer">
             저장 완료
           </button>
         </div>
@@ -2359,7 +2367,7 @@ function loadUserProfile() {
 
               <!-- Role Badge Label -->
               <rect x="-22" y="21" width="44" height="13" rx="6" fill="${isHost ? '#f97316' : '#059669'}" />
-              <text x="0" y="30" text-anchor="middle" fill="#ffffff" font-size="8.5" font-weight="bold">${label}</text>
+              <text x="0" y="30" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">${label}</text>
             </g>
           `;
         } else {
@@ -2372,7 +2380,7 @@ function loadUserProfile() {
               <circle cx="0" cy="-10" r="6" fill="rgba(30,41,59,0.7)" stroke="#94a3b8" stroke-width="1.2" stroke-dasharray="3,2" />
               <text x="0" y="7" text-anchor="middle" fill="#cbd5e1" font-size="10" font-weight="bold">+</text>
               <rect x="-18" y="19" width="36" height="12" rx="5" fill="rgba(51,65,85,0.85)" />
-              <text x="0" y="27.5" text-anchor="middle" fill="#94a3b8" font-size="8" font-weight="medium">참여대기</text>
+              <text x="0" y="27.5" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-weight="bold">참여대기</text>
             </g>
           `;
         }
@@ -2484,40 +2492,40 @@ function loadUserProfile() {
               <!-- Top Badges -->
               <div class="flex items-center justify-between gap-2 mb-3">
                 <div class="flex items-center gap-1.5">
-                  <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${calculateDDay(camp).includes('D-1') || calculateDDay(camp).includes('D-2') || calculateDDay(camp).includes('D-Day') ? 'bg-red-100 text-red-600 badge-pulse border border-red-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
+                  <span class="px-2.5 py-1 rounded-full text-xs font-bold ${calculateDDay(camp).includes('D-1') || calculateDDay(camp).includes('D-2') || calculateDDay(camp).includes('D-Day') ? 'bg-red-100 text-red-600 badge-pulse border border-red-200' : 'bg-slate-100 text-slate-600 border border-slate-200'}">
                     ${calculateDDay(camp)}
                   </span>
                   ${camp.bookingType && camp.bookingType !== '일정등록' ? `
-                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${camp.bookingType === '취합예약' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
+                    <span class="px-2.5 py-1 rounded-md text-xs font-bold ${camp.bookingType === '취합예약' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-blue-50 text-blue-700 border border-blue-200'}">
                       ${camp.bookingType === '취합예약' ? '🎪 취합예약' : '🏕️ 개별예약'}
                     </span>
                   ` : ''}
                   ${camp.reservationConfirmed ? `
-                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-500 text-white shadow-2xs flex items-center gap-1" title="호스트가 캠핑장 예약을 확정했습니다">
+                    <span class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-amber-500 text-white shadow-2xs flex items-center gap-1" title="호스트가 캠핑장 예약을 확정했습니다">
                       <span>🔒</span> 예약확정
                     </span>
                   ` : ''}
                   ${camp.openChatUrl ? `
-                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#FEE500]/70 text-[#191919] border border-[#FEE500] flex items-center gap-1" title="카카오톡 오픈채팅방 개설됨">
-                      <span class="w-3.5 h-3.5 rounded bg-[#FEE500] text-[8px] font-black flex items-center justify-center">톡</span> 오픈채팅
+                    <span class="px-2.5 py-1 rounded-md text-xs font-extrabold bg-[#FEE500]/80 text-[#191919] border border-[#FDD835] flex items-center gap-1 shadow-2xs" title="카카오톡 오픈채팅방 개설됨">
+                      <span class="w-4 h-4 rounded bg-[#FEE500] text-[9px] font-black flex items-center justify-center">톡</span> 오픈채팅
                     </span>
                   ` : ''}
                 </div>
                 <div>
                   ${!isFull ? `
-                    <span class="text-[11px] font-bold text-forest-600">${spotsLeft}가족 남음</span>
+                    <span class="text-xs sm:text-sm font-extrabold text-forest-600">${spotsLeft}가족 남음</span>
                   ` : (camp.bookingType !== '일정등록' ? `
                     ${(camp.waitlist || []).length < camp.maxMembers ? `
-                      <span class="text-[11px] font-extrabold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300 shadow-2xs">
+                      <span class="text-xs font-extrabold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-300 shadow-2xs">
                         ⏳ 대기신청 (${(camp.waitlist || []).length}/${camp.maxMembers})
                       </span>
                     ` : `
-                      <span class="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
+                      <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
                         정원·대기 마감
                       </span>
                     `}
                   ` : `
-                    <span class="text-[11px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
+                    <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full border border-slate-200">
                       모집완료
                     </span>
                   `)}
@@ -2525,29 +2533,29 @@ function loadUserProfile() {
               </div>
 
               <!-- Title -->
-              <h3 onclick="openCampDetail(${camp.id})" class="text-sm font-bold text-slate-800 group-hover:text-forest-600 cursor-pointer line-clamp-2 leading-snug transition">
+              <h3 onclick="openCampDetail(${camp.id})" class="text-base sm:text-lg font-extrabold text-slate-800 group-hover:text-forest-600 cursor-pointer line-clamp-2 leading-snug transition">
                 ${camp.title}
               </h3>
 
               <!-- Child Info Highlight Pill (Zero redundant duplication!) -->
-              <div class="mt-2.5 p-2.5 rounded-xl ${camp.kidInfo.applyPeerMatching ? 'bg-amber-50/80 border border-amber-200' : 'bg-slate-50 border border-slate-200'} flex items-center justify-between text-xs">
-                <div class="flex items-center gap-2">
-                  <span class="text-xl">${camp.kidInfo.gender === '여아' ? '👧' : '👦'}</span>
+              <div class="mt-2.5 p-3 rounded-xl ${camp.kidInfo.applyPeerMatching ? 'bg-amber-50/80 border border-amber-200' : 'bg-slate-50 border border-slate-200'} flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2.5">
+                  <span class="text-2xl">${camp.kidInfo.gender === '여아' ? '👧' : '👦'}</span>
                   <div>
-                    <div class="flex items-center gap-1.5">
-                      <span class="font-extrabold ${camp.kidInfo.applyPeerMatching ? 'text-amber-950' : 'text-slate-800'}">${camp.kidInfo.birthYear}년생 ${camp.kidInfo.gender}</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="font-extrabold text-sm sm:text-base ${camp.kidInfo.applyPeerMatching ? 'text-amber-950' : 'text-slate-800'}">${camp.kidInfo.birthYear}년생 ${camp.kidInfo.gender}</span>
                       ${!camp.title.includes('또래') && camp.kidInfo.applyPeerMatching ? `
-                        <span class="px-2 py-0.2 rounded-full bg-amber-200/80 text-amber-900 text-[10px] font-bold">
+                        <span class="px-2.5 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-xs font-bold">
                           🎯 또래: ${camp.kidInfo.birthYear - 2}~${camp.kidInfo.birthYear + 2}년생
                         </span>
                       ` : ''}
                       ${!camp.kidInfo.applyPeerMatching ? `
-                        <span class="px-2 py-0.2 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold">
+                        <span class="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 text-xs font-bold">
                           🎈 연령 무관
                         </span>
                       ` : ''}
                     </div>
-                    <span class="text-[10px] ${camp.kidInfo.applyPeerMatching ? 'text-amber-800' : 'text-slate-500'} block mt-0.5">
+                    <span class="text-xs ${camp.kidInfo.applyPeerMatching ? 'text-amber-800 font-medium' : 'text-slate-500'} block mt-1">
                       ${camp.kidInfo.applyPeerMatching ? (camp.title.includes('또래') ? '우리 외동아이와 즐겁게 함께할 친구 가족' : `호스트 아이 기준 ±2년 (${camp.kidInfo.birthYear - 2}~${camp.kidInfo.birthYear + 2}년생) 모집`) : '나이 상관없이 모든 가족 환영'}
                     </span>
                   </div>
@@ -2555,18 +2563,18 @@ function loadUserProfile() {
               </div>
 
               <!-- Meta Info -->
-              <div class="mt-2.5 space-y-1 text-xs text-slate-500">
-                <div class="flex items-center gap-1.5 truncate">
-                  <span>📍</span>
-                  <span class="truncate">${camp.location}</span>
+              <div class="mt-3 space-y-1.5 text-sm text-slate-600">
+                <div class="flex items-center gap-2 truncate">
+                  <span class="text-base">📍</span>
+                  <span class="truncate font-medium">${camp.location}</span>
                 </div>
-                <div class="flex items-center gap-1.5">
-                  <span>📅</span>
-                  <span>${camp.startDate.slice(5)} ~ ${camp.endDate.slice(5)}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-base">📅</span>
+                  <span class="font-medium">${camp.startDate.slice(5)} ~ ${camp.endDate.slice(5)}</span>
                 </div>
                 ${camp.bookingType && camp.bookingType !== '일정등록' ? `
-                  <div class="flex items-center gap-1.5 text-[11px] text-slate-600 truncate">
-                    <span>🎟️</span>
+                  <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-600 truncate">
+                    <span class="text-base">🎟️</span>
                     <span class="truncate font-medium">${camp.bookingNote || (camp.bookingType === '취합예약' ? '호스트 사이트 일괄 예약' : '각자 사이트 개별 예약')}</span>
                   </div>
                 ` : ''}
@@ -2582,35 +2590,35 @@ function loadUserProfile() {
 
             <!-- Host Card & Action Footer -->
             <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-forest-600 text-white text-[10px] font-bold tracking-tighter flex items-center justify-center shrink-0">
+              <div class="flex items-center gap-2.5">
+                <div class="w-8 h-8 rounded-full bg-forest-600 text-white text-xs font-bold tracking-tighter flex items-center justify-center shrink-0 shadow-2xs">
                   ${(camp.host.name || camp.host.avatar || '').slice(0, 2)}
                 </div>
                 <div class="text-left">
-                  <div class="text-xs font-semibold text-slate-800">
+                  <div class="text-sm font-bold text-slate-800">
                     ${camp.host.name}
                   </div>
-                  <div class="text-[10px] text-slate-400">호스트</div>
+                  <div class="text-xs text-slate-400 font-medium">호스트</div>
                 </div>
               </div>
 
               <div class="flex items-center gap-1.5">
                 ${camp.host.name === myProfile.nickname ? `
-                  <button onclick="openCampDetail(${camp.id})" class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 font-extrabold text-xs transition shadow-sm">
+                  <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 font-extrabold text-sm transition shadow-sm cursor-pointer">
                     👑 내 주최글
                   </button>
-                  <button onclick="openCafeShareModal(${camp.id})" class="px-2.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs transition shadow-2xs" title="네이버 카페 공유 양식 복사">
+                  <button onclick="openCafeShareModal(${camp.id})" class="px-3 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold text-sm transition shadow-2xs cursor-pointer" title="네이버 카페 공유 양식 복사">
                     📋 카페공유
                   </button>
                 ` : (myProfile.isAdmin ? `
-                  <button onclick="openCampDetail(${camp.id})" class="px-3 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-xs transition shadow-sm">
+                  <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-sm transition shadow-sm cursor-pointer">
                     ${camp.applied ? '참여중 ✓' : '상세보기'}
                   </button>
-                  <button onclick="currentModalCamp = camps.find(c => c.id === ${camp.id}); openDeleteConfirmModal(true);" class="px-2.5 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-800 border border-red-300 font-extrabold text-xs transition shadow-2xs" title="관리자 권한으로 강제 삭제">
+                  <button onclick="currentModalCamp = camps.find(c => c.id === ${camp.id}); openDeleteConfirmModal(true);" class="px-3 py-2 rounded-xl bg-red-100 hover:bg-red-200 text-red-800 border border-red-300 font-extrabold text-sm transition shadow-2xs cursor-pointer" title="관리자 권한으로 강제 삭제">
                     🛡️ 삭제
                   </button>
                 ` : `
-                  <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-xs transition shadow-sm">
+                  <button onclick="openCampDetail(${camp.id})" class="px-4 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-sm transition shadow-sm cursor-pointer">
                     ${camp.applied ? '참여중 (상세보기) ✓' : '상세보기'}
                   </button>
                 `)}
@@ -2675,54 +2683,54 @@ function loadUserProfile() {
       camp.participants.forEach((part, idx) => {
         const isMe = part.name === myProfile.nickname;
         html += `
-          <div class="p-3 rounded-xl border ${part.isHost ? 'bg-amber-50/70 border-amber-200' : isMe ? 'bg-emerald-50/70 border-emerald-300' : 'bg-slate-50 border-slate-200'} flex items-start justify-between gap-2.5">
-            <div class="flex items-start gap-2.5 min-w-0">
-              <div class="w-8 h-8 rounded-full ${part.isHost ? 'bg-amber-400 text-amber-950 font-black' : isMe ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-600 text-white font-bold'} text-[11px] font-extrabold tracking-tighter flex items-center justify-center shrink-0 shadow-2xs">
+          <div class="p-3.5 rounded-xl border ${part.isHost ? 'bg-amber-50/70 border-amber-200' : isMe ? 'bg-emerald-50/70 border-emerald-300' : 'bg-slate-50 border-slate-200'} flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-9 h-9 rounded-full ${part.isHost ? 'bg-amber-400 text-amber-950 font-black' : isMe ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-600 text-white font-bold'} text-xs font-black tracking-tighter flex items-center justify-center shrink-0 shadow-2xs">
                 ${(part.name || '').slice(0, 2)}
               </div>
               <div class="min-w-0">
-                <div class="flex items-center gap-1.5 flex-wrap">
-                  <span class="font-extrabold text-slate-800 text-xs">${part.name}</span>
-                  <span class="px-2 py-0.2 rounded-md font-bold text-[10px] ${part.isHost ? 'bg-amber-200 text-amber-900' : 'bg-forest-100 text-forest-700'}">
+                <div class="flex items-center gap-2 flex-wrap">
+                  <span class="font-extrabold text-slate-800 text-sm sm:text-base">${part.name}</span>
+                  <span class="px-2.5 py-0.5 rounded-md font-bold text-xs ${part.isHost ? 'bg-amber-200 text-amber-900' : 'bg-forest-100 text-forest-700'}">
                     ${part.role}
                   </span>
-                  ${isMe ? '<span class="px-1.5 py-0.2 rounded bg-emerald-600 text-white text-[9px] font-bold">나</span>' : ''}
+                  ${isMe ? '<span class="px-2 py-0.5 rounded bg-emerald-600 text-white text-[10px] font-extrabold">나</span>' : ''}
                 </div>
-                <div class="text-[11px] text-slate-600 font-medium mt-0.5">
+                <div class="text-xs sm:text-sm text-slate-600 font-medium mt-1">
                   👶 아이: <span class="font-bold text-slate-800">${part.kid}</span>
                 </div>
-                <div class="mt-2 p-2.5 rounded-xl ${part.isHost ? 'bg-amber-100/70 border border-amber-200/90' : isMe ? 'bg-emerald-100/70 border border-emerald-200' : 'bg-white border border-slate-200'} text-xs text-slate-700 leading-relaxed shadow-2xs">
+                <div class="mt-2.5 p-3 rounded-xl ${part.isHost ? 'bg-amber-100/70 border border-amber-200/90' : isMe ? 'bg-emerald-100/70 border border-emerald-200' : 'bg-white border border-slate-200'} text-sm text-slate-700 leading-relaxed shadow-2xs">
                   <div class="flex items-center justify-between mb-1">
-                    <span class="font-extrabold ${part.isHost ? 'text-amber-950' : 'text-forest-700'} text-[11px]">
+                    <span class="font-bold ${part.isHost ? 'text-amber-950' : 'text-forest-700'} text-xs">
                       ${part.isHost ? '💬 호스트 안내글:' : (camp.bookingType === '일정등록' ? '🏕️ 예약한 사이트명:' : '💬 일행에게 하고싶은 말:')}
                     </span>
                     ${isMe ? `
-                      <button onclick="toggleEditMyComment(${idx})" class="text-[10px] text-forest-700 hover:text-forest-900 font-bold underline flex items-center gap-0.5 cursor-pointer" title="내가 남긴 한마디 수정하기">
+                      <button onclick="toggleEditMyComment(${idx})" class="text-xs text-forest-700 hover:text-forest-900 font-bold underline flex items-center gap-0.5 cursor-pointer" title="내가 남긴 한마디 수정하기">
                         <span>✏️</span> 수정
                       </button>
                     ` : ''}
                   </div>
-                  <div id="commentDisplay_${idx}">
+                  <div id="commentDisplay_${idx}" class="text-sm font-medium">
                     "${part.message || (camp.bookingType === '일정등록' ? '예약 완료' : '함께 캠핑할 생각에 설레네요!')}"
                   </div>
                   <!-- Inline Edit Form for My Comment -->
-                  <div id="commentEditBox_${idx}" class="hidden mt-1.5 space-y-1.5">
-                    <input type="text" id="commentInput_${idx}" value="${part.message || ''}" placeholder="${camp.bookingType === '일정등록' ? '예약한 사이트명을 적어주세요 (예: B구역 데크 3번)' : '일행에게 하고싶은 말을 수정해주세요'}" class="w-full px-3 py-1.5 rounded-lg border border-forest-400 text-xs bg-white focus:outline-none focus:ring-1 focus:ring-forest-500">
-                    <div class="flex justify-end gap-1.5">
-                      <button onclick="cancelEditMyComment(${idx})" class="px-2.5 py-1 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 text-[10px] font-bold">취소</button>
-                      <button onclick="saveMyComment(${idx})" class="px-3 py-1 rounded-md bg-forest-600 hover:bg-forest-700 text-white text-[10px] font-bold shadow-2xs">저장</button>
+                  <div id="commentEditBox_${idx}" class="hidden mt-2 space-y-2">
+                    <input type="text" id="commentInput_${idx}" value="${part.message || ''}" placeholder="${camp.bookingType === '일정등록' ? '예약한 사이트명을 적어주세요 (예: B구역 데크 3번)' : '일행에게 하고싶은 말을 수정해주세요'}" class="w-full px-3.5 py-2 rounded-lg border border-forest-400 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-forest-500">
+                    <div class="flex justify-end gap-2">
+                      <button onclick="cancelEditMyComment(${idx})" class="px-3 py-1.5 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold cursor-pointer">취소</button>
+                      <button onclick="saveMyComment(${idx})" class="px-3.5 py-1.5 rounded-md bg-forest-600 hover:bg-forest-700 text-white text-xs font-bold shadow-2xs cursor-pointer">저장</button>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div class="shrink-0 text-right space-y-1">
-              <span class="text-[10px] font-bold ${part.isHost ? 'text-amber-800' : 'text-emerald-700'} bg-white px-2 py-0.5 rounded border border-slate-200 block">
+            <div class="shrink-0 text-right space-y-1.5">
+              <span class="text-xs font-bold ${part.isHost ? 'text-amber-800' : 'text-emerald-700'} bg-white px-2.5 py-1 rounded border border-slate-200 block">
                 착석완료 ✓
               </span>
               ${(isHost && isConfirmed && !part.isHost) ? `
-                <button type="button" onclick="openHostCancelParticipantModal(${idx})" class="mt-1 px-2 py-0.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-[10px] font-extrabold transition flex items-center gap-0.5 cursor-pointer shadow-2xs" title="호스트 권한으로 [${part.name}]님 참여 취소">
+                <button type="button" onclick="openHostCancelParticipantModal(${idx})" class="mt-1 px-2.5 py-1 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-extrabold transition flex items-center gap-1 cursor-pointer shadow-2xs" title="호스트 권한으로 [${part.name}]님 참여 취소">
                   <span>✕</span> 참여 취소
                 </button>
               ` : ''}
@@ -2737,17 +2745,17 @@ function loadUserProfile() {
         if (max <= 8) {
           for (let i = current; i < max; i++) {
             html += `
-              <div class="p-3 rounded-xl border border-dashed border-slate-300 bg-white/60 flex items-center justify-between opacity-80">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 font-bold text-xs flex items-center justify-center border border-dashed border-slate-300">
+              <div class="p-3.5 rounded-xl border border-dashed border-slate-300 bg-white/60 flex items-center justify-between opacity-80">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-full bg-slate-100 text-slate-400 font-bold text-sm flex items-center justify-center border border-dashed border-slate-300">
                     +
                   </div>
                   <div>
-                    <span class="font-bold text-slate-600 text-xs">동행 ${i}가족 (참여 대기중)</span>
-                    <span class="text-[10px] text-slate-400 block mt-0.5">새로운 참여 가족을 기다리고 있습니다</span>
+                    <span class="font-bold text-slate-700 text-sm">동행 ${i}가족 (참여 대기중)</span>
+                    <span class="text-xs text-slate-400 block mt-0.5">새로운 참여 가족을 기다리고 있습니다</span>
                   </div>
                 </div>
-                <span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+                <span class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded">
                   빈 의자
                 </span>
               </div>
@@ -2785,13 +2793,13 @@ function loadUserProfile() {
         html += `
           <div class="mt-4 pt-4 border-t border-slate-200">
             <div class="flex items-center justify-between mb-2.5">
-              <span class="font-extrabold text-xs text-slate-800 flex items-center gap-1.5">
+              <span class="font-extrabold text-sm sm:text-base text-slate-800 flex items-center gap-2">
                 <span>⏳</span> 대기 신청 가족 명단
-                <span class="px-2 py-0.5 rounded-full ${waitlist.length > 0 ? 'bg-amber-100 text-amber-900 font-black border border-amber-300' : 'bg-slate-100 text-slate-600 font-bold'} text-[10px]">
+                <span class="px-2.5 py-0.5 rounded-full ${waitlist.length > 0 ? 'bg-amber-100 text-amber-900 font-black border border-amber-300' : 'bg-slate-100 text-slate-600 font-bold'} text-xs">
                   ${waitlist.length} / ${maxWaitlist}가족
                 </span>
               </span>
-              <span class="text-[10px] text-slate-400">
+              <span class="text-xs text-slate-500 font-medium">
                 ${current >= max ? (waitlist.length < maxWaitlist ? '취소 시 순번대로 자동 승격' : '대기 정원 마감') : '정원 마감 시 대기 활성화'}
               </span>
             </div>
@@ -2799,48 +2807,48 @@ function loadUserProfile() {
 
         if (waitlist.length === 0) {
           html += `
-            <div class="p-3.5 rounded-xl border border-dashed border-slate-200 bg-slate-50/70 text-center text-[11px] text-slate-400">
+            <div class="p-4 rounded-xl border border-dashed border-slate-200 bg-slate-50/70 text-center text-xs sm:text-sm text-slate-500">
               현재 대기 중인 가족이 없습니다. (최대 ${maxWaitlist}가족 대기 가능)
             </div>
           `;
         } else {
-          html += `<div class="space-y-2">`;
+          html += `<div class="space-y-2.5">`;
           waitlist.forEach((w, wIdx) => {
             const isMeWaiting = w.name === myProfile.nickname;
             html += `
-              <div class="p-3 rounded-xl border ${isMeWaiting ? 'bg-amber-50/90 border-amber-300' : 'bg-slate-50 border-slate-200'} flex items-start justify-between gap-2.5">
-                <div class="flex items-start gap-2.5 min-w-0">
-                  <div class="w-8 h-8 rounded-full ${isMeWaiting ? 'bg-amber-500 text-white font-black' : 'bg-slate-300 text-slate-700 font-bold'} text-xs flex items-center justify-center shrink-0">
+              <div class="p-3.5 rounded-xl border ${isMeWaiting ? 'bg-amber-50/90 border-amber-300' : 'bg-slate-50 border-slate-200'} flex items-start justify-between gap-3">
+                <div class="flex items-start gap-3 min-w-0">
+                  <div class="w-9 h-9 rounded-full ${isMeWaiting ? 'bg-amber-500 text-white font-black' : 'bg-slate-300 text-slate-700 font-bold'} text-sm flex items-center justify-center shrink-0 shadow-2xs">
                     ${wIdx + 1}
                   </div>
                   <div class="min-w-0">
-                    <div class="flex items-center gap-1.5 flex-wrap">
-                      <span class="font-extrabold text-slate-800 text-xs">${w.name}</span>
-                      <span class="px-2 py-0.2 rounded-md font-bold text-[10px] bg-amber-100 text-amber-900 border border-amber-200">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="font-extrabold text-slate-800 text-sm sm:text-base">${w.name}</span>
+                      <span class="px-2.5 py-0.5 rounded-md font-bold text-xs bg-amber-100 text-amber-900 border border-amber-200">
                         대기 ${wIdx + 1}번
                       </span>
-                      ${isMeWaiting ? '<span class="px-1.5 py-0.2 rounded bg-amber-600 text-white text-[9px] font-bold">나</span>' : ''}
+                      ${isMeWaiting ? '<span class="px-2 py-0.5 rounded bg-amber-600 text-white text-[10px] font-extrabold">나</span>' : ''}
                     </div>
-                    <div class="text-[11px] text-slate-600 font-medium mt-0.5">
+                    <div class="text-xs sm:text-sm text-slate-600 font-medium mt-1">
                       👶 아이: <span class="font-bold text-slate-800">${w.kid}</span>
                     </div>
-                    <div class="mt-1.5 p-2 rounded-lg bg-white border border-slate-200 text-xs text-slate-700 shadow-2xs">
-                      <div class="flex items-center justify-between mb-0.5">
-                        <span class="font-bold text-amber-900 text-[10px]">💬 대기 신청 한마디:</span>
+                    <div class="mt-2 p-2.5 rounded-lg bg-white border border-slate-200 text-xs sm:text-sm text-slate-700 shadow-2xs leading-relaxed">
+                      <div class="flex items-center justify-between mb-1">
+                        <span class="font-bold text-amber-900 text-xs">💬 대기 신청 한마디:</span>
                         ${isMeWaiting ? `
-                          <button onclick="cancelWaitlistApplication(${camp.id})" class="text-[10px] text-red-500 hover:text-red-700 font-bold underline cursor-pointer">
+                          <button onclick="cancelWaitlistApplication(${camp.id})" class="text-xs text-red-600 hover:text-red-700 font-bold underline cursor-pointer">
                             대기 취소
                           </button>
                         ` : ''}
                       </div>
-                      <div class="text-[11px] text-slate-600">
+                      <div class="text-xs sm:text-sm text-slate-700">
                         "${w.message || '취소 발생 시 꼭 참여하고 싶어요!'}"
                       </div>
                     </div>
                   </div>
                 </div>
                 <div class="shrink-0 text-right">
-                  <span class="text-[10px] font-bold text-amber-800 bg-amber-100/80 px-2 py-0.5 rounded border border-amber-200">
+                  <span class="text-xs font-bold text-amber-800 bg-amber-100/80 px-2.5 py-1 rounded border border-amber-200">
                     대기 ${wIdx + 1}순위
                   </span>
                 </div>
@@ -3097,7 +3105,7 @@ function loadUserProfile() {
         // If I am the host, show Delete button! (Host cannot apply/cancel their own room)
         if (deleteBtn) {
           deleteBtn.classList.remove('hidden');
-          deleteBtn.className = "px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer";
+          deleteBtn.className = "px-4 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition flex items-center gap-1.5 cursor-pointer";
           deleteBtn.innerHTML = '<span>🗑️</span> 모집글 삭제하기';
           deleteBtn.onclick = () => openDeleteConfirmModal(false);
         }
@@ -3108,7 +3116,7 @@ function loadUserProfile() {
         if (isAdmin) {
           if (deleteBtn) {
             deleteBtn.classList.remove('hidden');
-            deleteBtn.className = "px-3.5 py-2 rounded-xl bg-red-800 hover:bg-red-900 text-white font-black text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer border border-red-950";
+            deleteBtn.className = "px-4 py-2.5 rounded-xl bg-red-800 hover:bg-red-900 text-white font-black text-sm shadow-md transition flex items-center gap-1.5 cursor-pointer border border-red-950";
             deleteBtn.innerHTML = '<span>🛡️</span> 관리자 강제삭제';
             deleteBtn.title = '카페 관리자(운영진) 권한으로 강제 삭제';
             deleteBtn.onclick = () => openDeleteConfirmModal(true);
@@ -3127,14 +3135,14 @@ function loadUserProfile() {
           if (cancelBtn) {
             cancelBtn.classList.remove('hidden');
             if (camp.reservationConfirmed) {
-              cancelBtn.className = "px-4 py-2 rounded-xl bg-slate-200 text-slate-500 border border-slate-300 font-bold text-xs flex items-center gap-1 cursor-not-allowed shadow-none";
+              cancelBtn.className = "px-4 py-2.5 rounded-xl bg-slate-200 text-slate-500 border border-slate-300 font-bold text-sm flex items-center gap-1 cursor-not-allowed shadow-none";
               cancelBtn.innerHTML = '<span>🔒</span> 예약확정 (취소 불가)';
               cancelBtn.title = '호스트가 캠핑장 예약을 확정한 모임이므로 참여를 취소할 수 없습니다.';
               cancelBtn.onclick = () => {
                 showToast('🔒 호스트가 예약을 확정한 모임입니다. 사이트 위약금 및 공백 방지를 위해 취소할 수 없습니다. 부득이한 경우 오픈채팅을 통해 호스트에게 먼저 문의해 주세요.');
               };
             } else {
-              cancelBtn.className = "px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs transition flex items-center gap-1 shadow-xs cursor-pointer";
+              cancelBtn.className = "px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-sm transition flex items-center gap-1 shadow-xs cursor-pointer";
               cancelBtn.innerHTML = '<span>✕</span> 동행 참여 취소하기';
               cancelBtn.title = '사정이 생겨 참여가 어려울 경우 동행 취소';
               cancelBtn.onclick = () => cancelCampApplication(camp.id);
@@ -3145,7 +3153,7 @@ function loadUserProfile() {
           applyBtn.classList.add('hidden');
           if (cancelBtn) {
             cancelBtn.classList.remove('hidden');
-            cancelBtn.className = "px-4 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-xs transition flex items-center gap-1 shadow-xs cursor-pointer";
+            cancelBtn.className = "px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-sm transition flex items-center gap-1 shadow-xs cursor-pointer";
             cancelBtn.innerHTML = `<span>✕</span> 대기 취소하기 (대기 ${myWaitIdx + 1}번)`;
             cancelBtn.onclick = () => cancelWaitlistApplication(camp.id);
           }
@@ -3153,7 +3161,7 @@ function loadUserProfile() {
           // Age mismatch for peer-matching post! Block participation & waitlist
           applyBtn.classList.remove('hidden');
           if (cancelBtn) cancelBtn.classList.add('hidden');
-          applyBtn.className = "px-4 py-2 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs cursor-not-allowed border border-slate-300";
+          applyBtn.className = "px-4 py-2.5 rounded-xl bg-slate-200 text-slate-500 font-bold text-sm cursor-not-allowed border border-slate-300";
           applyBtn.innerHTML = `<span>🚫</span> 또래 조건 불일치 (${minPeerYear.toString().slice(2)}~${maxPeerYear.toString().slice(2)}년생만 참여 가능)`;
           applyBtn.disabled = true;
           applyBtn.onclick = null;
@@ -3164,7 +3172,7 @@ function loadUserProfile() {
               // Waitlist open!
               applyBtn.classList.remove('hidden');
               if (cancelBtn) cancelBtn.classList.add('hidden');
-              applyBtn.className = "px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-extrabold shadow-md transition text-xs flex items-center gap-1.5 cursor-pointer";
+              applyBtn.className = "px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 active:scale-95 text-white font-extrabold shadow-md transition text-sm sm:text-base flex items-center gap-1.5 cursor-pointer";
               applyBtn.innerHTML = `<span>⏳</span> 대기 ${waitlist.length + 1}번 신청하기 (${waitlist.length}/${maxWaitlist}가족)`;
               applyBtn.disabled = false;
               applyBtn.onclick = submitWaitlistApplication;
@@ -3172,7 +3180,7 @@ function loadUserProfile() {
               // Waitlist also full!
               applyBtn.classList.remove('hidden');
               if (cancelBtn) cancelBtn.classList.add('hidden');
-              applyBtn.className = "px-5 py-2 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs cursor-not-allowed";
+              applyBtn.className = "px-5 py-2.5 rounded-xl bg-slate-200 text-slate-500 font-bold text-sm cursor-not-allowed";
               applyBtn.innerHTML = `<span>✕</span> 정원 및 대기 마감 (${waitlist.length}/${maxWaitlist}가족)`;
               applyBtn.disabled = true;
             }
@@ -3180,7 +3188,7 @@ function loadUserProfile() {
             // Schedule type
             applyBtn.classList.remove('hidden');
             if (cancelBtn) cancelBtn.classList.add('hidden');
-            applyBtn.className = "px-5 py-2 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs cursor-not-allowed";
+            applyBtn.className = "px-5 py-2.5 rounded-xl bg-slate-200 text-slate-500 font-bold text-sm cursor-not-allowed";
             applyBtn.innerHTML = `<span>✕</span> 모집 정원 마감`;
             applyBtn.disabled = true;
           }
@@ -3188,7 +3196,7 @@ function loadUserProfile() {
           // Regular open seat
           applyBtn.classList.remove('hidden');
           if (cancelBtn) cancelBtn.classList.add('hidden');
-          applyBtn.className = "px-5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 active:scale-95 text-white font-bold shadow-md transition text-xs flex items-center gap-1.5 cursor-pointer";
+          applyBtn.className = "px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 active:scale-95 text-white font-extrabold shadow-md transition text-sm sm:text-base flex items-center gap-1.5 cursor-pointer";
           applyBtn.innerHTML = `<span>🔥</span> 모닥불 옆에 착석하기`;
           applyBtn.disabled = false;
           applyBtn.onclick = submitApplication;
@@ -3658,7 +3666,7 @@ function loadUserProfile() {
     function showToast(message) {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      toast.className = "bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold px-4 py-3 rounded-xl shadow-lg border border-slate-700 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2";
+      toast.className = "bg-slate-900/95 backdrop-blur-md text-white text-sm font-semibold px-4.5 py-3.5 rounded-xl shadow-lg border border-slate-700 pointer-events-auto transition-all duration-300 transform translate-y-2 opacity-0 flex items-center gap-2";
       toast.innerHTML = `<span>💬</span><span>${message}</span>`;
 
       container.appendChild(toast);
