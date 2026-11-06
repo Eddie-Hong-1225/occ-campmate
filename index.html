@@ -173,7 +173,7 @@
             🎈 외동아이 캠핑친구 만들기 (OCC) 공식 서포트
           </span>
           <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug">
-            우리 아이 친구를 찾고,<br>함께 떠나는 신나는 가족 캠핑!
+            우리 아이에게 딱 맞는 또래 친구를 찾고,<br>함께 떠나는 신나는 가족 캠핑!
           </h1>
           <p class="mt-2 text-sm text-emerald-100 leading-relaxed">
             외동아이 친구들과 소중한 추억을 쌓으세요.
@@ -1401,7 +1401,7 @@
     // ==========================================
     let myProfile = {
       nickname: '00길동맘서울',
-      kidBirthYear: 2000,
+      kidBirthYear: 2018,
       kidGender: '남아',
       kidDesc: '외동아이 또래와 캠핑하는 것을 좋아해요',
       avatar: '길',
@@ -1519,6 +1519,16 @@ function loadUserProfile() {
       }
       if (typeof updateMatchTargetPreview === 'function') updateMatchTargetPreview();
       if (typeof updateMatchTitlePreview === 'function') updateMatchTitlePreview();
+
+      // Pre-fill Explore Tab Kid Age Filter with Profile Kid Birth Year (친구찾기 또래 ±2년 자동 매칭 기본값!)
+      const exploreKidAge = document.getElementById('kidAgeSelect');
+      if (exploreKidAge && myProfile.kidBirthYear) {
+        const yearStr = String(myProfile.kidBirthYear);
+        const hasOption = Array.from(exploreKidAge.options).some(opt => opt.value === yearStr);
+        if (hasOption) {
+          exploreKidAge.value = yearStr;
+        }
+      }
     }
 
     function openProfileModal() {
@@ -1882,9 +1892,16 @@ function loadUserProfile() {
       document.getElementById('searchInput').value = '';
       document.getElementById('onlyRecruitingCheck').checked = false;
       if (document.getElementById('myCampsOnlyCheck')) document.getElementById('myCampsOnlyCheck').checked = false;
-            document.getElementById('kidAgeSelect').value = 'all';
-                        document.getElementById('sortSelect').value = 'latest';
-          }
+      
+      const exploreKidAge = document.getElementById('kidAgeSelect');
+      if (exploreKidAge) {
+        const yearStr = String(myProfile.kidBirthYear);
+        const hasOption = Array.from(exploreKidAge.options).some(opt => opt.value === yearStr);
+        exploreKidAge.value = hasOption ? yearStr : 'all';
+      }
+      document.getElementById('sortSelect').value = 'latest';
+      applyFilters();
+    }
 
     // ==========================================
     // CAMPFIRE CIRCLE SVG GENERATOR (Dynamic Campers Around Fire)
