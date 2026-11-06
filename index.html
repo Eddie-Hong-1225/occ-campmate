@@ -134,19 +134,19 @@
         </button>
 
         <!-- Interactive Profile Chip (Click to Edit) -->
-        <button onclick="openProfileModal()" class="flex items-center gap-2 pl-2 border-l border-forest-600 text-left hover:opacity-90 transition group" title="내 카페 닉네임 및 아이 정보 설정/변경">
-          <div id="headerAvatar" class="w-8 h-8 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center shadow group-hover:scale-105 transition" aria-label="프로필">
-            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+        <button onclick="openProfileModal()" class="flex items-center gap-2 pl-2 border-l border-forest-600 text-left hover:opacity-90 transition group cursor-pointer" title="내 카페 닉네임 및 아이 정보 설정/변경">
+          <div id="headerAvatar" class="w-9 h-9 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center shadow group-hover:scale-105 transition" aria-label="프로필">
+            <svg class="w-4.5 h-4.5 fill-current" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
             </svg>
           </div>
           <div class="hidden sm:block text-left text-sm">
             <div class="font-bold text-white flex items-center gap-1.5">
-              <span id="headerNickname">18시원맘김포</span>
-              <span id="headerAdminBadge" class="px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[10px] shadow-2xs border border-red-400">🛡️관리자</span>
-              <span class="text-amber-300 text-xs font-bold bg-forest-800 px-2 py-0.5 rounded border border-forest-600">설정 ⚙️</span>
+              <span id="headerNickname">프로필 등록</span>
+              <span id="headerAdminBadge" class="hidden px-2 py-0.5 rounded-full bg-red-600 text-white font-black text-[10px] shadow-2xs border border-red-400">🛡️관리자</span>
+              <span id="headerSettingBadge" class="text-white text-xs font-bold bg-amber-500 px-2 py-0.5 rounded-full shadow-sm animate-pulse">등록 필요 ✍️</span>
             </div>
-            <div id="headerKidSummary" class="text-xs text-emerald-200/90 font-medium">아이: 18년생 남아</div>
+            <div id="headerKidSummary" class="text-xs text-emerald-200/90 font-medium">탭하여 닉네임 설정</div>
           </div>
         </button>
       </div>
@@ -217,7 +217,7 @@
 
             <!-- Only My Camps Toggle (호스트가 내가 올린 글/참여글 확인) -->
             <label class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 cursor-pointer hover:bg-amber-100 transition text-sm font-bold text-amber-900">
-              <input type="checkbox" id="myCampsOnlyCheck" onchange="applyFilters()" class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4">
+              <input type="checkbox" id="myCampsOnlyCheck" onchange="handleMyCampsOnlyToggle(this)" class="rounded text-amber-600 focus:ring-amber-500 w-4 h-4">
               <span>👑 내가 주최/참여한 모임</span>
             </label>
 
@@ -1682,13 +1682,36 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
     // USER PROFILE STORAGE (localStorage 기반 1회 저장)
     // ==========================================
     let myProfile = {
-      nickname: '00길동맘서울',
-      kidBirthYear: 2018,
+      nickname: '',
+      kidBirthYear: 2019,
       kidGender: '남아',
-      kidDesc: '외동아이 또래와 캠핑하는 것을 좋아해요',
-      avatar: '길',
+      kidDesc: '',
+      avatar: '?',
       isAdmin: false
     };
+
+    function isProfileRegistered() {
+      return Boolean(myProfile && myProfile.nickname && myProfile.nickname.trim().length > 0);
+    }
+
+    function checkProfileOrPrompt(customMessage = null) {
+      if (!isProfileRegistered()) {
+        showToast(customMessage || '⚠️ 먼저 카페 닉네임과 아이 정보를 등록해 주세요.');
+        openProfileModal();
+        return false;
+      }
+      return true;
+    }
+
+    function handleMyCampsOnlyToggle(checkbox) {
+      if (checkbox.checked && !isProfileRegistered()) {
+        showToast('⚠️ 내 모임을 확인하려면 먼저 프로필을 등록해 주세요.');
+        checkbox.checked = false;
+        openProfileModal();
+        return;
+      }
+      applyFilters();
+    }
 
         function updatePostTargetPreview() {
       const year = parseInt(document.getElementById('postKidBirthYear').value) || 2019;
@@ -1735,10 +1758,17 @@ function loadUserProfile() {
       try {
         const stored = localStorage.getItem('occ_campmate_profile');
         if (stored) {
-          myProfile = JSON.parse(stored);
+          const parsed = JSON.parse(stored);
+          if (parsed && typeof parsed.nickname === 'string') {
+            // Clear previous mock/placeholder dummy nicknames
+            if (parsed.nickname === '00길동맘서울') {
+              parsed.nickname = '';
+            }
+            myProfile = { ...myProfile, ...parsed };
+          }
         }
       } catch (e) {}
-      // Enforce admin permission strictly only for 18시원맘김포
+      // Enforce admin permission strictly only for registered admin nickname
       myProfile.isAdmin = isNicknameAdmin(myProfile.nickname);
       applyProfileToUI();
       syncMyProfileWithCamps();
@@ -1765,18 +1795,33 @@ function loadUserProfile() {
       const headerNick = document.getElementById('headerNickname');
       const headerAvatar = document.getElementById('headerAvatar');
       const headerKid = document.getElementById('headerKidSummary');
+      const headerBadge = document.getElementById('headerSettingBadge');
+      const headerAdminBadge = document.getElementById('headerAdminBadge');
 
-      if (headerNick) headerNick.textContent = myProfile.nickname;
+      const registered = isProfileRegistered();
 
-      const birth = myProfile.kidBirthYear || 2019;
-      if (headerKid) {
-        headerKid.textContent = `아이: ${birth.toString().slice(2)}년생 ${myProfile.kidGender}`;
+      if (registered) {
+        if (headerNick) headerNick.textContent = myProfile.nickname;
+        const birth = myProfile.kidBirthYear || 2019;
+        if (headerKid) {
+          headerKid.textContent = `아이: ${birth.toString().slice(2)}년생 ${myProfile.kidGender || '남아'}`;
+        }
+        if (headerBadge) {
+          headerBadge.textContent = '설정 ⚙️';
+          headerBadge.className = 'text-amber-300 text-xs font-bold bg-forest-800 px-2 py-0.5 rounded border border-forest-600';
+        }
+      } else {
+        if (headerNick) headerNick.textContent = '프로필 등록';
+        if (headerKid) headerKid.textContent = '탭하여 닉네임 설정';
+        if (headerBadge) {
+          headerBadge.textContent = '등록 필요 ✍️';
+          headerBadge.className = 'text-white text-xs font-bold bg-amber-500 px-2 py-0.5 rounded-full shadow-sm animate-pulse';
+        }
       }
 
       // Admin Badge in Header
-      const headerAdminBadge = document.getElementById('headerAdminBadge');
       if (headerAdminBadge) {
-        if (myProfile.isAdmin) {
+        if (registered && myProfile.isAdmin) {
           headerAdminBadge.classList.remove('hidden');
         } else {
           headerAdminBadge.classList.add('hidden');
@@ -1813,11 +1858,15 @@ function loadUserProfile() {
     }
 
     function openProfileModal() {
-      document.getElementById('inputNickname').value = myProfile.nickname;
-      document.getElementById('inputKidYear').value = myProfile.kidBirthYear;
-      document.getElementById('inputKidGender').value = myProfile.kidGender;
+      document.getElementById('inputNickname').value = myProfile.nickname || '';
+      document.getElementById('inputKidYear').value = myProfile.kidBirthYear || 2019;
+      document.getElementById('inputKidGender').value = myProfile.kidGender || '남아';
       checkAdminNicknamePreview();
       document.getElementById('profileSetupModal').classList.remove('hidden');
+      setTimeout(() => {
+        const input = document.getElementById('inputNickname');
+        if (input) input.focus();
+      }, 100);
     }
 
     function checkAdminNicknamePreview() {
@@ -1839,9 +1888,14 @@ function loadUserProfile() {
 
     function handleSaveProfile(e) {
       e.preventDefault();
-      const nick = document.getElementById('inputNickname').value.trim() || '카페회원';
-      const year = parseInt(document.getElementById('inputKidYear').value) || 2018;
-      const gender = document.getElementById('inputKidGender').value;
+      const nick = document.getElementById('inputNickname').value.trim();
+      if (!nick) {
+        showToast('⚠️ 네이버 카페 닉네임을 입력해 주세요.');
+        document.getElementById('inputNickname').focus();
+        return;
+      }
+      const year = parseInt(document.getElementById('inputKidYear').value) || 2019;
+      const gender = document.getElementById('inputKidGender').value || '남아';
       const desc = `${year}년생 ${gender}`;
       const isAdmin = isNicknameAdmin(nick);
 
@@ -1856,6 +1910,10 @@ function loadUserProfile() {
 
       saveUserProfile(updated);
       closeProfileModal();
+
+      if (currentModalCamp) {
+        openCampDetail(currentModalCamp.id);
+      }
     }
 
 
@@ -1906,6 +1964,10 @@ function loadUserProfile() {
 
     function handleCreateMatch(e) {
       e.preventDefault();
+
+      if (!checkProfileOrPrompt('⚠️ 캠핑 일정을 등록하려면 먼저 카페 닉네임과 아이 정보를 등록해 주세요.')) {
+        return;
+      }
 
       const title = generateMatchAutoTitle();
       const kidBirthYear = parseInt(document.getElementById('matchKidBirthYear').value) || 2019;
@@ -2141,6 +2203,12 @@ function loadUserProfile() {
           }
         }
       });
+
+      // Prompt profile registration when navigating to create/match tabs
+      if ((tabId === 'match' || tabId === 'create') && !isProfileRegistered()) {
+        showToast('⚠️ 모임을 등록하려면 먼저 카페 닉네임과 아이 정보를 등록해 주세요.');
+        openProfileModal();
+      }
 
       // When switching to match tab, auto-sync profile kid birth year and gender
       if (tabId === 'match') {
@@ -2659,6 +2727,7 @@ function loadUserProfile() {
     // CAMP DETAIL MODAL LOGIC
     // ==========================================
     function quickJoinCamp(campId) {
+      if (!checkProfileOrPrompt('⚠️ 모닥불 옆에 착석하려면 먼저 프로필을 등록해 주세요.')) return;
       const camp = camps.find(c => c.id === campId);
       if (!camp) return;
       if (camp.currentMembers < camp.maxMembers) {
@@ -2892,6 +2961,7 @@ function loadUserProfile() {
     // PARTICIPANT COMMENT INLINE EDIT LOGIC (신청 한마디 수정)
     // ==========================================
     function toggleEditMyComment(idx) {
+      if (!checkProfileOrPrompt('⚠️ 프로필 등록 후 이용해 주세요.')) return;
       const display = document.getElementById(`commentDisplay_${idx}`);
       const editBox = document.getElementById(`commentEditBox_${idx}`);
       if (display && editBox) {
@@ -3240,6 +3310,9 @@ function loadUserProfile() {
     // ==========================================
     function submitWaitlistApplication() {
       if (!currentModalCamp) return;
+      if (!checkProfileOrPrompt('⚠️ 대기 신청을 하려면 먼저 카페 닉네임과 아이 정보를 등록해 주세요.')) {
+        return;
+      }
       if (!isPeerAgeEligible(currentModalCamp)) {
         const minY = (currentModalCamp.kidInfo.birthYear - 2).toString().slice(2);
         const maxY = (currentModalCamp.kidInfo.birthYear + 2).toString().slice(2);
@@ -3581,6 +3654,9 @@ function loadUserProfile() {
 
     function submitApplication() {
       if (!currentModalCamp) return;
+      if (!checkProfileOrPrompt('⚠️ 모닥불 옆에 착석하려면 먼저 카페 닉네임과 아이 정보를 등록해 주세요.')) {
+        return;
+      }
       if (!isPeerAgeEligible(currentModalCamp)) {
         const minY = (currentModalCamp.kidInfo.birthYear - 2).toString().slice(2);
         const maxY = (currentModalCamp.kidInfo.birthYear + 2).toString().slice(2);
@@ -3617,6 +3693,10 @@ function loadUserProfile() {
     // ==========================================
     function handleCreateCamp(e) {
       e.preventDefault();
+
+      if (!checkProfileOrPrompt('⚠️ 동행 모집글을 등록하려면 먼저 카페 닉네임과 아이 정보를 등록해 주세요.')) {
+        return;
+      }
 
       const title = document.getElementById('postTitle').value.trim();
       const kidBirthYear = parseInt(document.getElementById('postKidBirthYear').value) || 2019;
