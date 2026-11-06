@@ -623,6 +623,7 @@
         <div class="flex items-center gap-2">
           <span id="modalBookingBadge" class="text-xs font-bold px-2.5 py-1 rounded-md bg-forest-100 text-forest-700">캠핑 동행</span>
           <span id="modalDdayBadge" class="text-xs font-bold px-2 py-0.5 rounded-full bg-fire-100 text-fire-700">D-9</span>
+          <span id="modalReservationBadge" class="hidden text-xs font-extrabold px-2.5 py-1 rounded-md bg-amber-500 text-white flex items-center gap-1 shadow-2xs"><span>🔒</span> 예약확정</span>
         </div>
         <button onclick="closeCampModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-lg">
           ✕
@@ -652,9 +653,14 @@
             <span class="font-extrabold text-slate-800 text-xs flex items-center gap-1.5 whitespace-nowrap">
               <span>👥</span> 참여 가족 (<span id="modalParticipantCount" class="text-forest-600 font-extrabold">2/3가족</span>)
             </span>
-            <span id="modalHostBadgeStatus" class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 shrink-0">
-              호스트 주최 모임
-            </span>
+            <div class="flex items-center gap-1.5">
+              <button id="modalHostCancelPartBtn" type="button" onclick="openHostCancelParticipantModal()" class="hidden px-2 py-0.5 rounded-md bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-[10px] font-extrabold transition flex items-center gap-1 cursor-pointer shadow-2xs" title="예약확정 상태에서 참여자를 선택하여 취소 처리">
+                <span>✕</span> 참여자 취소 관리
+              </button>
+              <span id="modalHostBadgeStatus" class="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200 shrink-0">
+                호스트 주최 모임
+              </span>
+            </div>
           </div>
           <!-- Dynamic list of attendee family cards -->
           <div id="modalParticipantsList" class="space-y-2"></div>
@@ -700,13 +706,21 @@
 
         <!-- Booking Notice (Clean Single Box) -->
         <div class="bg-emerald-50/70 border border-emerald-200 rounded-xl p-3.5">
-          <span class="font-bold text-emerald-900 flex items-center gap-1.5">
-            <span id="modalBookingTypeIcon">🎪</span>
-            <span id="modalBookingTypeTitle">예약 방식: 취합예약</span>
-          </span>
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-emerald-900 flex items-center gap-1.5">
+              <span id="modalBookingTypeIcon">🎪</span>
+              <span id="modalBookingTypeTitle">예약 방식: 취합예약</span>
+            </span>
+            <span id="modalReservationNoticeBadge" class="hidden text-[11px] font-extrabold px-2 py-0.5 rounded bg-amber-500 text-white flex items-center gap-1 shadow-2xs">
+              <span>🔒</span> 예약확정됨
+            </span>
+          </div>
           <p id="modalBookingNote" class="mt-1 text-[11px] text-emerald-800 leading-relaxed">
             호스트가 사이트 예약을 완료하여 참여자는 몸과 장비만 챙겨오시면 됩니다. 사이트비는 1/N 정산에 포함됩니다.
           </p>
+          <div id="modalReservationWarning" class="hidden mt-2 p-2 rounded-lg bg-amber-100/90 border border-amber-300 text-[11px] text-amber-950 font-semibold flex items-center gap-1.5">
+            <span>🔒</span> 호스트가 캠핑장 예약을 최종 확정했습니다. 위약금 및 사이트 공백 방지를 위해 참여 취소가 제한됩니다.
+          </div>
         </div>
 
         <!-- Plan Description -->
@@ -795,6 +809,9 @@
           <button id="modalCafeShareBtn" onclick="openCafeShareModal()" class="hidden px-3.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="호스트 전용 네이버 카페 공유 양식 복사">
             <span>📋</span> 카페 글양식 복사
           </button>
+          <button id="modalConfirmReservationBtn" onclick="openReservationConfirmModal()" class="hidden px-3.5 py-2 rounded-xl font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer" title="캠핑장 예약 확정 설정">
+            <span>🔒</span> 예약확정 하기
+          </button>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="closeCampModal()" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 text-xs">
@@ -836,6 +853,79 @@
         </button>
         <button id="deleteConfirmBtn" onclick="confirmDeleteCamp()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition">
           네, 삭제합니다
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: RESERVATION CONFIRMATION MODAL (호스트 예약확정 설정) -->
+  <!-- ============================================== -->
+  <div id="reservationConfirmModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+      <div id="reservationModalHeader" class="flex items-center gap-2.5 text-amber-600 font-extrabold text-sm">
+        <span id="reservationModalIcon" class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-base">🔒</span>
+        <span id="reservationModalTitle">캠핑장 예약을 확정할까요?</span>
+      </div>
+      <p id="reservationModalDesc" class="text-xs text-slate-600 leading-relaxed">
+        캠핑장 사이트 예약을 최종 확정합니다.<br>
+        <span class="text-amber-700 font-semibold">* 예약확정 후에는 사이트 위약금 및 공백 방지를 위해 참여자들의 동행 취소가 차단됩니다.</span>
+      </p>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeReservationConfirmModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+          취소
+        </button>
+        <button id="reservationConfirmActionBtn" onclick="executeToggleReservationConfirm()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition cursor-pointer">
+          네, 예약확정합니다
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: HOST CANCEL PARTICIPANT (호스트 참여자 취소 관리) -->
+  <!-- ============================================== -->
+  <div id="hostCancelParticipantModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-2.5 text-red-600 font-extrabold text-sm">
+        <span class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-base">✕</span>
+        <span>참여자 동행 취소 (호스트 권한)</span>
+      </div>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        예약확정된 모임에서 부득이한 사정(노쇼, 긴급 사유 등)이 있는 참여자를 선택하여 취소 처리합니다.
+      </p>
+
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">취소할 참여 가족 선택</label>
+        <select id="hostCancelParticipantSelect" onchange="updateHostCancelParticipantPreview()" class="w-full px-3 py-2 rounded-xl border border-slate-300 bg-white text-xs font-bold text-slate-800 focus:ring-2 focus:ring-red-500 focus:outline-none">
+          <!-- Dynamic options populated from camp.participants -->
+        </select>
+      </div>
+
+      <!-- Selected Participant Info Preview -->
+      <div id="hostCancelParticipantPreview" class="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs space-y-1">
+        <div class="flex items-center justify-between">
+          <span id="previewPartName" class="font-extrabold text-slate-800">닉네임</span>
+          <span id="previewPartKid" class="text-slate-600 font-medium">아이 정보</span>
+        </div>
+        <div id="previewPartMsg" class="text-[11px] text-slate-500 italic">"한마디"</div>
+      </div>
+
+      <div class="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 space-y-0.5">
+        <div class="font-bold flex items-center gap-1">
+          <span>⚠️</span> 취소 처리 시 주의사항
+        </div>
+        <p class="text-[10px] text-amber-800 leading-snug">
+          취소된 가족은 모닥불 좌석에서 제외되며, 대기 신청 중인 가족이 있을 경우 <strong>대기 1순위 가족이 자동으로 모닥불 좌석으로 승격</strong>됩니다.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeHostCancelParticipantModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition cursor-pointer">
+          취소
+        </button>
+        <button onclick="executeHostCancelParticipant()" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition cursor-pointer flex items-center gap-1">
+          <span>✕</span> 선택한 참여자 취소하기
         </button>
       </div>
     </div>
@@ -1296,6 +1386,10 @@
 `;
       text += `🎟️ 예약 방식: ${camp.bookingType} ${camp.bookingNote ? `(${camp.bookingNote})` : ''}
 `;
+      if (camp.reservationConfirmed) {
+        text += `🔒 예약 상태: ✅ 캠핑장 예약확정 완료 (신청 후 취소 불가)
+`;
+      }
       if (camp.openChatUrl && camp.openChatUrl.trim()) {
         text += `💬 카톡 오픈채팅: ${camp.openChatUrl.trim()}
 `;
@@ -1374,6 +1468,7 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
           ['캠핑 장소', camp.location],
           ['캠핑 일정', `${camp.startDate} ~ ${camp.endDate}`],
           ['예약 방식', `${camp.bookingType} (${camp.bookingNote || ''})`],
+          ['예약 확정 여부', camp.reservationConfirmed ? '🔒 예약확정 완료 (참여자 취소 불가)' : '대기/진행 중 (미확정)'],
           ['오픈채팅 링크', camp.openChatUrl || '미개설'],
           ['참여 가족 현황', `${camp.currentMembers} / ${camp.maxMembers} 가족`],
           ['다운로드 일시', new Date().toLocaleString('ko-KR')],
@@ -1846,6 +1941,7 @@ function loadUserProfile() {
         description: desc,
         openChatUrl: openChatUrl,
         applied: true,
+        reservationConfirmed: false,
         waitlist: [],
         participants: [
           {
@@ -2396,6 +2492,11 @@ function loadUserProfile() {
                       ${camp.bookingType === '취합예약' ? '🎪 취합예약' : '🏕️ 개별예약'}
                     </span>
                   ` : ''}
+                  ${camp.reservationConfirmed ? `
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-amber-500 text-white shadow-2xs flex items-center gap-1" title="호스트가 캠핑장 예약을 확정했습니다">
+                      <span>🔒</span> 예약확정
+                    </span>
+                  ` : ''}
                   ${camp.openChatUrl ? `
                     <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold bg-[#FEE500]/70 text-[#191919] border border-[#FEE500] flex items-center gap-1" title="카카오톡 오픈채팅방 개설됨">
                       <span class="w-3.5 h-3.5 rounded bg-[#FEE500] text-[8px] font-black flex items-center justify-center">톡</span> 오픈채팅
@@ -2548,6 +2649,17 @@ function loadUserProfile() {
       countEl.textContent = `${current} / ${max}가족`;
 
       const isHost = camp.host.name === myProfile.nickname;
+      const isConfirmed = camp.reservationConfirmed === true;
+      const otherParticipants = (camp.participants || []).filter(p => !p.isHost);
+      const hostCancelPartBtn = document.getElementById('modalHostCancelPartBtn');
+      if (hostCancelPartBtn) {
+        if (isHost && isConfirmed && otherParticipants.length > 0) {
+          hostCancelPartBtn.classList.remove('hidden');
+        } else {
+          hostCancelPartBtn.classList.add('hidden');
+        }
+      }
+
       if (badgeStatus) {
         badgeStatus.textContent = isHost ? '👑 내가 주최한 모임 (호스트 관리중)' : '참여 가능한 모임';
         badgeStatus.className = isHost 
@@ -2605,10 +2717,15 @@ function loadUserProfile() {
               </div>
             </div>
             
-            <div class="shrink-0 text-right">
-              <span class="text-[10px] font-bold ${part.isHost ? 'text-amber-800' : 'text-emerald-700'} bg-white px-2 py-0.5 rounded border border-slate-200">
+            <div class="shrink-0 text-right space-y-1">
+              <span class="text-[10px] font-bold ${part.isHost ? 'text-amber-800' : 'text-emerald-700'} bg-white px-2 py-0.5 rounded border border-slate-200 block">
                 착석완료 ✓
               </span>
+              ${(isHost && isConfirmed && !part.isHost) ? `
+                <button type="button" onclick="openHostCancelParticipantModal(${idx})" class="mt-1 px-2 py-0.5 rounded-md bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-[10px] font-extrabold transition flex items-center gap-0.5 cursor-pointer shadow-2xs" title="호스트 권한으로 [${part.name}]님 참여 취소">
+                  <span>✕</span> 참여 취소
+                </button>
+              ` : ''}
             </div>
           </div>
         `;
@@ -2897,6 +3014,21 @@ function loadUserProfile() {
 
       const isHost = camp.host.name === myProfile.nickname;
 
+      // Reservation confirmation badges & notices
+      const modalResBadge = document.getElementById('modalReservationBadge');
+      const modalResNoticeBadge = document.getElementById('modalReservationNoticeBadge');
+      const modalResWarning = document.getElementById('modalReservationWarning');
+
+      if (camp.reservationConfirmed) {
+        if (modalResBadge) modalResBadge.classList.remove('hidden');
+        if (modalResNoticeBadge) modalResNoticeBadge.classList.remove('hidden');
+        if (modalResWarning) modalResWarning.classList.remove('hidden');
+      } else {
+        if (modalResBadge) modalResBadge.classList.add('hidden');
+        if (modalResNoticeBadge) modalResNoticeBadge.classList.add('hidden');
+        if (modalResWarning) modalResWarning.classList.add('hidden');
+      }
+
       // Reset Host Edit Plan & OpenChat Box
       const hostEditBox = document.getElementById('hostEditPlanBox');
       const hostEditBtn = document.getElementById('hostEditDescBtn');
@@ -2905,13 +3037,29 @@ function loadUserProfile() {
       if (document.getElementById('modalDescription')) document.getElementById('modalDescription').classList.remove('hidden');
 
       const cafeShareBtn = document.getElementById('modalCafeShareBtn');
+      const confirmReservationBtn = document.getElementById('modalConfirmReservationBtn');
 
       if (isHost) {
         if (hostEditBtn) hostEditBtn.classList.remove('hidden');
         if (cafeShareBtn) cafeShareBtn.classList.remove('hidden');
+        if (isRecruitmentPost && confirmReservationBtn) {
+          confirmReservationBtn.classList.remove('hidden');
+          if (camp.reservationConfirmed) {
+            confirmReservationBtn.className = "px-3.5 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer";
+            confirmReservationBtn.innerHTML = '<span>✅</span> 예약확정 완료 (해제하기)';
+            confirmReservationBtn.title = '현재 캠핑장 예약이 확정된 상태입니다. 클릭 시 확정을 해제할 수 있습니다.';
+          } else {
+            confirmReservationBtn.className = "px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer";
+            confirmReservationBtn.innerHTML = '<span>🔒</span> 예약확정 하기';
+            confirmReservationBtn.title = '캠핑장 사이트 예약을 확정하고 참여자 임의 취소를 차단합니다.';
+          }
+        } else if (confirmReservationBtn) {
+          confirmReservationBtn.classList.add('hidden');
+        }
       } else {
         if (hostEditBtn) hostEditBtn.classList.add('hidden');
         if (cafeShareBtn) cafeShareBtn.classList.add('hidden');
+        if (confirmReservationBtn) confirmReservationBtn.classList.add('hidden');
       }
 
       // KakaoTalk Open Chat Banner Setup
@@ -2978,9 +3126,19 @@ function loadUserProfile() {
           applyBtn.classList.add('hidden');
           if (cancelBtn) {
             cancelBtn.classList.remove('hidden');
-            cancelBtn.className = "px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs transition flex items-center gap-1 shadow-xs cursor-pointer";
-            cancelBtn.innerHTML = '<span>✕</span> 동행 참여 취소하기';
-            cancelBtn.onclick = () => cancelCampApplication(camp.id);
+            if (camp.reservationConfirmed) {
+              cancelBtn.className = "px-4 py-2 rounded-xl bg-slate-200 text-slate-500 border border-slate-300 font-bold text-xs flex items-center gap-1 cursor-not-allowed shadow-none";
+              cancelBtn.innerHTML = '<span>🔒</span> 예약확정 (취소 불가)';
+              cancelBtn.title = '호스트가 캠핑장 예약을 확정한 모임이므로 참여를 취소할 수 없습니다.';
+              cancelBtn.onclick = () => {
+                showToast('🔒 호스트가 예약을 확정한 모임입니다. 사이트 위약금 및 공백 방지를 위해 취소할 수 없습니다. 부득이한 경우 오픈채팅을 통해 호스트에게 먼저 문의해 주세요.');
+              };
+            } else {
+              cancelBtn.className = "px-4 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-xs transition flex items-center gap-1 shadow-xs cursor-pointer";
+              cancelBtn.innerHTML = '<span>✕</span> 동행 참여 취소하기';
+              cancelBtn.title = '사정이 생겨 참여가 어려울 경우 동행 취소';
+              cancelBtn.onclick = () => cancelCampApplication(camp.id);
+            }
           }
         } else if (isOnWaitlist) {
           // User is on waitlist!
@@ -3109,6 +3267,12 @@ function loadUserProfile() {
       const camp = targetCampId ? camps.find(c => c.id === targetCampId) : currentModalCamp;
       if (!camp) return;
 
+      // Hard guard: reservationConfirmed check
+      if (camp.reservationConfirmed) {
+        showToast('🔒 호스트가 예약을 확정한 모임이므로 참여를 취소할 수 없습니다. 오픈채팅으로 호스트에게 문의해 주세요.');
+        return;
+      }
+
       if (!camp.applied) {
         showToast('ℹ️ 참여 신청 내역이 없는 모임입니다.');
         return;
@@ -3146,6 +3310,183 @@ function loadUserProfile() {
       applyFilters();
     }
 
+
+    // ==========================================
+    // RESERVATION CONFIRMATION LOGIC (호스트 예약확정 토글)
+    // ==========================================
+    function openReservationConfirmModal() {
+      if (!currentModalCamp) return;
+      const modal = document.getElementById('reservationConfirmModal');
+      const headerEl = document.getElementById('reservationModalHeader');
+      const iconEl = document.getElementById('reservationModalIcon');
+      const titleEl = document.getElementById('reservationModalTitle');
+      const descEl = document.getElementById('reservationModalDesc');
+      const actionBtn = document.getElementById('reservationConfirmActionBtn');
+
+      if (currentModalCamp.reservationConfirmed) {
+        // Toggle OFF (해제하기)
+        iconEl.textContent = '🔓';
+        iconEl.className = 'w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-base';
+        headerEl.className = 'flex items-center gap-2.5 text-slate-800 font-extrabold text-sm';
+        titleEl.textContent = '예약확정을 해제할까요?';
+        descEl.innerHTML = '예약확정 상태를 해제하여 미확정 상태로 되돌립니다.<br><span class="text-slate-500 font-semibold">* 해제 시 참여자들이 다시 자율적으로 동행 취소를 할 수 있게 됩니다.</span>';
+        actionBtn.textContent = '확정 해제하기';
+        actionBtn.className = 'px-4 py-2 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold text-xs shadow-sm transition cursor-pointer';
+      } else {
+        // Toggle ON (확정하기)
+        iconEl.textContent = '🔒';
+        iconEl.className = 'w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-base';
+        headerEl.className = 'flex items-center gap-2.5 text-amber-600 font-extrabold text-sm';
+        titleEl.textContent = '캠핑장 예약을 확정할까요?';
+        descEl.innerHTML = '캠핑장 사이트 예약을 최종 확정합니다.<br><span class="text-amber-700 font-semibold">* 예약확정 후에는 사이트 위약금 및 공백 방지를 위해 참여자들의 동행 취소가 차단됩니다.</span>';
+        actionBtn.textContent = '네, 예약확정합니다';
+        actionBtn.className = 'px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition cursor-pointer';
+      }
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeReservationConfirmModal() {
+      const modal = document.getElementById('reservationConfirmModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function executeToggleReservationConfirm() {
+      if (!currentModalCamp) return;
+      currentModalCamp.reservationConfirmed = !currentModalCamp.reservationConfirmed;
+
+      const isConfirmed = currentModalCamp.reservationConfirmed;
+      await saveCampToCloud(currentModalCamp);
+      closeReservationConfirmModal();
+
+      if (isConfirmed) {
+        showToast('🔒 캠핑장 예약이 확정되었습니다! 참여자의 임의 취소가 방지됩니다.');
+      } else {
+        showToast('🔓 캠핑장 예약확정이 해제되었습니다.');
+      }
+
+      // Re-render modal and cards
+      openCampDetail(currentModalCamp.id);
+      applyFilters();
+    }
+
+    // ==========================================
+    // HOST CANCEL PARTICIPANT LOGIC (호스트 참여자 취소 관리)
+    // ==========================================
+    function openHostCancelParticipantModal(targetIndex = null) {
+      if (!currentModalCamp || !currentModalCamp.participants) return;
+      
+      const modal = document.getElementById('hostCancelParticipantModal');
+      const select = document.getElementById('hostCancelParticipantSelect');
+      if (!modal || !select) return;
+
+      // Filter eligible participants (exclude host)
+      const nonHostParticipants = [];
+      currentModalCamp.participants.forEach((part, idx) => {
+        if (!part.isHost) {
+          nonHostParticipants.push({ part, idx });
+        }
+      });
+
+      if (nonHostParticipants.length === 0) {
+        showToast('ℹ️ 취소할 수 있는 동행 참여 가족이 없습니다.');
+        return;
+      }
+
+      // Populate select options
+      select.innerHTML = nonHostParticipants.map(({ part, idx }) => `
+        <option value="${idx}">
+          [${part.role || `동행 ${idx}가족`}] ${part.name} (${part.kid || '아이 정보'})
+        </option>
+      `).join('');
+
+      // If targetIndex is provided and matches a valid non-host participant, select it
+      if (targetIndex !== null && currentModalCamp.participants[targetIndex] && !currentModalCamp.participants[targetIndex].isHost) {
+        select.value = targetIndex.toString();
+      } else {
+        select.value = nonHostParticipants[0].idx.toString();
+      }
+
+      updateHostCancelParticipantPreview();
+      modal.classList.remove('hidden');
+    }
+
+    function closeHostCancelParticipantModal() {
+      const modal = document.getElementById('hostCancelParticipantModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function updateHostCancelParticipantPreview() {
+      if (!currentModalCamp || !currentModalCamp.participants) return;
+      const select = document.getElementById('hostCancelParticipantSelect');
+      const nameEl = document.getElementById('previewPartName');
+      const kidEl = document.getElementById('previewPartKid');
+      const msgEl = document.getElementById('previewPartMsg');
+      if (!select || !nameEl || !kidEl || !msgEl) return;
+
+      const idx = parseInt(select.value);
+      const part = currentModalCamp.participants[idx];
+      if (!part) return;
+
+      nameEl.textContent = `${part.name} (${part.role || `동행 ${idx}가족`})`;
+      kidEl.textContent = `👶 ${part.kid || '아이 정보'}`;
+      msgEl.textContent = `"${part.message || '즐겁게 함께해요!'}"`;
+    }
+
+    async function executeHostCancelParticipant() {
+      if (!currentModalCamp || !currentModalCamp.participants) return;
+      const select = document.getElementById('hostCancelParticipantSelect');
+      if (!select) return;
+
+      const targetIdx = parseInt(select.value);
+      if (isNaN(targetIdx) || targetIdx < 0 || targetIdx >= currentModalCamp.participants.length) {
+        showToast('⚠️ 유효하지 않은 참여자입니다.');
+        return;
+      }
+
+      const canceledPart = currentModalCamp.participants[targetIdx];
+      if (!canceledPart || canceledPart.isHost) {
+        showToast('⚠️ 호스트(주최자)는 취소할 수 없습니다.');
+        return;
+      }
+
+      // Remove from participants
+      currentModalCamp.participants.splice(targetIdx, 1);
+
+      // Re-index roles for remaining non-host participants
+      currentModalCamp.participants.forEach((p, i) => {
+        if (!p.isHost) {
+          p.role = `동행 ${i}가족`;
+        }
+      });
+
+      // If the canceled person happens to be current user
+      if (canceledPart.name === myProfile.nickname) {
+        currentModalCamp.applied = false;
+      }
+
+      // Auto-promote waitlist if someone is waiting
+      if (currentModalCamp.waitlist && currentModalCamp.waitlist.length > 0) {
+        const promoted = currentModalCamp.waitlist.shift();
+        promoted.role = `동행 ${currentModalCamp.participants.length}가족`;
+        promoted.isHost = false;
+        currentModalCamp.participants.push(promoted);
+
+        if (promoted.name === myProfile.nickname) {
+          currentModalCamp.applied = true;
+        }
+
+        showToast(`👋 [${canceledPart.name}]님의 참여가 취소되었습니다. 대기 1번이던 [${promoted.name}]님 가족이 모닥불 좌석으로 자동 승격되었습니다! 🎉`);
+      } else {
+        currentModalCamp.currentMembers = Math.max(1, currentModalCamp.participants.length);
+        showToast(`👋 [${canceledPart.name}]님의 모임 참여가 취소되었습니다. 모닥불 빈자리가 다시 확보되었습니다.`);
+      }
+
+      await saveCampToCloud(currentModalCamp);
+      closeHostCancelParticipantModal();
+      openCampDetail(currentModalCamp.id);
+      applyFilters();
+    }
 
     // ==========================================
     // DELETE CAMP LOGIC (호스트 삭제 및 관리자 강제 삭제)
