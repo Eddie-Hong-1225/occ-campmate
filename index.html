@@ -457,6 +457,20 @@
             </p>
           </div>
 
+          <!-- Host Management Password (모집글 관리 비밀번호) -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/90 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                <span>🔐</span> 모집글 관리 비밀번호 <span class="text-red-500">*</span>
+              </label>
+              <span class="text-xs text-slate-500 font-medium">수정·삭제·예약확정 시 확인</span>
+            </div>
+            <input type="password" id="postPassword" required minlength="4" placeholder="비밀번호 4자리 이상 입력 (예: 1234)" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none bg-white text-sm text-slate-800">
+            <p class="text-xs text-slate-500 leading-relaxed">
+              💡 호스트 전용 비밀번호입니다. 추후 모임 계획 수정, 참여자 취소, 예약확정 및 글 삭제 시 본인 확인용으로 사용됩니다.
+            </p>
+          </div>
+
           <!-- Submit Buttons -->
           <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
             <button type="button" onclick="switchTab('explore')" class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition">
@@ -599,6 +613,20 @@
             <input type="url" id="matchOpenChatUrl" placeholder="https://open.kakao.com/o/..." class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-[#FEE500] focus:border-amber-400 focus:outline-none bg-white text-sm text-slate-800">
             <p class="text-[11px] text-slate-500">
               💡 카카오톡 앱에서 오픈채팅방 개설 후 <b>[링크 복사]</b>하여 붙여넣으시면, 모임 상세 팝업에 노란색 <b>[카카오톡 오픈채팅 참여하기]</b> 버튼이 자동 생성됩니다.
+            </p>
+          </div>
+
+          <!-- Host Management Password (일정등록 관리 비밀번호) -->
+          <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200/90 space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="block font-bold text-slate-800 text-sm flex items-center gap-1.5">
+                <span>🔐</span> 모임 관리 비밀번호 <span class="text-red-500">*</span>
+              </label>
+              <span class="text-xs text-slate-500 font-medium">수정·삭제 시 확인</span>
+            </div>
+            <input type="password" id="matchPassword" required minlength="4" placeholder="비밀번호 4자리 이상 입력 (예: 1234)" class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-forest-500 focus:outline-none bg-white text-sm text-slate-800">
+            <p class="text-xs text-slate-500 leading-relaxed">
+              💡 호스트 전용 비밀번호입니다. 추후 모임 계획 수정 및 글 삭제 시 본인 확인용으로 사용됩니다.
             </p>
           </div>
 
@@ -755,6 +783,12 @@
               <input type="url" id="hostEditOpenChatInput" placeholder="https://open.kakao.com/o/... (비워두면 숨김)" class="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-forest-500">
               <span class="text-[10px] text-slate-500 block mt-0.5">💡 오픈채팅방 링크를 수정하거나 새로 등록하실 수 있습니다. (비워두시면 오픈채팅 참여 버튼이 자동으로 숨겨집니다.)</span>
             </div>
+            <div id="hostEditPasswordBox">
+              <label class="block font-bold text-slate-800 text-xs mb-1 flex items-center gap-1">
+                <span>🔐</span> 관리 비밀번호 확인 <span class="text-red-500">*</span>
+              </label>
+              <input type="password" id="hostEditPasswordInput" placeholder="글 작성 시 설정한 비밀번호" class="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-forest-500">
+            </div>
             <div class="flex items-center justify-end gap-1.5 pt-1">
               <button type="button" onclick="cancelHostEditPlan()" class="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
                 취소
@@ -855,6 +889,13 @@
         내가 등록한 모집글과 모닥불 방이 완전히 삭제됩니다.<br>
         <span class="text-red-500 font-semibold">* 이미 착석한 참여 가족들의 명단도 함께 정리됩니다.</span>
       </p>
+      <!-- Password field for Host Delete (hidden for Admin Force Delete) -->
+      <div id="deletePasswordBox" class="space-y-1.5 pt-1">
+        <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
+          <span>🔐</span> 글 작성 시 설정한 비밀번호 <span class="text-red-500">*</span>
+        </label>
+        <input type="password" id="deletePasswordInput" placeholder="관리 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800">
+      </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button onclick="closeDeleteConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
           취소
@@ -879,6 +920,13 @@
         캠핑장 사이트 예약을 최종 확정합니다.<br>
         <span class="text-amber-700 font-semibold">* 예약확정 후에는 사이트 위약금 및 공백 방지를 위해 참여자들의 동행 취소가 차단됩니다.</span>
       </p>
+      <!-- Password field for Reservation Confirmation -->
+      <div id="reservationPasswordBox" class="space-y-1.5 pt-1">
+        <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
+          <span>🔐</span> 관리 비밀번호 확인 <span class="text-red-500">*</span>
+        </label>
+        <input type="password" id="reservationPasswordInput" placeholder="글 작성 시 설정한 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-sm text-slate-800">
+      </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button onclick="closeReservationConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
           취소
@@ -926,6 +974,14 @@
         <p class="text-xs text-amber-800 leading-relaxed">
           취소된 가족은 모닥불 좌석에서 제외되며, 대기 신청 중인 가족이 있을 경우 <strong>대기 1순위 가족이 자동으로 모닥불 좌석으로 승격</strong>됩니다.
         </p>
+      </div>
+
+      <!-- Password field for Host Cancel Participant -->
+      <div id="hostCancelPartPasswordBox" class="space-y-1.5 pt-1">
+        <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
+          <span>🔐</span> 관리 비밀번호 확인 <span class="text-red-500">*</span>
+        </label>
+        <input type="password" id="hostCancelPartPasswordInput" placeholder="글 작성 시 설정한 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800">
       </div>
 
       <div class="flex items-center justify-end gap-2.5 pt-2.5 border-t border-slate-100">
@@ -1982,9 +2038,17 @@ function loadUserProfile() {
       const startDate = document.getElementById('matchStartDate').value;
       const endDate = document.getElementById('matchEndDate').value;
       const maxMembers = 3; // 친구매칭 기본 기준 인원 3가족 (호스트 + 참여 2가족)
+      const password = document.getElementById('matchPassword')?.value.trim();
+      if (!password || password.length < 4) {
+        showToast('⚠️ 관리 비밀번호를 4자리 이상 입력해 주세요.');
+        document.getElementById('matchPassword')?.focus();
+        return;
+      }
+
       const desc = document.getElementById('matchDesc').value.trim() || '우리 외동아이와 즐겁게 함께할 친구 가족 구합니다!';
       const openChatUrl = document.getElementById('matchOpenChatUrl')?.value.trim() || '';
       const newCamp = {
+        password: password,
         id: Date.now(),
         title: title,
         location: location,
@@ -3001,12 +3065,23 @@ function loadUserProfile() {
       const editBox = document.getElementById('hostEditPlanBox');
       const descInput = document.getElementById('hostEditDescInput');
       const chatInput = document.getElementById('hostEditOpenChatInput');
+      const pwBox = document.getElementById('hostEditPasswordBox');
+      const pwInput = document.getElementById('hostEditPasswordInput');
+
+      if (pwInput) pwInput.value = '';
 
       if (descBox && editBox && descInput && chatInput) {
         descBox.classList.add('hidden');
         editBox.classList.remove('hidden');
         descInput.value = currentModalCamp.description || '';
         chatInput.value = currentModalCamp.openChatUrl || '';
+        if (pwBox) {
+          if (!currentModalCamp.password) {
+            pwBox.classList.add('hidden');
+          } else {
+            pwBox.classList.remove('hidden');
+          }
+        }
         descInput.focus();
       }
     }
@@ -3025,6 +3100,16 @@ function loadUserProfile() {
       const descInput = document.getElementById('hostEditDescInput');
       const chatInput = document.getElementById('hostEditOpenChatInput');
       if (!descInput || !chatInput) return;
+
+      // Password verification
+      if (currentModalCamp.password) {
+        const inputPw = document.getElementById('hostEditPasswordInput')?.value.trim();
+        if (!inputPw || inputPw !== currentModalCamp.password) {
+          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
+          document.getElementById('hostEditPasswordInput')?.focus();
+          return;
+        }
+      }
 
       const newDesc = descInput.value.trim() || '즐겁게 함께 캠핑할 메이트 구합니다!';
       const newChatUrl = chatInput.value.trim();
@@ -3427,6 +3512,18 @@ function loadUserProfile() {
       const titleEl = document.getElementById('reservationModalTitle');
       const descEl = document.getElementById('reservationModalDesc');
       const actionBtn = document.getElementById('reservationConfirmActionBtn');
+      const pwBox = document.getElementById('reservationPasswordBox');
+      const pwInput = document.getElementById('reservationPasswordInput');
+
+      if (pwInput) pwInput.value = '';
+      if (pwBox) {
+        if (!currentModalCamp.password) {
+          pwBox.classList.add('hidden');
+        } else {
+          pwBox.classList.remove('hidden');
+          setTimeout(() => pwInput?.focus(), 100);
+        }
+      }
 
       if (currentModalCamp.reservationConfirmed) {
         // Toggle OFF (해제하기)
@@ -3436,7 +3533,7 @@ function loadUserProfile() {
         titleEl.textContent = '예약확정을 해제할까요?';
         descEl.innerHTML = '예약확정 상태를 해제하여 미확정 상태로 되돌립니다.<br><span class="text-slate-500 font-semibold">* 해제 시 참여자들이 다시 자율적으로 동행 취소를 할 수 있게 됩니다.</span>';
         actionBtn.textContent = '확정 해제하기';
-        actionBtn.className = 'px-4 py-2 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold text-xs shadow-sm transition cursor-pointer';
+        actionBtn.className = 'px-4.5 py-2.5 rounded-xl bg-slate-600 hover:bg-slate-700 text-white font-bold text-sm shadow-sm transition cursor-pointer';
       } else {
         // Toggle ON (확정하기)
         iconEl.textContent = '🔒';
@@ -3445,7 +3542,7 @@ function loadUserProfile() {
         titleEl.textContent = '캠핑장 예약을 확정할까요?';
         descEl.innerHTML = '캠핑장 사이트 예약을 최종 확정합니다.<br><span class="text-amber-700 font-semibold">* 예약확정 후에는 사이트 위약금 및 공백 방지를 위해 참여자들의 동행 취소가 차단됩니다.</span>';
         actionBtn.textContent = '네, 예약확정합니다';
-        actionBtn.className = 'px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-sm transition cursor-pointer';
+        actionBtn.className = 'px-4.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-sm transition cursor-pointer';
       }
 
       modal.classList.remove('hidden');
@@ -3458,6 +3555,17 @@ function loadUserProfile() {
 
     async function executeToggleReservationConfirm() {
       if (!currentModalCamp) return;
+
+      // Password verification
+      if (currentModalCamp.password) {
+        const inputPw = document.getElementById('reservationPasswordInput')?.value.trim();
+        if (!inputPw || inputPw !== currentModalCamp.password) {
+          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
+          document.getElementById('reservationPasswordInput')?.focus();
+          return;
+        }
+      }
+
       currentModalCamp.reservationConfirmed = !currentModalCamp.reservationConfirmed;
 
       const isConfirmed = currentModalCamp.reservationConfirmed;
@@ -3512,6 +3620,17 @@ function loadUserProfile() {
         select.value = nonHostParticipants[0].idx.toString();
       }
 
+      const pwBox = document.getElementById('hostCancelPartPasswordBox');
+      const pwInput = document.getElementById('hostCancelPartPasswordInput');
+      if (pwInput) pwInput.value = '';
+      if (pwBox) {
+        if (!currentModalCamp.password) {
+          pwBox.classList.add('hidden');
+        } else {
+          pwBox.classList.remove('hidden');
+        }
+      }
+
       updateHostCancelParticipantPreview();
       modal.classList.remove('hidden');
     }
@@ -3553,6 +3672,16 @@ function loadUserProfile() {
       if (!canceledPart || canceledPart.isHost) {
         showToast('⚠️ 호스트(주최자)는 취소할 수 없습니다.');
         return;
+      }
+
+      // Password verification
+      if (currentModalCamp.password) {
+        const inputPw = document.getElementById('hostCancelPartPasswordInput')?.value.trim();
+        if (!inputPw || inputPw !== currentModalCamp.password) {
+          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
+          document.getElementById('hostCancelPartPasswordInput')?.focus();
+          return;
+        }
       }
 
       // Remove from participants
@@ -3605,6 +3734,10 @@ function loadUserProfile() {
       const titleEl = document.getElementById('deleteModalTitle');
       const descEl = document.getElementById('deleteModalDesc');
       const confirmBtn = document.getElementById('deleteConfirmBtn');
+      const pwBox = document.getElementById('deletePasswordBox');
+      const pwInput = document.getElementById('deletePasswordInput');
+
+      if (pwInput) pwInput.value = '';
 
       if (isAdmin) {
         if (iconEl) iconEl.textContent = '🛡️';
@@ -3612,15 +3745,24 @@ function loadUserProfile() {
         if (descEl) descEl.innerHTML = `카페 운영진(관리자) 권한으로 <b>[${currentModalCamp?.host?.name || '호스트'}]</b>님의 모집글을 강제 삭제합니다.<br><span class="text-red-600 font-bold">* 부적절한 홍보, 도배, 카페 규정 위반 글 삭제 목적입니다.</span>`;
         if (confirmBtn) {
           confirmBtn.textContent = '🛡️ 관리자 권한으로 강제 삭제';
-          confirmBtn.className = 'px-4 py-2 rounded-xl bg-red-800 hover:bg-red-900 text-white font-black text-xs shadow-md transition';
+          confirmBtn.className = 'px-4.5 py-2.5 rounded-xl bg-red-800 hover:bg-red-900 text-white font-black text-sm shadow-md transition';
         }
+        if (pwBox) pwBox.classList.add('hidden');
       } else {
         if (iconEl) iconEl.textContent = '🗑️';
         if (titleEl) titleEl.textContent = '모집글을 정말 삭제할까요?';
         if (descEl) descEl.innerHTML = `내가 등록한 모집글과 모닥불 방이 완전히 삭제됩니다.<br><span class="text-red-500 font-semibold">* 이미 착석한 참여 가족들의 명단도 함께 정리됩니다.</span>`;
         if (confirmBtn) {
           confirmBtn.textContent = '네, 삭제합니다';
-          confirmBtn.className = 'px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs shadow-sm transition';
+          confirmBtn.className = 'px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer';
+        }
+        if (pwBox) {
+          if (!currentModalCamp || !currentModalCamp.password) {
+            pwBox.classList.add('hidden');
+          } else {
+            pwBox.classList.remove('hidden');
+            setTimeout(() => pwInput?.focus(), 100);
+          }
         }
       }
       modal.classList.remove('hidden');
@@ -3636,6 +3778,16 @@ function loadUserProfile() {
       const targetId = currentModalCamp.id;
       const targetTitle = currentModalCamp.title || '모집글';
       const isForceAdmin = deleteModeIsAdmin;
+
+      // Password verification for host delete
+      if (!isForceAdmin && currentModalCamp.password) {
+        const inputPw = document.getElementById('deletePasswordInput')?.value.trim();
+        if (!inputPw || inputPw !== currentModalCamp.password) {
+          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
+          document.getElementById('deletePasswordInput')?.focus();
+          return;
+        }
+      }
       
       // Delete from camps array & Cloud DB
       camps = camps.filter(c => c.id !== targetId);
@@ -3711,10 +3863,18 @@ function loadUserProfile() {
       const startDate = document.getElementById('postStartDate').value;
       const endDate = document.getElementById('postEndDate').value;
       const maxMembers = Math.min(50, Math.max(2, parseInt(document.getElementById('postMaxMembers').value) || 4));
+      const password = document.getElementById('postPassword')?.value.trim();
+      if (!password || password.length < 4) {
+        showToast('⚠️ 관리 비밀번호를 4자리 이상 입력해 주세요.');
+        document.getElementById('postPassword')?.focus();
+        return;
+      }
+
       const desc = document.getElementById('postDesc').value.trim() || '즐겁게 함께 캠핑할 메이트 구합니다!';
       const openChatUrl = document.getElementById('postOpenChatUrl')?.value.trim() || '';
 
       const newCamp = {
+        password: password,
         id: Date.now(),
         title: title,
         location: location,
