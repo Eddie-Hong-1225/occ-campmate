@@ -711,14 +711,38 @@
 
         <!-- Plan Description -->
         <div>
-          <span class="font-bold text-slate-700 block mb-1">상세 캠핑 계획</span>
+          <div class="flex items-center justify-between mb-1">
+            <span class="font-bold text-slate-700">상세 캠핑 계획</span>
+            <button type="button" id="hostEditDescBtn" onclick="toggleHostEditPlan()" class="hidden text-[11px] text-forest-700 hover:text-forest-900 font-bold underline flex items-center gap-1 cursor-pointer">
+              <span>✏️</span> 계획/오픈채팅 수정
+            </button>
+          </div>
           <div id="modalDescription" class="bg-slate-50 rounded-xl p-3.5 text-slate-600 leading-relaxed whitespace-pre-line border border-slate-200">
             소백산 삼가야영장 C구역 예약 완료했습니다.
             대형 쉘터와 화로대는 제가 가져가므로, 개인 침구와 의자만 챙겨오시면 됩니다. 저녁에는 소고기 바베큐와 따뜻한 어묵탕 끓여먹고 밤늦게까지 불멍할 예정입니다!
           </div>
+
+          <!-- Host Plan & OpenChat Inline Edit Box (Hidden by default, shown when host clicks edit) -->
+          <div id="hostEditPlanBox" class="hidden mt-2 p-3.5 rounded-xl bg-amber-50/80 border border-amber-300 space-y-2.5 animate-in fade-in duration-150">
+            <div>
+              <label class="block font-bold text-slate-800 text-[11px] mb-1">상세 캠핑 계획 내용</label>
+              <textarea id="hostEditDescInput" rows="4" placeholder="상세 캠핑 일정 및 준비 사항을 입력해주세요" class="w-full p-2.5 rounded-lg border border-amber-300 bg-white text-xs leading-relaxed focus:outline-none focus:ring-1 focus:ring-forest-500"></textarea>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-800 text-[11px] mb-1">카카오톡 오픈채팅방 링크</label>
+              <input type="url" id="hostEditOpenChatInput" placeholder="https://open.kakao.com/o/... (비워두면 숨김)" class="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white text-xs text-slate-800 focus:outline-none focus:ring-1 focus:ring-forest-500">
+              <span class="text-[10px] text-slate-500 block mt-0.5">💡 오픈채팅방 링크를 수정하거나 새로 등록하실 수 있습니다. (비워두시면 오픈채팅 참여 버튼이 자동으로 숨겨집니다.)</span>
+            </div>
+            <div class="flex items-center justify-end gap-1.5 pt-1">
+              <button type="button" onclick="cancelHostEditPlan()" class="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
+                취소
+              </button>
+              <button type="button" onclick="saveHostEditPlan()" class="px-4 py-1.5 rounded-lg bg-forest-600 hover:bg-forest-700 text-white text-xs font-bold shadow-sm transition">
+                저장 완료
+              </button>
+            </div>
+          </div>
         </div>
-
-
 
         <!-- KakaoTalk Open Chat Room Banner & Button -->
         <div id="modalOpenChatSection" class="hidden p-4 rounded-2xl bg-[#FEE500]/20 border border-[#FEE500] flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
@@ -728,6 +752,9 @@
               <div class="flex items-center gap-2">
                 <span class="text-xs font-black text-slate-900">카카오톡 오픈채팅방</span>
                 <span class="px-2 py-0.5 rounded-full bg-[#FEE500] text-[#191919] text-[10px] font-extrabold">개설완료</span>
+                <button type="button" id="hostEditChatBtn" onclick="toggleHostEditPlan()" class="hidden text-[10px] text-amber-900 hover:text-black font-extrabold underline ml-1 cursor-pointer">
+                  수정
+                </button>
               </div>
               <p class="text-[11px] text-slate-600 mt-0.5">
                 호스트와 참여 가족들이 모여있는 실시간 소통방입니다.
@@ -738,6 +765,17 @@
             <span>💬</span> 카카오톡 오픈채팅 참여하기
             <span class="text-[10px]">↗</span>
           </a>
+        </div>
+
+        <!-- Host Prompt to add open chat when not present -->
+        <div id="hostAddOpenChatNotice" class="hidden p-3 rounded-xl bg-amber-50/70 border border-dashed border-amber-300 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2 text-amber-900">
+            <span class="text-base">💬</span>
+            <span class="font-medium">카카오톡 오픈채팅방 링크가 아직 등록되지 않았습니다.</span>
+          </div>
+          <button type="button" onclick="toggleHostEditPlan()" class="px-2.5 py-1 rounded-lg bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold text-[11px] transition shrink-0 cursor-pointer">
+            + 링크 등록하기
+          </button>
         </div>
 
         <!-- Application Form -->
@@ -756,7 +794,7 @@
           <button onclick="downloadCampDetailExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="참여자 명단, 아이 정보, 장비 분담표를 엑셀 파일(.xlsx)로 저장">
             <span>📊</span> 엑셀 다운로드
           </button>
-          <button id="modalCafeShareBtn" onclick="openCafeShareModal()" class="px-3.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="네이버 카페에 올릴 수 있는 게시글 서식 복사">
+          <button id="modalCafeShareBtn" onclick="openCafeShareModal()" class="hidden px-3.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="호스트 전용 네이버 카페 공유 양식 복사">
             <span>📋</span> 카페 글양식 복사
           </button>
         </div>
@@ -2737,6 +2775,56 @@ function loadUserProfile() {
       showToast(currentModalCamp && currentModalCamp.bookingType === '일정등록' ? '🏕️ 예약한 사이트명이 수정되었습니다!' : '💬 일행에게 하고싶은 말이 수정되었습니다!');
     }
 
+    // ==========================================
+    // HOST EDIT PLAN & OPEN CHAT LOGIC (호스트 상세계획/오픈채팅 수정)
+    // ==========================================
+    function toggleHostEditPlan() {
+      if (!currentModalCamp) return;
+      const descBox = document.getElementById('modalDescription');
+      const editBox = document.getElementById('hostEditPlanBox');
+      const descInput = document.getElementById('hostEditDescInput');
+      const chatInput = document.getElementById('hostEditOpenChatInput');
+
+      if (descBox && editBox && descInput && chatInput) {
+        descBox.classList.add('hidden');
+        editBox.classList.remove('hidden');
+        descInput.value = currentModalCamp.description || '';
+        chatInput.value = currentModalCamp.openChatUrl || '';
+        descInput.focus();
+      }
+    }
+
+    function cancelHostEditPlan() {
+      const descBox = document.getElementById('modalDescription');
+      const editBox = document.getElementById('hostEditPlanBox');
+      if (descBox && editBox) {
+        descBox.classList.remove('hidden');
+        editBox.classList.add('hidden');
+      }
+    }
+
+    async function saveHostEditPlan() {
+      if (!currentModalCamp) return;
+      const descInput = document.getElementById('hostEditDescInput');
+      const chatInput = document.getElementById('hostEditOpenChatInput');
+      if (!descInput || !chatInput) return;
+
+      const newDesc = descInput.value.trim() || '즐겁게 함께 캠핑할 메이트 구합니다!';
+      const newChatUrl = chatInput.value.trim();
+
+      currentModalCamp.description = newDesc;
+      currentModalCamp.openChatUrl = newChatUrl;
+
+      // Save to Cloud DB and local storage
+      await saveCampToCloud(currentModalCamp);
+
+      // Re-render modal and camp cards
+      openCampDetail(currentModalCamp.id);
+      applyFilters();
+
+      showToast('🎉 상세 캠핑 계획 및 카카오톡 오픈채팅방 링크가 수정되었습니다!');
+    }
+
     // 또래 매칭 조건(±2년) 충족 여부 검증 헬퍼
     function isPeerAgeEligible(camp) {
       if (!camp || !camp.kidInfo) return true;
@@ -2809,6 +2897,28 @@ function loadUserProfile() {
 
                   document.getElementById('modalDescription').textContent = camp.description;
 
+      const isHost = camp.host.name === myProfile.nickname;
+
+      // Reset Host Edit Plan & OpenChat Box
+      const hostEditBox = document.getElementById('hostEditPlanBox');
+      const hostEditBtn = document.getElementById('hostEditDescBtn');
+      const hostAddOpenChatNotice = document.getElementById('hostAddOpenChatNotice');
+      const hostEditChatBtn = document.getElementById('hostEditChatBtn');
+      if (hostEditBox) hostEditBox.classList.add('hidden');
+      if (document.getElementById('modalDescription')) document.getElementById('modalDescription').classList.remove('hidden');
+
+      const cafeShareBtn = document.getElementById('modalCafeShareBtn');
+
+      if (isHost) {
+        if (hostEditBtn) hostEditBtn.classList.remove('hidden');
+        if (hostEditChatBtn) hostEditChatBtn.classList.remove('hidden');
+        if (cafeShareBtn) cafeShareBtn.classList.remove('hidden');
+      } else {
+        if (hostEditBtn) hostEditBtn.classList.add('hidden');
+        if (hostEditChatBtn) hostEditChatBtn.classList.add('hidden');
+        if (cafeShareBtn) cafeShareBtn.classList.add('hidden');
+      }
+
       // KakaoTalk Open Chat Banner Setup
       const openChatSection = document.getElementById('modalOpenChatSection');
       const openChatLink = document.getElementById('modalOpenChatLink');
@@ -2816,9 +2926,17 @@ function loadUserProfile() {
         if (camp.openChatUrl && camp.openChatUrl.trim()) {
           openChatSection.classList.remove('hidden');
           openChatLink.href = camp.openChatUrl.trim();
+          if (hostAddOpenChatNotice) hostAddOpenChatNotice.classList.add('hidden');
         } else {
           openChatSection.classList.add('hidden');
           openChatLink.href = '#';
+          if (hostAddOpenChatNotice) {
+            if (isHost) {
+              hostAddOpenChatNotice.classList.remove('hidden');
+            } else {
+              hostAddOpenChatNotice.classList.add('hidden');
+            }
+          }
         }
       }
 
@@ -2828,7 +2946,6 @@ function loadUserProfile() {
       const applyBtn = document.getElementById('modalApplyBtn');
       const cancelBtn = document.getElementById('modalCancelBtn');
       const deleteBtn = document.getElementById('modalDeleteBtn');
-      const isHost = camp.host.name === myProfile.nickname;
       const isAdmin = myProfile.isAdmin === true;
       const isOnWaitlist = waitlist.some(w => w.name === myProfile.nickname);
       const myWaitIdx = waitlist.findIndex(w => w.name === myProfile.nickname);
