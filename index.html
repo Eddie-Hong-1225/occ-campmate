@@ -2485,6 +2485,19 @@ function loadUserProfile() {
       showToast(currentModalCamp && currentModalCamp.bookingType === '일정등록' ? '🏕️ 예약한 사이트명이 수정되었습니다!' : '💬 일행에게 하고싶은 말이 수정되었습니다!');
     }
 
+    // 또래 매칭 조건(±2년) 충족 여부 검증 헬퍼
+    function isPeerAgeEligible(camp) {
+      if (!camp || !camp.kidInfo) return true;
+      // 연령 무관(applyPeerMatching === false)이면 누구나 참여 가능
+      if (camp.kidInfo.applyPeerMatching === false) return true;
+
+      const hostYear = parseInt(camp.kidInfo.birthYear);
+      const myYear = parseInt(myProfile.kidBirthYear);
+      if (isNaN(hostYear) || isNaN(myYear)) return false;
+
+      return Math.abs(hostYear - myYear) <= 2;
+    }
+
     function openCampDetail(campId) {
       const camp = camps.find(c => c.id === campId);
       if (!camp) return;
@@ -2592,6 +2605,10 @@ function loadUserProfile() {
           if (deleteBtn) deleteBtn.classList.add('hidden');
         }
 
+        const minPeerYear = camp.kidInfo.birthYear - 2;
+        const maxPeerYear = camp.kidInfo.birthYear + 2;
+        const isEligibleAge = isPeerAgeEligible(camp);
+
         if (camp.applied && !isOnWaitlist) {
           // Confirmed attendee
           applyBtn.classList.add('hidden');
@@ -2610,6 +2627,14 @@ function loadUserProfile() {
             cancelBtn.innerHTML = `<span>✕</span> 대기 취소하기 (대기 ${myWaitIdx + 1}번)`;
             cancelBtn.onclick = () => cancelWaitlistApplication(camp.id);
           }
+        } else if (!isEligibleAge) {
+          // Age mismatch for peer-matching post! Block participation & waitlist
+          applyBtn.classList.remove('hidden');
+          if (cancelBtn) cancelBtn.classList.add('hidden');
+          applyBtn.className = "px-4 py-2 rounded-xl bg-slate-200 text-slate-500 font-bold text-xs cursor-not-allowed border border-slate-300";
+          applyBtn.innerHTML = `<span>🚫</span> 또래 조건 불일치 (${minPeerYear.toString().slice(2)}~${maxPeerYear.toString().slice(2)}년생만 참여 가능)`;
+          applyBtn.disabled = true;
+          applyBtn.onclick = null;
         } else if (camp.currentMembers >= camp.maxMembers) {
           // 100% full!
           if (isRecruitmentPost) {
@@ -2661,6 +2686,12 @@ function loadUserProfile() {
     // ==========================================
     function submitWaitlistApplication() {
       if (!currentModalCamp) return;
+      if (!isPeerAgeEligible(currentModalCamp)) {
+        const minY = (currentModalCamp.kidInfo.birthYear - 2).toString().slice(2);
+        const maxY = (currentModalCamp.kidInfo.birthYear + 2).toString().slice(2);
+        showToast(`🚫 이 모임은 ${minY}~${maxY}년생 또래 전용 모임입니다. (내 아이: ${myProfile.kidBirthYear}년생)`);
+        return;
+      }
       if (!currentModalCamp.waitlist) currentModalCamp.waitlist = [];
 
       const maxWaitlist = currentModalCamp.maxMembers;
@@ -2813,6 +2844,12 @@ function loadUserProfile() {
 
     function submitApplication() {
       if (!currentModalCamp) return;
+      if (!isPeerAgeEligible(currentModalCamp)) {
+        const minY = (currentModalCamp.kidInfo.birthYear - 2).toString().slice(2);
+        const maxY = (currentModalCamp.kidInfo.birthYear + 2).toString().slice(2);
+        showToast(`🚫 이 모임은 ${minY}~${maxY}년생 또래 전용 모임입니다. (내 아이: ${myProfile.kidBirthYear}년생)`);
+        return;
+      }
       const comment = document.getElementById('applyComment').value.trim();
 
 
