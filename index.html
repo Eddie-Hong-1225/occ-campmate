@@ -1800,6 +1800,18 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       }
     }
 
+    // Device Token for Third-Party Impersonation Cancellation Protection
+    function getDeviceToken() {
+      let token = localStorage.getItem('occ_device_token');
+      if (!token) {
+        token = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 11);
+        try {
+          localStorage.setItem('occ_device_token', token);
+        } catch (e) {}
+      }
+      return token;
+    }
+
     function isProfileRegistered() {
       return Boolean(myProfile && myProfile.nickname && myProfile.nickname.trim().length > 0);
     }
@@ -2915,7 +2927,7 @@ function loadUserProfile() {
                     <span class="font-bold ${part.isHost ? 'text-amber-950' : 'text-forest-700'} text-xs">
                       ${part.isHost ? '💬 호스트 안내글:' : (camp.bookingType === '일정등록' ? '🏕️ 예약한 사이트명:' : '💬 일행에게 하고싶은 말:')}
                     </span>
-                    ${isMe ? `
+                    ${(isMe && (!part.deviceToken || part.deviceToken === getDeviceToken())) ? `
                       <button onclick="toggleEditMyComment(${idx})" class="text-xs text-forest-700 hover:text-forest-900 font-bold underline flex items-center gap-0.5 cursor-pointer" title="내가 남긴 한마디 수정하기">
                         <span>✏️</span> 수정
                       </button>
@@ -3080,6 +3092,12 @@ function loadUserProfile() {
     // ==========================================
     function toggleEditMyComment(idx) {
       if (!checkProfileOrPrompt('⚠️ 프로필 등록 후 이용해 주세요.')) return;
+      if (!currentModalCamp || !currentModalCamp.participants || !currentModalCamp.participants[idx]) return;
+      const targetPart = currentModalCamp.participants[idx];
+      if (targetPart.deviceToken && targetPart.deviceToken !== getDeviceToken()) {
+        showToast('🚫 다른 기기에서 작성된 신청 내용이므로 이 기기에서는 수정할 수 없습니다.');
+        return;
+      }
       const display = document.getElementById(`commentDisplay_${idx}`);
       const editBox = document.getElementById(`commentEditBox_${idx}`);
       if (display && editBox) {
@@ -3362,6 +3380,9 @@ function loadUserProfile() {
         const maxPeerYear = camp.kidInfo.birthYear + 2;
         const isEligibleAge = isPeerAgeEligible(camp);
 
+        const myPart = camp.participants ? camp.participants.find(p => p.name === myProfile.nickname) : null;
+        const isMyDevice = !myPart || !myPart.deviceToken || myPart.deviceToken === getDeviceToken();
+
         if (camp.applied && !isOnWaitlist) {
           // Confirmed attendee
           applyBtn.classList.add('hidden');
@@ -3374,6 +3395,14 @@ function loadUserProfile() {
               cancelBtn.onclick = () => {
                 showToast('🔒 호스트가 예약을 확정한 모임입니다. 사이트 위약금 및 공백 방지를 위해 취소할 수 없습니다. 부득이한 경우 오픈채팅을 통해 호스트에게 먼저 문의해 주세요.');
               };
+            } else if (!isMyDevice) {
+              // Block third-party impersonation cancellation from a different device!
+              cancelBtn.className = "px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 font-bold text-sm flex items-center gap-1 cursor-not-allowed shadow-none";
+              cancelBtn.innerHTML = '<span>🔒</span> 타 기기 신청 (취소 불가)';
+              cancelBtn.title = '다른 기기에서 신청된 내역이므로 이 기기에서는 취소할 수 없습니다.';
+              cancelBtn.onclick = () => {
+                showToast('🚫 이 모임은 다른 기기(스마트폰/PC)에서 신청된 내역입니다. 본인이 직접 신청하신 기기에서 취소하시거나, 호스트에게 오픈채팅으로 취소를 요청해 주세요.');
+              };
             } else {
               cancelBtn.className = "px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-sm transition flex items-center gap-1 shadow-xs cursor-pointer";
               cancelBtn.innerHTML = '<span>✕</span> 동행 참여 취소하기';
@@ -3383,12 +3412,23 @@ function loadUserProfile() {
           }
         } else if (isOnWaitlist) {
           // User is on waitlist!
+          const myWait = camp.waitlist ? camp.waitlist.find(w => w.name === myProfile.nickname) : null;
+          const isMyWaitDevice = !myWait || !myWait.deviceToken || myWait.deviceToken === getDeviceToken();
+
           applyBtn.classList.add('hidden');
           if (cancelBtn) {
             cancelBtn.classList.remove('hidden');
-            cancelBtn.className = "px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-sm transition flex items-center gap-1 shadow-xs cursor-pointer";
-            cancelBtn.innerHTML = `<span>✕</span> 대기 취소하기 (대기 ${myWaitIdx + 1}번)`;
-            cancelBtn.onclick = () => cancelWaitlistApplication(camp.id);
+            if (!isMyWaitDevice) {
+              cancelBtn.className = "px-4 py-2.5 rounded-xl bg-slate-100 text-slate-400 border border-slate-200 font-bold text-sm flex items-center gap-1 cursor-not-allowed shadow-none";
+              cancelBtn.innerHTML = `<span>🔒</span> 타 기기 대기 (취소 불가)`;
+              cancelBtn.onclick = () => {
+                showToast('🚫 다른 기기에서 대기 신청된 내역입니다. 직접 신청하신 스마트폰에서 취소해 주세요.');
+              };
+            } else {
+              cancelBtn.className = "px-4 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-300 font-bold text-sm transition flex items-center gap-1 shadow-xs cursor-pointer";
+              cancelBtn.innerHTML = `<span>✕</span> 대기 취소하기 (대기 ${myWaitIdx + 1}번)`;
+              cancelBtn.onclick = () => cancelWaitlistApplication(camp.id);
+            }
           }
         } else if (!isEligibleAge) {
           // Age mismatch for peer-matching post! Block participation & waitlist
@@ -3483,6 +3523,7 @@ function loadUserProfile() {
         kid: `${myProfile.kidBirthYear}년생 ${myProfile.kidGender}`,
         message: comment || '취소 발생 시 꼭 참여하고 싶어요!',
         waitOrder: waitOrder,
+        deviceToken: getDeviceToken(),
         registeredAt: new Date().toISOString()
       });
 
@@ -3496,6 +3537,12 @@ function loadUserProfile() {
     function cancelWaitlistApplication(targetCampId) {
       const camp = targetCampId ? camps.find(c => c.id === targetCampId) : currentModalCamp;
       if (!camp || !camp.waitlist) return;
+
+      const myWait = camp.waitlist.find(w => w.name === myProfile.nickname);
+      if (myWait && myWait.deviceToken && myWait.deviceToken !== getDeviceToken()) {
+        showToast('🚫 다른 기기에서 대기 신청된 내역이므로 이 기기에서는 취소할 수 없습니다.');
+        return;
+      }
 
       camp.waitlist = camp.waitlist.filter(w => w.name !== myProfile.nickname);
       saveCampToCloud(camp);
@@ -3514,6 +3561,13 @@ function loadUserProfile() {
       // Hard guard: reservationConfirmed check
       if (camp.reservationConfirmed) {
         showToast('🔒 호스트가 예약을 확정한 모임이므로 참여를 취소할 수 없습니다. 오픈채팅으로 호스트에게 문의해 주세요.');
+        return;
+      }
+
+      // Hard guard: Device token verification to block third-party impersonation
+      const myPart = camp.participants ? camp.participants.find(p => p.name === myProfile.nickname) : null;
+      if (myPart && myPart.deviceToken && myPart.deviceToken !== getDeviceToken()) {
+        showToast('🚫 이 모임은 다른 기기에서 신청된 내역입니다. 본인이 직접 신청하신 스마트폰에서 취소하시거나, 호스트에게 문의해 주세요.');
         return;
       }
 
@@ -3877,14 +3931,16 @@ function loadUserProfile() {
       currentModalCamp.currentMembers += 1;
       const targetId = currentModalCamp.id;
 
-      // Add myProfile to camp.participants
+      // Add myProfile to camp.participants with deviceToken protection
       if (!currentModalCamp.participants) currentModalCamp.participants = [];
       currentModalCamp.participants.push({
         name: myProfile.nickname,
         role: `동행 ${currentModalCamp.currentMembers - 1}가족`,
         kid: `${myProfile.kidBirthYear}년생 ${myProfile.kidGender}`,
         message: comment || (currentModalCamp.bookingType === '일정등록' ? '사이트 예약 완료' : '함께 캠핑할 생각에 설레네요!'),
-        isHost: false
+        isHost: false,
+        deviceToken: getDeviceToken(),
+        registeredAt: new Date().toISOString()
       });
 
       saveCampToCloud(currentModalCamp);
