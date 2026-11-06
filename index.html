@@ -62,6 +62,14 @@
     .badge-pulse {
       animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
+    @keyframes shake-x {
+      0%, 100% { transform: translateX(0); }
+      15%, 45%, 75% { transform: translateX(-6px); }
+      30%, 60%, 90% { transform: translateX(6px); }
+    }
+    .shake-anim {
+      animation: shake-x 0.45s ease-in-out !important;
+    }
     @keyframes pulse-ring {
       0%, 100% { opacity: 1; transform: scale(1); }
       50% { opacity: .75; transform: scale(1.04); }
@@ -92,7 +100,7 @@
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
 
   <!-- Toast Notification Container -->
-  <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+  <div id="toastContainer" class="fixed top-5 left-4 right-4 sm:left-auto sm:right-5 z-[9999] flex flex-col gap-2 pointer-events-none items-center sm:items-end"></div>
 
   <!-- Header -->
   <header class="bg-forest-700 text-white shadow-md sticky top-0 z-40">
@@ -787,7 +795,10 @@
               <label class="block font-bold text-slate-800 text-xs mb-1 flex items-center gap-1">
                 <span>🔐</span> 관리 비밀번호 확인 <span class="text-red-500">*</span>
               </label>
-              <input type="password" id="hostEditPasswordInput" placeholder="글 작성 시 설정한 비밀번호" class="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-forest-500">
+              <input type="password" id="hostEditPasswordInput" oninput="clearPasswordError('hostEdit')" placeholder="글 작성 시 설정한 비밀번호" class="w-full px-3 py-1.5 rounded-lg border border-amber-300 bg-white text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-forest-500 transition-all">
+              <p id="hostEditPasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
+                <span>⚠️</span> 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
+              </p>
             </div>
             <div class="flex items-center justify-end gap-1.5 pt-1">
               <button type="button" onclick="cancelHostEditPlan()" class="px-3 py-1.5 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold transition">
@@ -894,7 +905,10 @@
         <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
           <span>🔐</span> 글 작성 시 설정한 비밀번호 <span class="text-red-500">*</span>
         </label>
-        <input type="password" id="deletePasswordInput" placeholder="관리 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800">
+        <input type="password" id="deletePasswordInput" oninput="clearPasswordError('delete')" placeholder="관리 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800 transition-all">
+        <p id="deletePasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
+          <span>⚠️</span> 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
+        </p>
       </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button onclick="closeDeleteConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
@@ -925,7 +939,10 @@
         <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
           <span>🔐</span> 관리 비밀번호 확인 <span class="text-red-500">*</span>
         </label>
-        <input type="password" id="reservationPasswordInput" placeholder="글 작성 시 설정한 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-sm text-slate-800">
+        <input type="password" id="reservationPasswordInput" oninput="clearPasswordError('reservation')" placeholder="글 작성 시 설정한 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-amber-300 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white text-sm text-slate-800 transition-all">
+        <p id="reservationPasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
+          <span>⚠️</span> 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
+        </p>
       </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
         <button onclick="closeReservationConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
@@ -981,7 +998,10 @@
         <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
           <span>🔐</span> 관리 비밀번호 확인 <span class="text-red-500">*</span>
         </label>
-        <input type="password" id="hostCancelPartPasswordInput" placeholder="글 작성 시 설정한 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800">
+        <input type="password" id="hostCancelPartPasswordInput" oninput="clearPasswordError('hostCancelPart')" placeholder="글 작성 시 설정한 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800 transition-all">
+        <p id="hostCancelPartPasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
+          <span>⚠️</span> 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
+        </p>
       </div>
 
       <div class="flex items-center justify-end gap-2.5 pt-2.5 border-t border-slate-100">
@@ -1745,6 +1765,40 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       avatar: '?',
       isAdmin: false
     };
+
+    // ==========================================
+    // PASSWORD ERROR VISUAL FEEDBACK (비밀번호 오류 시각 피드백)
+    // ==========================================
+    function triggerPasswordError(prefix, customMsg = '비밀번호가 일치하지 않습니다. 다시 확인해 주세요.') {
+      const input = document.getElementById(`${prefix}PasswordInput`);
+      const err = document.getElementById(`${prefix}PasswordError`);
+      if (input) {
+        input.classList.remove('shake-anim');
+        void input.offsetWidth; // Force CSS reflow to re-trigger shake animation
+        input.classList.add('shake-anim', '!border-red-500', '!ring-2', '!ring-red-400', '!bg-red-50/70');
+        input.select();
+        input.focus();
+      }
+      if (err) {
+        err.innerHTML = `<span>⚠️</span> ${customMsg}`;
+        err.classList.remove('hidden');
+      }
+      if (navigator.vibrate) {
+        try { navigator.vibrate([100, 50, 100]); } catch (e) {}
+      }
+      showToast(`🚨 ${customMsg}`);
+    }
+
+    function clearPasswordError(prefix) {
+      const input = document.getElementById(`${prefix}PasswordInput`);
+      const err = document.getElementById(`${prefix}PasswordError`);
+      if (input) {
+        input.classList.remove('shake-anim', '!border-red-500', '!ring-2', '!ring-red-400', '!bg-red-50/70');
+      }
+      if (err) {
+        err.classList.add('hidden');
+      }
+    }
 
     function isProfileRegistered() {
       return Boolean(myProfile && myProfile.nickname && myProfile.nickname.trim().length > 0);
@@ -3068,6 +3122,7 @@ function loadUserProfile() {
       const pwBox = document.getElementById('hostEditPasswordBox');
       const pwInput = document.getElementById('hostEditPasswordInput');
 
+      clearPasswordError('hostEdit');
       if (pwInput) pwInput.value = '';
 
       if (descBox && editBox && descInput && chatInput) {
@@ -3101,12 +3156,11 @@ function loadUserProfile() {
       const chatInput = document.getElementById('hostEditOpenChatInput');
       if (!descInput || !chatInput) return;
 
-      // Password verification
+      // Password verification with visual feedback
       if (currentModalCamp.password) {
         const inputPw = document.getElementById('hostEditPasswordInput')?.value.trim();
         if (!inputPw || inputPw !== currentModalCamp.password) {
-          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
-          document.getElementById('hostEditPasswordInput')?.focus();
+          triggerPasswordError('hostEdit', '관리 비밀번호가 일치하지 않습니다.');
           return;
         }
       }
@@ -3515,6 +3569,7 @@ function loadUserProfile() {
       const pwBox = document.getElementById('reservationPasswordBox');
       const pwInput = document.getElementById('reservationPasswordInput');
 
+      clearPasswordError('reservation');
       if (pwInput) pwInput.value = '';
       if (pwBox) {
         if (!currentModalCamp.password) {
@@ -3556,12 +3611,11 @@ function loadUserProfile() {
     async function executeToggleReservationConfirm() {
       if (!currentModalCamp) return;
 
-      // Password verification
+      // Password verification with visual feedback
       if (currentModalCamp.password) {
         const inputPw = document.getElementById('reservationPasswordInput')?.value.trim();
         if (!inputPw || inputPw !== currentModalCamp.password) {
-          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
-          document.getElementById('reservationPasswordInput')?.focus();
+          triggerPasswordError('reservation', '관리 비밀번호가 일치하지 않습니다.');
           return;
         }
       }
@@ -3622,6 +3676,7 @@ function loadUserProfile() {
 
       const pwBox = document.getElementById('hostCancelPartPasswordBox');
       const pwInput = document.getElementById('hostCancelPartPasswordInput');
+      clearPasswordError('hostCancelPart');
       if (pwInput) pwInput.value = '';
       if (pwBox) {
         if (!currentModalCamp.password) {
@@ -3674,12 +3729,11 @@ function loadUserProfile() {
         return;
       }
 
-      // Password verification
+      // Password verification with visual feedback
       if (currentModalCamp.password) {
         const inputPw = document.getElementById('hostCancelPartPasswordInput')?.value.trim();
         if (!inputPw || inputPw !== currentModalCamp.password) {
-          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
-          document.getElementById('hostCancelPartPasswordInput')?.focus();
+          triggerPasswordError('hostCancelPart', '관리 비밀번호가 일치하지 않습니다.');
           return;
         }
       }
@@ -3737,6 +3791,7 @@ function loadUserProfile() {
       const pwBox = document.getElementById('deletePasswordBox');
       const pwInput = document.getElementById('deletePasswordInput');
 
+      clearPasswordError('delete');
       if (pwInput) pwInput.value = '';
 
       if (isAdmin) {
@@ -3779,12 +3834,11 @@ function loadUserProfile() {
       const targetTitle = currentModalCamp.title || '모집글';
       const isForceAdmin = deleteModeIsAdmin;
 
-      // Password verification for host delete
+      // Password verification with visual feedback for host delete
       if (!isForceAdmin && currentModalCamp.password) {
         const inputPw = document.getElementById('deletePasswordInput')?.value.trim();
         if (!inputPw || inputPw !== currentModalCamp.password) {
-          showToast('⚠️ 관리 비밀번호가 일치하지 않습니다.');
-          document.getElementById('deletePasswordInput')?.focus();
+          triggerPasswordError('delete', '관리 비밀번호가 일치하지 않습니다.');
           return;
         }
       }
