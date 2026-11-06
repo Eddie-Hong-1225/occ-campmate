@@ -685,7 +685,7 @@
         <!-- Host Profile Card -->
         <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <div id="modalHostAvatar" class="w-11 h-11 rounded-full bg-forest-600 text-white flex items-center justify-center font-bold text-base shadow">
+            <div id="modalHostAvatar" class="w-11 h-11 rounded-full bg-forest-600 text-white flex items-center justify-center font-extrabold text-xs tracking-tighter shadow shrink-0">
               호
             </div>
             <div>
@@ -1747,7 +1747,7 @@ function loadUserProfile() {
         kidBirthYear: year,
         kidGender: gender,
         kidDesc: desc,
-        avatar: nick.slice(0, 1) || '나',
+        avatar: nick.slice(0, 2) || '나',
         isAdmin: isAdmin
       };
 
@@ -1841,7 +1841,7 @@ function loadUserProfile() {
         theme: "생태/자연탐험",
         host: {
           name: myProfile.nickname,
-          avatar: myProfile.nickname.slice(0, 1) || '호'
+          avatar: myProfile.nickname.slice(0, 2) || '호'
         },
         description: desc,
         openChatUrl: openChatUrl,
@@ -2482,8 +2482,8 @@ function loadUserProfile() {
             <!-- Host Card & Action Footer -->
             <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
               <div class="flex items-center gap-2">
-                <div class="w-7 h-7 rounded-full bg-forest-600 text-white text-xs font-bold flex items-center justify-center">
-                  ${camp.host.avatar}
+                <div class="w-7 h-7 rounded-full bg-forest-600 text-white text-[10px] font-bold tracking-tighter flex items-center justify-center shrink-0">
+                  ${(camp.host.name || camp.host.avatar || '').slice(0, 2)}
                 </div>
                 <div class="text-left">
                   <div class="text-xs font-semibold text-slate-800">
@@ -2565,8 +2565,8 @@ function loadUserProfile() {
         html += `
           <div class="p-3 rounded-xl border ${part.isHost ? 'bg-amber-50/70 border-amber-200' : isMe ? 'bg-emerald-50/70 border-emerald-300' : 'bg-slate-50 border-slate-200'} flex items-start justify-between gap-2.5">
             <div class="flex items-start gap-2.5 min-w-0">
-              <div class="w-8 h-8 rounded-full ${part.isHost ? 'bg-amber-400 text-amber-950 font-black' : isMe ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-600 text-white font-bold'} text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                ${part.name.slice(0, 1)}
+              <div class="w-8 h-8 rounded-full ${part.isHost ? 'bg-amber-400 text-amber-950 font-black' : isMe ? 'bg-emerald-600 text-white font-bold' : 'bg-slate-600 text-white font-bold'} text-[11px] font-extrabold tracking-tighter flex items-center justify-center shrink-0 shadow-2xs">
+                ${(part.name || '').slice(0, 2)}
               </div>
               <div class="min-w-0">
                 <div class="flex items-center gap-1.5 flex-wrap">
@@ -2889,7 +2889,7 @@ function loadUserProfile() {
         document.getElementById('modalMembers').textContent = `${camp.currentMembers} / ${camp.maxMembers}가족 (${spotsLeft <= 0 ? '모집완료' : `${spotsLeft}가족 남음`})`;
       }
       
-      document.getElementById('modalHostAvatar').textContent = camp.host.avatar;
+      document.getElementById('modalHostAvatar').textContent = (camp.host.name || camp.host.avatar || '호스트').slice(0, 2);
       document.getElementById('modalHostName').textContent = camp.host.name;
             
 
@@ -3283,7 +3283,7 @@ function loadUserProfile() {
         theme: "생태/자연탐험",
         host: {
           name: myProfile.nickname,
-          avatar: myProfile.nickname.slice(0, 1) || '호'
+          avatar: myProfile.nickname.slice(0, 2) || '호'
         },
         description: desc,
         openChatUrl: openChatUrl,
