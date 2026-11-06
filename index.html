@@ -752,9 +752,7 @@
               <div class="flex items-center gap-2">
                 <span class="text-xs font-black text-slate-900">카카오톡 오픈채팅방</span>
                 <span class="px-2 py-0.5 rounded-full bg-[#FEE500] text-[#191919] text-[10px] font-extrabold">개설완료</span>
-                <button type="button" id="hostEditChatBtn" onclick="toggleHostEditPlan()" class="hidden text-[10px] text-amber-900 hover:text-black font-extrabold underline ml-1 cursor-pointer">
-                  수정
-                </button>
+
               </div>
               <p class="text-[11px] text-slate-600 mt-0.5">
                 호스트와 참여 가족들이 모여있는 실시간 소통방입니다.
@@ -2903,7 +2901,6 @@ function loadUserProfile() {
       const hostEditBox = document.getElementById('hostEditPlanBox');
       const hostEditBtn = document.getElementById('hostEditDescBtn');
       const hostAddOpenChatNotice = document.getElementById('hostAddOpenChatNotice');
-      const hostEditChatBtn = document.getElementById('hostEditChatBtn');
       if (hostEditBox) hostEditBox.classList.add('hidden');
       if (document.getElementById('modalDescription')) document.getElementById('modalDescription').classList.remove('hidden');
 
@@ -2911,11 +2908,9 @@ function loadUserProfile() {
 
       if (isHost) {
         if (hostEditBtn) hostEditBtn.classList.remove('hidden');
-        if (hostEditChatBtn) hostEditChatBtn.classList.remove('hidden');
         if (cafeShareBtn) cafeShareBtn.classList.remove('hidden');
       } else {
         if (hostEditBtn) hostEditBtn.classList.add('hidden');
-        if (hostEditChatBtn) hostEditChatBtn.classList.add('hidden');
         if (cafeShareBtn) cafeShareBtn.classList.add('hidden');
       }
 
