@@ -125,8 +125,10 @@
 
         <!-- Interactive Profile Chip (Click to Edit) -->
         <button onclick="openProfileModal()" class="flex items-center gap-2 pl-2 border-l border-forest-600 text-left hover:opacity-90 transition group" title="내 카페 닉네임 및 아이 정보 설정/변경">
-          <div id="headerAvatar" class="w-8 h-8 rounded-full bg-amber-400 text-slate-800 font-bold flex items-center justify-center text-sm shadow group-hover:scale-105 transition">
-            시
+          <div id="headerAvatar" class="w-8 h-8 rounded-full bg-amber-400 text-slate-900 flex items-center justify-center shadow group-hover:scale-105 transition" aria-label="프로필">
+            <svg class="w-4 h-4 fill-current" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
           </div>
           <div class="hidden sm:block text-left text-xs">
             <div class="font-semibold text-white flex items-center gap-1">
@@ -256,9 +258,6 @@
         <div class="text-sm font-semibold text-slate-700">
           모집글 <span id="campCount" class="text-forest-600 font-bold">0</span>건
         </div>
-        <button onclick="switchTab('create')" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white text-xs font-bold shadow-sm transition">
-          <span>+</span> 내 캠핑 동행 모집하기
-        </button>
       </div>
 
       <!-- Camp Cards Grid -->
@@ -1629,7 +1628,6 @@ function loadUserProfile() {
       const headerKid = document.getElementById('headerKidSummary');
 
       if (headerNick) headerNick.textContent = myProfile.nickname;
-      if (headerAvatar) headerAvatar.textContent = myProfile.nickname.slice(0, 1) || '나';
 
       const birth = myProfile.kidBirthYear || 2019;
       if (headerKid) {
