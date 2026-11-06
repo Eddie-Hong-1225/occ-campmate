@@ -761,6 +761,9 @@
           <button onclick="downloadCampDetailExcel()" class="px-3.5 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="참여자 명단, 아이 정보, 장비 분담표를 엑셀 파일(.xlsx)로 저장">
             <span>📊</span> 엑셀 다운로드
           </button>
+          <button id="modalCafeShareBtn" onclick="openCafeShareModal()" class="px-3.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5" title="네이버 카페에 올릴 수 있는 게시글 서식 복사">
+            <span>📋</span> 카페 글양식 복사
+          </button>
         </div>
         <div class="flex items-center gap-2">
           <button onclick="closeCampModal()" class="px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold hover:bg-slate-100 text-xs">
@@ -819,7 +822,54 @@
 
   <!-- ============================================== -->
   <!-- ============================================== -->
-  <!-- MODAL 4: USER PROFILE SETUP & EDIT (카페 닉네임 1회 저장) -->
+  <!-- ============================================== -->
+  <!-- MODAL: NAVER CAFE SHARE COPY MODAL (카페 게시글 복사) -->
+  <!-- ============================================== -->
+  <div id="cafeShareModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">📋</span>
+          <div>
+            <h3 class="font-extrabold text-sm sm:text-base text-slate-800">네이버 카페 게시글 양식 복사</h3>
+            <p class="text-[11px] text-slate-500">카페 '외동아이 캠핑친구만들기' 게시판에 그대로 붙여넣을 수 있습니다</p>
+          </div>
+        </div>
+        <button onclick="closeCafeShareModal()" class="w-7 h-7 rounded-full hover:bg-slate-100 text-slate-400 font-bold flex items-center justify-center">✕</button>
+      </div>
+
+      <!-- Preview textarea -->
+      <div class="space-y-1.5">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-slate-700">게시글 본문 미리보기</span>
+          <span class="text-[11px] text-emerald-600 font-bold">실시간 웹앱 링크 자동 포함됨</span>
+        </div>
+        <textarea id="cafeShareText" readonly rows="12" class="w-full p-3.5 rounded-xl border border-slate-300 bg-slate-50 text-xs font-mono text-slate-800 leading-relaxed focus:outline-none select-all"></textarea>
+      </div>
+
+      <!-- Helper tip -->
+      <p class="text-[11px] text-slate-600 bg-emerald-50 p-3 rounded-xl border border-emerald-100 leading-relaxed">
+        💡 <b>[📋 본문 복사하기]</b>를 누른 후 네이버 카페 글쓰기 창에서 <b>붙여넣기(Ctrl+V)</b> 하시면 게시글이 완성됩니다. 카페 회원들이 게시글 속 링크를 누르면 웹앱 모닥불 방으로 바로 들어와 신청할 수 있습니다.
+      </p>
+
+      <!-- Action buttons -->
+      <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+        <a href="https://cafe.naver.com" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2.5 rounded-xl bg-[#03C75A]/10 hover:bg-[#03C75A]/20 text-[#03C75A] font-extrabold text-xs transition flex items-center gap-1 border border-[#03C75A]/30">
+          <span>네이버 카페 바로가기</span> <span>↗</span>
+        </a>
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="closeCafeShareModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition">
+            닫기
+          </button>
+          <button type="button" onclick="copyCafeShareText()" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-xs shadow-md transition flex items-center gap-1.5 cursor-pointer">
+            <span>📋</span> 본문 복사하기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <!-- MODAL 4: USER PROFILE SETUP & EDIT (카페 닉네임 1회 저장) -->
   <!-- ============================================== -->
   <div id="profileSetupModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
@@ -1168,6 +1218,104 @@
     let isMobileView = false;
 
 
+
+    // ==========================================
+    // NAVER CAFE SHARE POST COPY LOGIC (네이버 카페 게시글 복사)
+    // ==========================================
+    function generateCafePostText(camp) {
+      if (!camp) return '';
+      const dDay = calculateDDay(camp);
+      const spotsLeft = camp.maxMembers - camp.currentMembers;
+      const isFull = camp.currentMembers >= camp.maxMembers;
+      const waitlist = camp.waitlist || [];
+      const isRecruitment = camp.bookingType !== '일정등록';
+
+      let memberStatus = `${camp.currentMembers} / ${camp.maxMembers}가족`;
+      if (!isFull) {
+        memberStatus += ` (${spotsLeft}가족 남음)`;
+      } else {
+        memberStatus += isRecruitment ? ` (정원 마감 · 대기 ${waitlist.length}/${camp.maxMembers}가족)` : ' (모집 완료)';
+      }
+
+      let peerText = '';
+      if (camp.kidInfo) {
+        if (camp.kidInfo.applyPeerMatching === false) {
+          peerText = `연령 무관 (누구나 환영, 호스트 아이: ${camp.kidInfo.birthYear}년생 ${camp.kidInfo.gender || ''})`;
+        } else {
+          peerText = `${camp.kidInfo.birthYear - 2}~${camp.kidInfo.birthYear + 2}년생 또래 (호스트 아이: ${camp.kidInfo.birthYear}년생 ${camp.kidInfo.gender || ''})`;
+        }
+      }
+
+      const appUrl = window.location.origin && window.location.origin !== 'null'
+        ? window.location.origin + window.location.pathname
+        : 'https://occ-campmate.vercel.app/';
+
+      let text = `[외동아이 캠핑친구만들기 동행 모집]
+
+`;
+      text += `🏕️ 모임 제목: ${camp.title}
+`;
+      text += `📍 캠핑 장소: ${camp.location}
+`;
+      text += `📅 캠핑 일정: ${camp.startDate} ~ ${camp.endDate} (${dDay})
+`;
+      text += `👥 모집 인원: ${memberStatus}
+`;
+      text += `👶 아이 정보: ${peerText}
+`;
+      text += `🎟️ 예약 방식: ${camp.bookingType} ${camp.bookingNote ? `(${camp.bookingNote})` : ''}
+`;
+      if (camp.openChatUrl && camp.openChatUrl.trim()) {
+        text += `💬 카톡 오픈채팅: ${camp.openChatUrl.trim()}
+`;
+      }
+      text += `
+📝 상세 소개 및 계획:
+${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추억을 만들어요!'}
+
+`;
+      text += `--------------------------------------------------
+`;
+      text += `🔥 실시간 모닥불 좌석 확인 & 동행 신청하기:
+`;
+      text += `👉 ${appUrl}
+`;
+      text += `(위 링크를 클릭하시면 웹앱에서 실시간 모닥불 착석 현황과 대기 신청을 확인하실 수 있습니다)
+`;
+
+      return text;
+    }
+
+    function openCafeShareModal(campId) {
+      const camp = campId ? camps.find(c => c.id === campId) : currentModalCamp;
+      if (!camp) return;
+      currentModalCamp = camp;
+      const text = generateCafePostText(camp);
+      const textarea = document.getElementById('cafeShareText');
+      if (textarea) textarea.value = text;
+      document.getElementById('cafeShareModal').classList.remove('hidden');
+    }
+
+    function closeCafeShareModal() {
+      document.getElementById('cafeShareModal').classList.add('hidden');
+    }
+
+    function copyCafeShareText() {
+      const textarea = document.getElementById('cafeShareText');
+      if (!textarea) return;
+      textarea.select();
+      const textToCopy = textarea.value;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(textToCopy).then(() => {
+          showToast('📋 네이버 카페 공유용 본문이 복사되었습니다! 카페 글쓰기 창에 붙여넣기(Ctrl+V) 해주세요.');
+        }).catch(() => {
+          showToast('📋 본문이 선택되었습니다. Ctrl+C를 눌러 복사해주세요.');
+        });
+      } else {
+        document.execCommand('copy');
+        showToast('📋 네이버 카페 공유용 본문이 복사되었습니다! 카페 글쓰기 창에 붙여넣기(Ctrl+V) 해주세요.');
+      }
+    }
 
     // ==========================================
     // EXCEL (.xlsx) EXPORT LOGIC USING SHEETJS
@@ -1683,11 +1831,12 @@ function loadUserProfile() {
 
       camps.unshift(newCamp);
       saveCampToCloud(newCamp);
-      showToast('🎉 캠핑 일정이 성공적으로 등록되었습니다!');
+      showToast('🎉 캠핑 일정이 등록되었습니다! 네이버 카페 공유 양식을 확인하세요.');
       
       document.getElementById('createMatchForm').reset();
       switchTab('explore');
       applyFilters();
+      openCafeShareModal(newCamp.id);
     }
 
 
@@ -2227,8 +2376,11 @@ function loadUserProfile() {
 
               <div class="flex items-center gap-1.5">
                 ${camp.host.name === myProfile.nickname ? `
-                  <button onclick="openCampDetail(${camp.id})" class="px-3.5 py-2 rounded-xl bg-amber-100 text-amber-950 border border-amber-300 font-extrabold text-xs transition shadow-sm">
-                    👑 내 주최글 (관리/삭제)
+                  <button onclick="openCampDetail(${camp.id})" class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-300 font-extrabold text-xs transition shadow-sm">
+                    👑 내 주최글
+                  </button>
+                  <button onclick="openCafeShareModal(${camp.id})" class="px-2.5 py-2 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-bold text-xs transition shadow-2xs" title="네이버 카페 공유 양식 복사">
+                    📋 카페공유
                   </button>
                 ` : (myProfile.isAdmin ? `
                   <button onclick="openCampDetail(${camp.id})" class="px-3 py-2 rounded-xl ${camp.applied ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold' : 'bg-forest-600 hover:bg-forest-700 text-white font-bold'} text-xs transition shadow-sm">
@@ -2956,11 +3108,12 @@ function loadUserProfile() {
 
       camps.unshift(newCamp);
       saveCampToCloud(newCamp);
-      showToast('🎉 캠핑 동행 모집글이 성공적으로 등록되었습니다!');
+      showToast('🎉 모집글이 등록되었습니다! 네이버 카페 공유 양식을 확인하세요.');
       
       document.getElementById('createCampForm').reset();
       switchTab('explore');
       applyFilters();
+      openCafeShareModal(newCamp.id);
     }
 
     // ==========================================
