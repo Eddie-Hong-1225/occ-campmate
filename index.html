@@ -1052,6 +1052,50 @@
   </div>
 
   <!-- ============================================== -->
+  <!-- MODAL: GLOBAL PROFILE RESET SUCCESS MODAL (초기화 완료 확인 팝업) -->
+  <!-- ============================================== -->
+  <div id="globalResetSuccessModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-2.5 text-emerald-600 font-extrabold text-base">
+        <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">✅</span>
+        <span>전체 사용자 프로필 초기화 완료</span>
+      </div>
+      
+      <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-2 text-slate-700 leading-relaxed">
+        <div class="flex items-center justify-between pb-1.5 border-b border-slate-200 font-semibold">
+          <span>📡 클라우드 신호 전송</span>
+          <span class="text-emerald-600 font-bold">정상 반영 (Realtime)</span>
+        </div>
+        <div class="flex items-center justify-between pb-1.5 border-b border-slate-200 font-semibold">
+          <span>🕒 실행 반영 일시</span>
+          <span id="successModalResetTime" class="text-slate-900 font-bold">-</span>
+        </div>
+        <div class="flex items-center justify-between font-semibold">
+          <span>📱 내 기기 프로필 상태</span>
+          <span class="text-amber-600 font-bold">공백 초기화 완료 (등록 필요)</span>
+        </div>
+      </div>
+
+      <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+        <div class="font-bold flex items-center gap-1">
+          <span>💡</span> 적용 여부 확인 안내
+        </div>
+        <p class="leading-relaxed text-[11px] text-amber-800">
+          • 상단 우측 헤더가 <b>'프로필 등록 [등록 필요 ✍️]'</b>으로 변경되었습니다.<br>
+          • 접속 중인 모든 사용자의 기기에서도 0.1초 내 프로필이 공백으로 초기화됩니다.<br>
+          • <b>참고:</b> 기존에 등록된 캠핑 모집글(게시글 데이터)은 유지되며, 사용자 개인의 프로필(닉네임/아이정보)만 안전하게 초기화됩니다.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end pt-1">
+        <button type="button" onclick="closeGlobalResetSuccessModal()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition cursor-pointer">
+          확인 완료
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
   <!-- MODAL 2: ADD GEAR ITEM (공용 장비 추가 모달) -->
   <!-- ============================================== -->
   
@@ -1216,6 +1260,11 @@
             <p class="text-[11px] text-red-700 leading-relaxed">
               버튼을 누르면 클라우드 동기화를 통해 <b>배포된 모든 회원의 기기에 저장된 기존 프로필이 초기 상태(공백)로 일괄 리셋</b>됩니다.
             </p>
+            <!-- Dynamic Timestamp of Last Global Reset -->
+            <div id="lastGlobalResetTimestampDisplay" class="text-[11px] font-semibold text-red-800 bg-red-100/80 px-2.5 py-1.5 rounded-lg border border-red-200 flex items-center justify-between">
+              <span>🕒 최근 클라우드 전체 초기화:</span>
+              <span id="lastGlobalResetTimeText" class="font-bold">확인 중...</span>
+            </div>
             <div class="flex justify-end pt-0.5">
               <button type="button" onclick="openGlobalProfileResetModal()" class="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
                 <span>🔄</span> 전체 배포 사용자 프로필 일괄 초기화
@@ -1374,8 +1423,54 @@
       return adminNicknames.includes(trimmed);
     }
 
+    let latestCloudResetTimestamp = null;
+
+    function formatKoDateTime(isoString) {
+      if (!isoString) return '기록 없음';
+      try {
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleString('ko-KR', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false
+        });
+      } catch (e) {
+        return isoString;
+      }
+    }
+
+    function updateLastResetDisplay(timestamp) {
+      if (timestamp) latestCloudResetTimestamp = timestamp;
+      const el = document.getElementById('lastGlobalResetTimeText');
+      if (el) {
+        const ts = latestCloudResetTimestamp || localStorage.getItem('occ_last_processed_global_reset');
+        el.textContent = ts ? formatKoDateTime(ts) : '실행 기록 없음';
+      }
+    }
+
+    function openGlobalResetSuccessModal(timestamp) {
+      const modal = document.getElementById('globalResetSuccessModal');
+      const timeEl = document.getElementById('successModalResetTime');
+      if (timeEl) {
+        timeEl.textContent = formatKoDateTime(timestamp || new Date().toISOString());
+      }
+      if (modal) modal.classList.remove('hidden');
+    }
+
+    function closeGlobalResetSuccessModal() {
+      const modal = document.getElementById('globalResetSuccessModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
     function checkAndApplySystemReset(globalResetTime) {
       if (!globalResetTime) return;
+      latestCloudResetTimestamp = globalResetTime;
+      updateLastResetDisplay(globalResetTime);
       const lastProcessed = localStorage.getItem('occ_last_processed_global_reset');
       if (lastProcessed !== globalResetTime) {
         localStorage.removeItem('occ_campmate_profile');
@@ -2103,13 +2198,17 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
         isAdmin: false
       };
 
+      latestCloudResetTimestamp = resetTimestamp;
+      updateLastResetDisplay(resetTimestamp);
+
       closeGlobalProfileResetModal();
       closeProfileModal();
       applyProfileToUI();
       syncMyProfileWithCamps();
       applyFilters();
 
-      showToast('✅ 전체 배포 사용자의 프로필 일괄 초기화 명령이 클라우드에 성공적으로 반영되었습니다!');
+      showToast('✅ 전체 배포 사용자 프로필 일괄 초기화 완료');
+      openGlobalResetSuccessModal(resetTimestamp);
     }
 
     function saveUserProfile(profile) {
@@ -2224,6 +2323,7 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
           if (myProfile.nickname === nick && myProfile.isAdmin) {
             statusBox.classList.remove('hidden');
             renderAdminListInModal();
+            updateLastResetDisplay();
           } else {
             statusBox.classList.add('hidden');
           }
