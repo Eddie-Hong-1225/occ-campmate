@@ -1126,6 +1126,23 @@
           </div>
         </div>
 
+        <!-- Admin Password Authentication Box (Shown when nickname is an admin like 18시원맘김포) -->
+        <div id="adminPasswordAuthBox" class="hidden p-4 bg-red-50/90 rounded-xl border border-red-300 text-xs sm:text-sm space-y-2.5 animate-in fade-in duration-150">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-red-950 text-sm flex items-center gap-1.5">
+              <span>🛡️</span> 관리자 인증 비밀번호 <span class="text-red-500">*</span>
+            </label>
+            <span class="px-2 py-0.5 rounded bg-red-200 text-red-900 font-extrabold text-xs border border-red-300">운영진 인증</span>
+          </div>
+          <input type="password" id="inputAdminPassword" oninput="clearPasswordError('adminAuth')" placeholder="관리자 인증 비밀번호 입력" class="w-full px-3.5 py-2.5 rounded-xl border border-red-300 bg-white text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all">
+          <p id="adminAuthPasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
+            <span>⚠️</span> 관리자 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
+          </p>
+          <p class="text-xs text-red-700 leading-relaxed">
+            🔒 <b>18시원맘김포</b> 계정은 카페 최고관리자(운영진) 계정입니다. 관리자 전용 비밀번호를 입력하셔야 프로필이 저장되고 관리자 권한이 적용됩니다.
+          </p>
+        </div>
+
         <!-- Admin Status & DB Admin Nickname Manager Box -->
         <div id="adminStatusBox" class="hidden p-4 bg-red-50 rounded-xl border border-red-200 text-xs sm:text-sm space-y-3">
           <div class="flex items-center justify-between">
@@ -1278,6 +1295,14 @@
     // ADMIN NICKNAMES DB MANAGEMENT (occ_admins 테이블 연동)
     // ==========================================
     const DEFAULT_ADMIN_NICKNAME = '18시원맘김포';
+    const DEFAULT_ADMIN_PASSWORD = 'occ2014'; // 관리자 전용 인증 비밀번호
+
+    function verifyAdminPassword(inputPw) {
+      if (!inputPw) return false;
+      const trimmed = inputPw.trim();
+      return trimmed === DEFAULT_ADMIN_PASSWORD;
+    }
+
     let adminNicknames = [DEFAULT_ADMIN_NICKNAME];
 
     function isNicknameAdmin(nick) {
@@ -1983,6 +2008,9 @@ function loadUserProfile() {
       document.getElementById('inputNickname').value = myProfile.nickname || '';
       document.getElementById('inputKidYear').value = myProfile.kidBirthYear || 2019;
       document.getElementById('inputKidGender').value = myProfile.kidGender || '남아';
+      const pwInput = document.getElementById('inputAdminPassword');
+      if (pwInput) pwInput.value = '';
+      clearPasswordError('adminAuth');
       checkAdminNicknamePreview();
       document.getElementById('profileSetupModal').classList.remove('hidden');
       setTimeout(() => {
@@ -1993,14 +2021,27 @@ function loadUserProfile() {
 
     function checkAdminNicknamePreview() {
       const nick = document.getElementById('inputNickname')?.value.trim();
-      const box = document.getElementById('adminStatusBox');
-      if (box) {
-        if (isNicknameAdmin(nick)) {
-          box.classList.remove('hidden');
-          renderAdminListInModal();
-        } else {
-          box.classList.add('hidden');
+      const authBox = document.getElementById('adminPasswordAuthBox');
+      const statusBox = document.getElementById('adminStatusBox');
+      const pwInput = document.getElementById('inputAdminPassword');
+
+      if (isNicknameAdmin(nick)) {
+        // If nickname is an admin nickname (e.g. 18시원맘김포), show admin password auth box!
+        if (authBox) authBox.classList.remove('hidden');
+        // Admin manager status box is only visible if the user is already authenticated as admin
+        if (statusBox) {
+          if (myProfile.nickname === nick && myProfile.isAdmin) {
+            statusBox.classList.remove('hidden');
+            renderAdminListInModal();
+          } else {
+            statusBox.classList.add('hidden');
+          }
         }
+      } else {
+        if (authBox) authBox.classList.add('hidden');
+        if (statusBox) statusBox.classList.add('hidden');
+        if (pwInput) pwInput.value = '';
+        clearPasswordError('adminAuth');
       }
     }
 
@@ -2016,10 +2057,23 @@ function loadUserProfile() {
         document.getElementById('inputNickname').focus();
         return;
       }
+
+      const isAdminNick = isNicknameAdmin(nick);
+      let isAdmin = false;
+
+      // Admin Password Verification for 18시원맘김포 (and registered admin nicknames)
+      if (isAdminNick) {
+        const adminPw = document.getElementById('inputAdminPassword')?.value.trim();
+        if (!verifyAdminPassword(adminPw)) {
+          triggerPasswordError('adminAuth', '관리자 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.');
+          return;
+        }
+        isAdmin = true;
+      }
+
       const year = parseInt(document.getElementById('inputKidYear').value) || 2019;
       const gender = document.getElementById('inputKidGender').value || '남아';
       const desc = `${year}년생 ${gender}`;
-      const isAdmin = isNicknameAdmin(nick);
 
       const updated = {
         nickname: nick,
