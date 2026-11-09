@@ -1015,85 +1015,7 @@
     </div>
   </div>
 
-  <!-- ============================================== -->
-  <!-- MODAL: GLOBAL PROFILE RESET CONFIRMATION (전체 사용자 프로필 초기화) -->
-  <!-- ============================================== -->
-  <div id="globalProfileResetModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
-      <div class="flex items-center gap-2.5 text-red-600 font-extrabold text-sm">
-        <span class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-base">🚨</span>
-        <span>전체 사용자 프로필 일괄 초기화</span>
-      </div>
-      <p class="text-xs text-slate-600 leading-relaxed">
-        클라우드 동기화를 통해 <strong>현재 배포된 모든 사용자의 스마트폰/PC에 저장된 프로필 정보를 완전히 리셋</strong>합니다.<br>
-        <span class="text-red-600 font-semibold">* 모든 사용자가 초기 상태(프로필 등록 필요)로 되돌아갑니다.</span>
-      </p>
 
-      <!-- Admin Password Verification -->
-      <div class="space-y-1.5 pt-1">
-        <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
-          <span>🔐</span> 관리자 비밀번호 확인 <span class="text-red-500">*</span>
-        </label>
-        <input type="password" id="globalResetPasswordInput" oninput="clearPasswordError('globalReset')" placeholder="관리자 비밀번호 입력 (occ2014)" class="w-full px-3.5 py-2.5 rounded-xl border border-red-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800 transition-all">
-        <p id="globalResetPasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
-          <span>⚠️</span> 관리자 비밀번호가 일치하지 않습니다.
-        </p>
-      </div>
-
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeGlobalProfileResetModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
-          취소
-        </button>
-        <button onclick="executeGlobalProfileReset()" class="px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer flex items-center gap-1.5">
-          <span>🔄</span> 전체 초기화 실행
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ============================================== -->
-  <!-- MODAL: GLOBAL PROFILE RESET SUCCESS MODAL (초기화 완료 확인 팝업) -->
-  <!-- ============================================== -->
-  <div id="globalResetSuccessModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
-      <div class="flex items-center gap-2.5 text-emerald-600 font-extrabold text-base">
-        <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg">✅</span>
-        <span>전체 사용자 프로필 초기화 완료</span>
-      </div>
-      
-      <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 text-xs space-y-2 text-slate-700 leading-relaxed">
-        <div class="flex items-center justify-between pb-1.5 border-b border-slate-200 font-semibold">
-          <span>📡 클라우드 신호 전송</span>
-          <span class="text-emerald-600 font-bold">정상 반영 (Realtime)</span>
-        </div>
-        <div class="flex items-center justify-between pb-1.5 border-b border-slate-200 font-semibold">
-          <span>🕒 실행 반영 일시</span>
-          <span id="successModalResetTime" class="text-slate-900 font-bold">-</span>
-        </div>
-        <div class="flex items-center justify-between font-semibold">
-          <span>📱 내 기기 프로필 상태</span>
-          <span class="text-amber-600 font-bold">공백 초기화 완료 (등록 필요)</span>
-        </div>
-      </div>
-
-      <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
-        <div class="font-bold flex items-center gap-1">
-          <span>💡</span> 적용 여부 확인 안내
-        </div>
-        <p class="leading-relaxed text-[11px] text-amber-800">
-          • 상단 우측 헤더가 <b>'프로필 등록 [등록 필요 ✍️]'</b>으로 변경되었습니다.<br>
-          • 접속 중인 모든 사용자의 기기에서도 0.1초 내 프로필이 공백으로 초기화됩니다.<br>
-          • <b>참고:</b> 기존에 등록된 캠핑 모집글(게시글 데이터)은 유지되며, 사용자 개인의 프로필(닉네임/아이정보)만 안전하게 초기화됩니다.
-        </p>
-      </div>
-
-      <div class="flex items-center justify-end pt-1">
-        <button type="button" onclick="closeGlobalResetSuccessModal()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-sm transition cursor-pointer">
-          확인 완료
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- ============================================== -->
   <!-- MODAL 2: ADD GEAR ITEM (공용 장비 추가 모달) -->
@@ -1248,29 +1170,6 @@
               </button>
             </div>
           </div>
-
-          <!-- Admin Global Profile Reset Box (최고관리자 전용 전역 프로필 초기화) -->
-          <div class="pt-3 border-t border-red-200/80 space-y-2">
-            <div class="flex items-center justify-between">
-              <span class="font-extrabold text-red-950 text-xs flex items-center gap-1.5">
-                <span>🚨</span> 전체 사용자 프로필 일괄 초기화
-              </span>
-              <span class="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded border border-red-200">배포 전역 적용</span>
-            </div>
-            <p class="text-[11px] text-red-700 leading-relaxed">
-              버튼을 누르면 클라우드 동기화를 통해 <b>배포된 모든 회원의 기기에 저장된 기존 프로필이 초기 상태(공백)로 일괄 리셋</b>됩니다.
-            </p>
-            <!-- Dynamic Timestamp of Last Global Reset -->
-            <div id="lastGlobalResetTimestampDisplay" class="text-[11px] font-semibold text-red-800 bg-red-100/80 px-2.5 py-1.5 rounded-lg border border-red-200 flex items-center justify-between">
-              <span>🕒 최근 클라우드 전체 초기화:</span>
-              <span id="lastGlobalResetTimeText" class="font-bold">확인 중...</span>
-            </div>
-            <div class="flex justify-end pt-0.5">
-              <button type="button" onclick="openGlobalProfileResetModal()" class="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
-                <span>🔄</span> 전체 배포 사용자 프로필 일괄 초기화
-              </button>
-            </div>
-          </div>
         </div>
 
         <div class="p-3.5 bg-amber-50 rounded-xl border border-amber-200 text-xs sm:text-sm text-amber-900 leading-relaxed">
@@ -1327,11 +1226,6 @@
 
         isCloudDbConnected = true;
 
-        const sysRow = (data || []).find(r => r.id === 0 || (r.data && r.data.isSystemConfig));
-        if (sysRow && sysRow.data && sysRow.data.systemProfileResetTimestamp) {
-          checkAndApplySystemReset(sysRow.data.systemProfileResetTimestamp);
-        }
-
         camps = (data || []).filter(r => r.id !== 0 && (!r.data || !r.data.isSystemConfig)).map(row => row.data);
         await fetchAdminsFromCloud();
         cleanupExpiredCamps();
@@ -1363,10 +1257,6 @@
           .select('*')
           .order('id', { ascending: false });
         if (!error && data) {
-          const sysRow = data.find(r => r.id === 0 || (r.data && r.data.isSystemConfig));
-          if (sysRow && sysRow.data && sysRow.data.systemProfileResetTimestamp) {
-            checkAndApplySystemReset(sysRow.data.systemProfileResetTimestamp);
-          }
           camps = data.filter(r => r.id !== 0 && (!r.data || !r.data.isSystemConfig)).map(row => row.data);
           syncMyProfileWithCamps();
           applyFilters();
@@ -1423,73 +1313,7 @@
       return adminNicknames.includes(trimmed);
     }
 
-    let latestCloudResetTimestamp = null;
 
-    function formatKoDateTime(isoString) {
-      if (!isoString) return '기록 없음';
-      try {
-        const d = new Date(isoString);
-        if (isNaN(d.getTime())) return isoString;
-        return d.toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        });
-      } catch (e) {
-        return isoString;
-      }
-    }
-
-    function updateLastResetDisplay(timestamp) {
-      if (timestamp) latestCloudResetTimestamp = timestamp;
-      const el = document.getElementById('lastGlobalResetTimeText');
-      if (el) {
-        const ts = latestCloudResetTimestamp || localStorage.getItem('occ_last_processed_global_reset');
-        el.textContent = ts ? formatKoDateTime(ts) : '실행 기록 없음';
-      }
-    }
-
-    function openGlobalResetSuccessModal(timestamp) {
-      const modal = document.getElementById('globalResetSuccessModal');
-      const timeEl = document.getElementById('successModalResetTime');
-      if (timeEl) {
-        timeEl.textContent = formatKoDateTime(timestamp || new Date().toISOString());
-      }
-      if (modal) modal.classList.remove('hidden');
-    }
-
-    function closeGlobalResetSuccessModal() {
-      const modal = document.getElementById('globalResetSuccessModal');
-      if (modal) modal.classList.add('hidden');
-    }
-
-    function checkAndApplySystemReset(globalResetTime) {
-      if (!globalResetTime) return;
-      latestCloudResetTimestamp = globalResetTime;
-      updateLastResetDisplay(globalResetTime);
-      const lastProcessed = localStorage.getItem('occ_last_processed_global_reset');
-      if (lastProcessed !== globalResetTime) {
-        localStorage.removeItem('occ_campmate_profile');
-        localStorage.removeItem('occ_device_token');
-        localStorage.setItem('occ_last_processed_global_reset', globalResetTime);
-        myProfile = {
-          nickname: '',
-          kidBirthYear: 2019,
-          kidGender: '남아',
-          kidDesc: '',
-          avatar: '?',
-          isAdmin: false
-        };
-        applyProfileToUI();
-        syncMyProfileWithCamps();
-        applyFilters();
-        showToast('🔄 관리자에 의해 모든 사용자 프로필이 초기화되었습니다.');
-      }
-    }
 
     async function fetchAdminsFromCloud() {
       if (!supabaseClient || !isCloudDbConnected) return;
@@ -1500,11 +1324,7 @@
           .order('created_at', { ascending: true });
 
         if (!error && data) {
-          // Check for global profile reset timestamp from administrator
-          const resetRow = data.find(r => r.nickname === '__system_profile_reset_timestamp__');
-          if (resetRow && resetRow.role) {
-            checkAndApplySystemReset(resetRow.role);
-          }
+
 
           if (data.length > 0) {
             adminNicknames = data
@@ -2090,31 +1910,13 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       });
     }
 
-    const PROFILE_STORAGE_RESET_KEY = 'occ_profile_reset_20261109_v3';
-
     function loadUserProfile() {
       try {
-        const resetDone = localStorage.getItem(PROFILE_STORAGE_RESET_KEY);
-        if (!resetDone) {
-          // Completely wipe all existing profiles across all client devices/browsers
-          localStorage.removeItem('occ_campmate_profile');
-          localStorage.removeItem('occ_device_token');
-          localStorage.setItem(PROFILE_STORAGE_RESET_KEY, 'done');
-          myProfile = {
-            nickname: '',
-            kidBirthYear: 2019,
-            kidGender: '남아',
-            kidDesc: '',
-            avatar: '?',
-            isAdmin: false
-          };
-        } else {
-          const stored = localStorage.getItem('occ_campmate_profile');
-          if (stored) {
-            const parsed = JSON.parse(stored);
-            if (parsed && typeof parsed.nickname === 'string') {
-              myProfile = { ...myProfile, ...parsed };
-            }
+        const stored = localStorage.getItem('occ_campmate_profile');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (parsed && typeof parsed.nickname === 'string') {
+            myProfile = { ...myProfile, ...parsed };
           }
         }
       } catch (e) {}
@@ -2124,98 +1926,7 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       syncMyProfileWithCamps();
     }
 
-    function openGlobalProfileResetModal() {
-      const modal = document.getElementById('globalProfileResetModal');
-      const pwInput = document.getElementById('globalResetPasswordInput');
-      if (pwInput) {
-        pwInput.value = '';
-        pwInput.blur(); // 모바일 기기에서 키보드가 자동으로 튀어나오지 않도록 방지
-      }
-      clearPasswordError('globalReset');
-      if (modal) modal.classList.remove('hidden');
-    }
-
-    function closeGlobalProfileResetModal() {
-      const modal = document.getElementById('globalProfileResetModal');
-      const pwInput = document.getElementById('globalResetPasswordInput');
-      if (pwInput) pwInput.blur();
-      if (modal) modal.classList.add('hidden');
-    }
-
-    async function executeGlobalProfileReset() {
-      const pwInput = document.getElementById('globalResetPasswordInput');
-      const inputPw = pwInput?.value.trim();
-
-      if (!verifyAdminPassword(inputPw)) {
-        triggerPasswordError('globalReset', '관리자 비밀번호가 일치하지 않습니다.');
-        return;
-      }
-
-      const resetTimestamp = new Date().toISOString();
-
-      try {
-        if (supabaseClient && isCloudDbConnected) {
-          // 1. Primary Reliable Transport: occ_camps table with id: 0 (triggers Realtime broadcast immediately)
-          const { error: campErr } = await supabaseClient.from('occ_camps').upsert({
-            id: 0,
-            data: {
-              isSystemConfig: true,
-              systemProfileResetTimestamp: resetTimestamp,
-              updatedAt: resetTimestamp
-            },
-            end_date: '2099-12-31',
-            updated_at: resetTimestamp
-          });
-
-          if (campErr) {
-            console.error('Failed to sync global reset to occ_camps:', campErr);
-            showToast('⚠️ 클라우드 동기화 실패: ' + campErr.message);
-            return;
-          }
-
-          // 2. Fallback Transport: occ_admins table
-          try {
-            await supabaseClient.from('occ_admins').upsert({
-              nickname: '__system_profile_reset_timestamp__',
-              role: resetTimestamp
-            });
-          } catch (e) {
-            console.warn('occ_admins dual-write fallback notice:', e);
-          }
-        }
-      } catch (e) {
-        console.error('Failed to sync global reset to cloud:', e);
-        showToast('⚠️ 클라우드 초기화 신호 전송 오류: ' + (e.message || e));
-        return;
-      }
-
-      // Reset locally on administrator's browser as well
-      localStorage.removeItem('occ_campmate_profile');
-      localStorage.removeItem('occ_device_token');
-      localStorage.setItem('occ_last_processed_global_reset', resetTimestamp);
-      myProfile = {
-        nickname: '',
-        kidBirthYear: 2019,
-        kidGender: '남아',
-        kidDesc: '',
-        avatar: '?',
-        isAdmin: false
-      };
-
-      latestCloudResetTimestamp = resetTimestamp;
-      updateLastResetDisplay(resetTimestamp);
-
-      closeGlobalProfileResetModal();
-      closeProfileModal();
-      applyProfileToUI();
-      syncMyProfileWithCamps();
-      applyFilters();
-
-      showToast('✅ 전체 배포 사용자 프로필 일괄 초기화 완료');
-      openGlobalResetSuccessModal(resetTimestamp);
-    }
-
-    function saveUserProfile(profile) {
+function saveUserProfile(profile) {
       myProfile = profile;
       myProfile.isAdmin = isNicknameAdmin(myProfile.nickname);
       try {
@@ -2323,7 +2034,6 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
           if (myProfile.nickname === nick && myProfile.isAdmin) {
             statusBox.classList.remove('hidden');
             renderAdminListInModal();
-            updateLastResetDisplay();
           } else {
             statusBox.classList.add('hidden');
           }
