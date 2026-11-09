@@ -2127,14 +2127,18 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
     function openGlobalProfileResetModal() {
       const modal = document.getElementById('globalProfileResetModal');
       const pwInput = document.getElementById('globalResetPasswordInput');
-      if (pwInput) pwInput.value = '';
+      if (pwInput) {
+        pwInput.value = '';
+        pwInput.blur(); // 모바일 기기에서 키보드가 자동으로 튀어나오지 않도록 방지
+      }
       clearPasswordError('globalReset');
       if (modal) modal.classList.remove('hidden');
-      setTimeout(() => pwInput?.focus(), 100);
     }
 
     function closeGlobalProfileResetModal() {
       const modal = document.getElementById('globalProfileResetModal');
+      const pwInput = document.getElementById('globalResetPasswordInput');
+      if (pwInput) pwInput.blur();
       if (modal) modal.classList.add('hidden');
     }
 
@@ -2303,10 +2307,6 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       clearPasswordError('adminAuth');
       checkAdminNicknamePreview();
       document.getElementById('profileSetupModal').classList.remove('hidden');
-      setTimeout(() => {
-        const input = document.getElementById('inputNickname');
-        if (input) input.focus();
-      }, 100);
     }
 
     function checkAdminNicknamePreview() {
