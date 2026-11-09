@@ -1278,7 +1278,12 @@
 
         isCloudDbConnected = true;
 
-        camps = (data || []).map(row => row.data);
+        const sysRow = (data || []).find(r => r.id === 0 || (r.data && r.data.isSystemConfig));
+        if (sysRow && sysRow.data && sysRow.data.systemProfileResetTimestamp) {
+          checkAndApplySystemReset(sysRow.data.systemProfileResetTimestamp);
+        }
+
+        camps = (data || []).filter(r => r.id !== 0 && (!r.data || !r.data.isSystemConfig)).map(row => row.data);
         await fetchAdminsFromCloud();
         cleanupExpiredCamps();
         syncMyProfileWithCamps();
@@ -1309,7 +1314,11 @@
           .select('*')
           .order('id', { ascending: false });
         if (!error && data) {
-          camps = data.map(row => row.data);
+          const sysRow = data.find(r => r.id === 0 || (r.data && r.data.isSystemConfig));
+          if (sysRow && sysRow.data && sysRow.data.systemProfileResetTimestamp) {
+            checkAndApplySystemReset(sysRow.data.systemProfileResetTimestamp);
+          }
+          camps = data.filter(r => r.id !== 0 && (!r.data || !r.data.isSystemConfig)).map(row => row.data);
           syncMyProfileWithCamps();
           applyFilters();
           if (currentModalCamp) {
@@ -1365,6 +1374,28 @@
       return adminNicknames.includes(trimmed);
     }
 
+    function checkAndApplySystemReset(globalResetTime) {
+      if (!globalResetTime) return;
+      const lastProcessed = localStorage.getItem('occ_last_processed_global_reset');
+      if (lastProcessed !== globalResetTime) {
+        localStorage.removeItem('occ_campmate_profile');
+        localStorage.removeItem('occ_device_token');
+        localStorage.setItem('occ_last_processed_global_reset', globalResetTime);
+        myProfile = {
+          nickname: '',
+          kidBirthYear: 2019,
+          kidGender: '남아',
+          kidDesc: '',
+          avatar: '?',
+          isAdmin: false
+        };
+        applyProfileToUI();
+        syncMyProfileWithCamps();
+        applyFilters();
+        showToast('🔄 관리자에 의해 모든 사용자 프로필이 초기화되었습니다.');
+      }
+    }
+
     async function fetchAdminsFromCloud() {
       if (!supabaseClient || !isCloudDbConnected) return;
       try {
@@ -1377,22 +1408,7 @@
           // Check for global profile reset timestamp from administrator
           const resetRow = data.find(r => r.nickname === '__system_profile_reset_timestamp__');
           if (resetRow && resetRow.role) {
-            const globalResetTime = resetRow.role;
-            const lastProcessed = localStorage.getItem('occ_last_processed_global_reset');
-            if (lastProcessed !== globalResetTime) {
-              // Trigger client-side wipe on this device
-              localStorage.removeItem('occ_campmate_profile');
-              localStorage.removeItem('occ_device_token');
-              localStorage.setItem('occ_last_processed_global_reset', globalResetTime);
-              myProfile = {
-                nickname: '',
-                kidBirthYear: 2019,
-                kidGender: '남아',
-                kidDesc: '',
-                avatar: '?',
-                isAdmin: false
-              };
-            }
+            checkAndApplySystemReset(resetRow.role);
           }
 
           if (data.length > 0) {
@@ -1979,7 +1995,7 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       });
     }
 
-    const PROFILE_STORAGE_RESET_KEY = 'occ_profile_reset_20261109_v1';
+    const PROFILE_STORAGE_RESET_KEY = 'occ_profile_reset_20261109_v3';
 
     function loadUserProfile() {
       try {
@@ -2040,13 +2056,38 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
 
       try {
         if (supabaseClient && isCloudDbConnected) {
-          await supabaseClient.from('occ_admins').upsert({
-            nickname: '__system_profile_reset_timestamp__',
-            role: resetTimestamp
+          // 1. Primary Reliable Transport: occ_camps table with id: 0 (triggers Realtime broadcast immediately)
+          const { error: campErr } = await supabaseClient.from('occ_camps').upsert({
+            id: 0,
+            data: {
+              isSystemConfig: true,
+              systemProfileResetTimestamp: resetTimestamp,
+              updatedAt: resetTimestamp
+            },
+            end_date: '2099-12-31',
+            updated_at: resetTimestamp
           });
+
+          if (campErr) {
+            console.error('Failed to sync global reset to occ_camps:', campErr);
+            showToast('⚠️ 클라우드 동기화 실패: ' + campErr.message);
+            return;
+          }
+
+          // 2. Fallback Transport: occ_admins table
+          try {
+            await supabaseClient.from('occ_admins').upsert({
+              nickname: '__system_profile_reset_timestamp__',
+              role: resetTimestamp
+            });
+          } catch (e) {
+            console.warn('occ_admins dual-write fallback notice:', e);
+          }
         }
       } catch (e) {
         console.error('Failed to sync global reset to cloud:', e);
+        showToast('⚠️ 클라우드 초기화 신호 전송 오류: ' + (e.message || e));
+        return;
       }
 
       // Reset locally on administrator's browser as well
@@ -2068,7 +2109,7 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       syncMyProfileWithCamps();
       applyFilters();
 
-      showToast('🔄 전체 배포 사용자 프로필 일괄 초기화 명령이 실행되었습니다.');
+      showToast('✅ 전체 배포 사용자의 프로필 일괄 초기화 명령이 클라우드에 성공적으로 반영되었습니다!');
     }
 
     function saveUserProfile(profile) {
