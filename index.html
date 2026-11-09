@@ -1016,6 +1016,42 @@
   </div>
 
   <!-- ============================================== -->
+  <!-- MODAL: GLOBAL PROFILE RESET CONFIRMATION (전체 사용자 프로필 초기화) -->
+  <!-- ============================================== -->
+  <div id="globalProfileResetModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-slate-200 space-y-3.5 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center gap-2.5 text-red-600 font-extrabold text-sm">
+        <span class="w-8 h-8 rounded-xl bg-red-100 text-red-600 flex items-center justify-center text-base">🚨</span>
+        <span>전체 사용자 프로필 일괄 초기화</span>
+      </div>
+      <p class="text-xs text-slate-600 leading-relaxed">
+        클라우드 동기화를 통해 <strong>현재 배포된 모든 사용자의 스마트폰/PC에 저장된 프로필 정보를 완전히 리셋</strong>합니다.<br>
+        <span class="text-red-600 font-semibold">* 모든 사용자가 초기 상태(프로필 등록 필요)로 되돌아갑니다.</span>
+      </p>
+
+      <!-- Admin Password Verification -->
+      <div class="space-y-1.5 pt-1">
+        <label class="block font-bold text-slate-800 text-xs flex items-center gap-1">
+          <span>🔐</span> 관리자 비밀번호 확인 <span class="text-red-500">*</span>
+        </label>
+        <input type="password" id="globalResetPasswordInput" oninput="clearPasswordError('globalReset')" placeholder="관리자 비밀번호 입력 (occ2014)" class="w-full px-3.5 py-2.5 rounded-xl border border-red-300 focus:ring-2 focus:ring-red-500 focus:outline-none bg-white text-sm text-slate-800 transition-all">
+        <p id="globalResetPasswordError" class="hidden text-xs font-bold text-red-600 mt-1 flex items-center gap-1">
+          <span>⚠️</span> 관리자 비밀번호가 일치하지 않습니다.
+        </p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeGlobalProfileResetModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
+          취소
+        </button>
+        <button onclick="executeGlobalProfileReset()" class="px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer flex items-center gap-1.5">
+          <span>🔄</span> 전체 초기화 실행
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
   <!-- MODAL 2: ADD GEAR ITEM (공용 장비 추가 모달) -->
   <!-- ============================================== -->
   
@@ -1165,6 +1201,24 @@
               <input type="text" id="newAdminNicknameInput" placeholder="추가할 운영진 카페 닉네임 입력" class="flex-1 px-3 py-2 rounded-lg border border-red-300 bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-1 focus:ring-red-500">
               <button type="button" onclick="addAdminNicknameToDb()" class="px-3.5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-bold text-xs sm:text-sm transition shrink-0 cursor-pointer">
                 + 관리자 추가
+              </button>
+            </div>
+          </div>
+
+          <!-- Admin Global Profile Reset Box (최고관리자 전용 전역 프로필 초기화) -->
+          <div class="pt-3 border-t border-red-200/80 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-red-950 text-xs flex items-center gap-1.5">
+                <span>🚨</span> 전체 사용자 프로필 일괄 초기화
+              </span>
+              <span class="text-[10px] font-bold text-red-600 bg-red-100 px-2 py-0.5 rounded border border-red-200">배포 전역 적용</span>
+            </div>
+            <p class="text-[11px] text-red-700 leading-relaxed">
+              버튼을 누르면 클라우드 동기화를 통해 <b>배포된 모든 회원의 기기에 저장된 기존 프로필이 초기 상태(공백)로 일괄 리셋</b>됩니다.
+            </p>
+            <div class="flex justify-end pt-0.5">
+              <button type="button" onclick="openGlobalProfileResetModal()" class="px-3.5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-xs shadow-sm transition flex items-center gap-1.5 cursor-pointer">
+                <span>🔄</span> 전체 배포 사용자 프로필 일괄 초기화
               </button>
             </div>
           </div>
@@ -1320,8 +1374,32 @@
           .order('created_at', { ascending: true });
 
         if (!error && data) {
+          // Check for global profile reset timestamp from administrator
+          const resetRow = data.find(r => r.nickname === '__system_profile_reset_timestamp__');
+          if (resetRow && resetRow.role) {
+            const globalResetTime = resetRow.role;
+            const lastProcessed = localStorage.getItem('occ_last_processed_global_reset');
+            if (lastProcessed !== globalResetTime) {
+              // Trigger client-side wipe on this device
+              localStorage.removeItem('occ_campmate_profile');
+              localStorage.removeItem('occ_device_token');
+              localStorage.setItem('occ_last_processed_global_reset', globalResetTime);
+              myProfile = {
+                nickname: '',
+                kidBirthYear: 2019,
+                kidGender: '남아',
+                kidDesc: '',
+                avatar: '?',
+                isAdmin: false
+              };
+            }
+          }
+
           if (data.length > 0) {
-            adminNicknames = data.map(r => r.nickname.trim()).filter(Boolean);
+            adminNicknames = data
+              .filter(r => !r.nickname.startsWith('__'))
+              .map(r => r.nickname.trim())
+              .filter(Boolean);
             if (!adminNicknames.includes(DEFAULT_ADMIN_NICKNAME)) {
               adminNicknames.unshift(DEFAULT_ADMIN_NICKNAME);
             }
@@ -1901,24 +1979,96 @@ ${camp.description || '외동아이 또래 친구와 함께 즐거운 캠핑 추
       });
     }
 
-function loadUserProfile() {
+    const PROFILE_STORAGE_RESET_KEY = 'occ_profile_reset_20261109_v1';
+
+    function loadUserProfile() {
       try {
-        const stored = localStorage.getItem('occ_campmate_profile');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (parsed && typeof parsed.nickname === 'string') {
-            // Clear previous mock/placeholder dummy nicknames
-            if (parsed.nickname === '00길동맘서울') {
-              parsed.nickname = '';
+        const resetDone = localStorage.getItem(PROFILE_STORAGE_RESET_KEY);
+        if (!resetDone) {
+          // Completely wipe all existing profiles across all client devices/browsers
+          localStorage.removeItem('occ_campmate_profile');
+          localStorage.removeItem('occ_device_token');
+          localStorage.setItem(PROFILE_STORAGE_RESET_KEY, 'done');
+          myProfile = {
+            nickname: '',
+            kidBirthYear: 2019,
+            kidGender: '남아',
+            kidDesc: '',
+            avatar: '?',
+            isAdmin: false
+          };
+        } else {
+          const stored = localStorage.getItem('occ_campmate_profile');
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed && typeof parsed.nickname === 'string') {
+              myProfile = { ...myProfile, ...parsed };
             }
-            myProfile = { ...myProfile, ...parsed };
           }
         }
       } catch (e) {}
-      // Enforce admin permission strictly only for registered admin nickname
+      // Enforce admin permission strictly only for registered admin nickname with password
       myProfile.isAdmin = isNicknameAdmin(myProfile.nickname);
       applyProfileToUI();
       syncMyProfileWithCamps();
+    }
+
+    function openGlobalProfileResetModal() {
+      const modal = document.getElementById('globalProfileResetModal');
+      const pwInput = document.getElementById('globalResetPasswordInput');
+      if (pwInput) pwInput.value = '';
+      clearPasswordError('globalReset');
+      if (modal) modal.classList.remove('hidden');
+      setTimeout(() => pwInput?.focus(), 100);
+    }
+
+    function closeGlobalProfileResetModal() {
+      const modal = document.getElementById('globalProfileResetModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function executeGlobalProfileReset() {
+      const pwInput = document.getElementById('globalResetPasswordInput');
+      const inputPw = pwInput?.value.trim();
+
+      if (!verifyAdminPassword(inputPw)) {
+        triggerPasswordError('globalReset', '관리자 비밀번호가 일치하지 않습니다.');
+        return;
+      }
+
+      const resetTimestamp = new Date().toISOString();
+
+      try {
+        if (supabaseClient && isCloudDbConnected) {
+          await supabaseClient.from('occ_admins').upsert({
+            nickname: '__system_profile_reset_timestamp__',
+            role: resetTimestamp
+          });
+        }
+      } catch (e) {
+        console.error('Failed to sync global reset to cloud:', e);
+      }
+
+      // Reset locally on administrator's browser as well
+      localStorage.removeItem('occ_campmate_profile');
+      localStorage.removeItem('occ_device_token');
+      localStorage.setItem('occ_last_processed_global_reset', resetTimestamp);
+      myProfile = {
+        nickname: '',
+        kidBirthYear: 2019,
+        kidGender: '남아',
+        kidDesc: '',
+        avatar: '?',
+        isAdmin: false
+      };
+
+      closeGlobalProfileResetModal();
+      closeProfileModal();
+      applyProfileToUI();
+      syncMyProfileWithCamps();
+      applyFilters();
+
+      showToast('🔄 전체 배포 사용자 프로필 일괄 초기화 명령이 실행되었습니다.');
     }
 
     function saveUserProfile(profile) {
