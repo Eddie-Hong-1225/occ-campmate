@@ -910,11 +910,11 @@
           <span>⚠️</span> 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
         </p>
       </div>
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeDeleteConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
+      <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeDeleteConfirmModal()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer text-center whitespace-nowrap">
           취소
         </button>
-        <button id="deleteConfirmBtn" onclick="confirmDeleteCamp()" class="px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer">
+        <button id="deleteConfirmBtn" onclick="confirmDeleteCamp()" class="py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer text-center whitespace-nowrap">
           네, 삭제합니다
         </button>
       </div>
@@ -944,11 +944,11 @@
           <span>⚠️</span> 비밀번호가 일치하지 않습니다. 다시 확인해 주세요.
         </p>
       </div>
-      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-        <button onclick="closeReservationConfirmModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
+      <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100">
+        <button onclick="closeReservationConfirmModal()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer text-center whitespace-nowrap">
           취소
         </button>
-        <button id="reservationConfirmActionBtn" onclick="executeToggleReservationConfirm()" class="px-4.5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-sm transition cursor-pointer">
+        <button id="reservationConfirmActionBtn" onclick="executeToggleReservationConfirm()" class="py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm shadow-sm transition cursor-pointer text-center whitespace-nowrap">
           네, 예약확정합니다
         </button>
       </div>
@@ -1004,12 +1004,12 @@
         </p>
       </div>
 
-      <div class="flex items-center justify-end gap-2.5 pt-2.5 border-t border-slate-100">
-        <button onclick="closeHostCancelParticipantModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
+      <div class="grid grid-cols-2 gap-2 pt-2.5 border-t border-slate-100">
+        <button onclick="closeHostCancelParticipantModal()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer text-center whitespace-nowrap">
           취소
         </button>
-        <button onclick="executeHostCancelParticipant()" class="px-4.5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer flex items-center gap-1.5">
-          <span>✕</span> 선택한 참여자 취소하기
+        <button onclick="executeHostCancelParticipant()" class="py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-sm shadow-sm transition cursor-pointer flex items-center justify-center gap-1 text-center whitespace-nowrap">
+          <span>✕</span> 참여자 취소
         </button>
       </div>
     </div>
@@ -1033,7 +1033,7 @@
   <!-- MODAL: NAVER CAFE SHARE COPY MODAL (카페 게시글 복사) -->
   <!-- ============================================== -->
   <div id="cafeShareModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150 space-y-4">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2.5">
           <span class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg font-bold">📋</span>
@@ -1059,17 +1059,22 @@
         💡 <b>[📋 본문 복사하기]</b>를 누른 후 네이버 카페 글쓰기 창에서 <b>붙여넣기(Ctrl+V)</b> 하시면 게시글이 완성됩니다. 카페 회원들이 게시글 속 링크를 누르면 웹앱 모닥불 방으로 바로 들어와 신청할 수 있습니다.
       </p>
 
-      <!-- Action buttons -->
-      <div class="flex items-center justify-between pt-2 border-t border-slate-100">
-        <a href="https://m.cafe.naver.com/ca-fe/web/cafes/27272326/menus/18" target="_blank" rel="noopener noreferrer" class="px-4 py-2.5 rounded-xl bg-[#03C75A]/10 hover:bg-[#03C75A]/20 text-[#03C75A] font-extrabold text-sm transition flex items-center gap-1.5 border border-[#03C75A]/30">
-          <span>네이버 카페 바로가기</span> <span>↗</span>
-        </a>
-        <div class="flex items-center gap-2">
-          <button type="button" onclick="closeCafeShareModal()" class="px-4.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition cursor-pointer">
+      <!-- Action buttons (Mobile-optimized structured layout) -->
+      <div class="pt-3 border-t border-slate-100 flex flex-col gap-2 sm:gap-2.5">
+        <!-- Primary Action Button: Full Width Copy -->
+        <button type="button" onclick="copyCafeShareText()" class="w-full py-3 px-4 rounded-xl bg-forest-600 hover:bg-forest-700 active:scale-[0.99] text-white font-extrabold text-sm sm:text-base shadow-md transition flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap">
+          <span class="text-base sm:text-lg">📋</span>
+          <span>본문 복사하기</span>
+        </button>
+
+        <!-- Secondary Action Buttons: 2 Equal Columns (Cafe Link & Close) -->
+        <div class="grid grid-cols-2 gap-2 sm:gap-2.5">
+          <a href="https://m.cafe.naver.com/ca-fe/web/cafes/27272326/menus/18" target="_blank" rel="noopener noreferrer" class="py-2.5 sm:py-3 px-3 rounded-xl bg-[#03C75A]/10 hover:bg-[#03C75A]/20 active:scale-[0.99] text-[#03C75A] font-extrabold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 border border-[#03C75A]/30 whitespace-nowrap text-center">
+            <span>네이버 카페 바로가기</span>
+            <span class="text-xs">↗</span>
+          </a>
+          <button type="button" onclick="closeCafeShareModal()" class="py-2.5 sm:py-3 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-[0.99] text-slate-700 font-bold text-xs sm:text-sm transition flex items-center justify-center cursor-pointer whitespace-nowrap text-center">
             닫기
-          </button>
-          <button type="button" onclick="copyCafeShareText()" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-sm shadow-md transition flex items-center gap-1.5 cursor-pointer">
-            <span>📋</span> 본문 복사하기
           </button>
         </div>
       </div>
@@ -1176,11 +1181,11 @@
           🔒 <b>안내:</b> 입력하신 정보는 외부 서버에 전송되지 않고 본인 스마트폰(브라우저)에만 안전하게 저장됩니다. 모닥불에 착석하거나 모집글을 올릴 때 자동으로 내 닉네임이 입력됩니다.
         </div>
 
-        <div class="flex items-center justify-end gap-2.5 pt-2.5 border-t border-slate-100">
-          <button type="button" onclick="closeProfileModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm cursor-pointer">
+        <div class="grid grid-cols-2 gap-2.5 pt-2.5 border-t border-slate-100">
+          <button type="button" onclick="closeProfileModal()" class="py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm cursor-pointer text-center whitespace-nowrap">
             닫기
           </button>
-          <button type="submit" class="px-5 py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-sm shadow-md transition cursor-pointer">
+          <button type="submit" class="py-2.5 rounded-xl bg-forest-600 hover:bg-forest-700 text-white font-extrabold text-sm shadow-md transition cursor-pointer text-center whitespace-nowrap">
             저장 완료
           </button>
         </div>
